@@ -4,7 +4,6 @@
       <div class="form--header">
         <h2 class="form--title">Submit Document</h2>
       </div>
-      fees - {{fees}}
       <div v-if="!!validations.length" class="validations">
         <ul style="text-align: left;"><li style="list-style-type: disc;" v-for="(validation, index) in validations" :key="index">{{validation}}</li></ul>
       </div>
@@ -17,23 +16,23 @@
         <input class="form--input" type="text" name="verifier" id="verifier" v-model="document.verifier" @blur="handleBlur($event)" placeholder="Enter destination school address" required />
       </div>
       <div class="form--item">
-        <label class="form--label" for="certifier">School Address: </label>
+        <label class="form--label" for="certifier">Source School Address: </label>
         <input class="form--input" type="text" name="certifier" id="certifier" v-model="document.certifier" @blur="handleBlur($event)"  @input="handleCertifier($event)" placeholder="Enter source school address" required />
       </div>
-      <div class="form--item">
+      <!-- <div class="form--item">
         <label class="form--label" for="name">Document Name: </label>
         <input class="form--input" type="text" name="name" id="name" v-model="document.name" @blur="handleBlur($event)" placeholder="Enter document name" required />
-      </div>
+      </div> -->
       <div class="form--item">
         <label for="fee" class="form--label">Document Name: </label><br>
         <select name="fee" id="fee" ref="fee" class="form--input" @change="handleFee($event)">
           <option value="" selected disabled>Select Document</option>
-          <option v-for="(fee) in fees" :value='fee' :key="fee.doc">{{ fee.doc }}</option>
+          <option :value="{doc: fee.doc, cost: fee.cost}" v-for="(fee) in fees" :key="fee.doc">{{ fee.doc }}</option>
         </select>
       </div>
       <div class="form--item">
         <label class="form--label" for="fee">Processing Fee: </label>
-        <input class="form--input" type="text" name="fee" id="fee" v-model="document.fee" @blur="handleBlur($event)" placeholder="Enter processing fee" required />
+        <input class="form--input" type="text" name="fee" id="fee" v-model="document.fee" @blur="handleBlur($event)" placeholder="Enter processing fee" readonly required />
       </div>
       <div class="form--item">
         <label class="form--label" for="description">Document Description: </label>
@@ -55,7 +54,6 @@
 import { computed, defineComponent, reactive } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from 'vue-router';
-import Certifier from '@/types/Certifier';
 import Fee from '@/types/Fee';
 import Document from '@/types/Document';
 export default defineComponent({
@@ -66,10 +64,8 @@ export default defineComponent({
     const store = useStore();
     // const route = useRoute();
     const router = useRouter();
-    // let validations = reactive<string[]>([]);
     let validations = reactive<string[]>([]);
-    const certifier = computed((): Certifier => store.getters.certifier);
-    const fees = computed((): Fee => store.getters.certifier.fees);
+    const fees = computed((): Fee[] => store.getters.fees);
     const getCertifier = (address: string) => store.dispatch('getCertifier', address);
     const addDocument = (document: Document) => store.dispatch('addDocument', document);
     const addDocumentImage = (file: FormData) => store.dispatch('addDocumentImage', file);
@@ -80,7 +76,7 @@ export default defineComponent({
       name: '',
       description: "",
       image: '',
-      fee: '',
+      fee: 0,
     });
     const isValid = computed(() => {
       return (
@@ -90,12 +86,15 @@ export default defineComponent({
         document.name !== "" && 
         document.description !== "" && 
         document.image !== "" && 
-        document.fee !== ""
+        document.fee !== 0
       );
     });
     const handleFee = async (event: Event) => {
-      console.log(event);
-      // console.log(fee);
+      const target = event.target as HTMLSelectElement;
+      let item = fees.value[target.selectedIndex-1]
+      document.name = item.doc;
+      document.description = item.description;
+      document.fee = item.cost;
     }
     const handleBlur = (event: Event) => {
       const target = event.target as HTMLInputElement;
@@ -105,9 +104,7 @@ export default defineComponent({
     };
     const handleCertifier = async (event: Event) => {
       const target = event.target as HTMLInputElement;
-      // console.log(target.value);
       await getCertifier(target.value);
-
     };
     const handleValidation = (): boolean => {
       validations = [];
@@ -141,7 +138,6 @@ export default defineComponent({
     };
 
     return {
-      certifier,
       fees,
       validations, 
       document, 

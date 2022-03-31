@@ -4,10 +4,10 @@ import axios, { AxiosResponse } from "axios";
 type method = "get" | "GET" | "delete" | "DELETE" | "head" | "HEAD" | "options" | "OPTIONS" | "post" | "POST" | "put" | "PUT" | "patch" | "PATCH" | "purge" | "PURGE" | "link" | "LINK" | "unlink" | "UNLINK" | undefined;
 
 // export default apiClient;
-import Nft from '@/types/Nft';
-import Key from '@/types/Key';
+// import Certifier from '@/types/Certifier';
+import Login from '@/types/Login';
 import Account from '@/types/Account';
-import Token from '@/types/Token';
+import Document from '@/types/Document';
 export const request = async <T = never, R = AxiosResponse<T>>(url: string, method: method, token?: string, data?: unknown): Promise<R> => {
   const res = await axios({
     method: method,
@@ -27,31 +27,31 @@ export const request = async <T = never, R = AxiosResponse<T>>(url: string, meth
 export const API_URL = `https://fullstack-nft.herokuapp.com/`;
 
 export default {
-	async addNftImage(token: string, params: File): Promise<string> {
+	async addDocumentImage(token: string, params: File): Promise<string> {
 		return await request(`${API_URL}nft/image`, 'post', token, params);
 	},
-	async addNft(token: string, params: Nft): Promise<unknown> {
+	async addNft(token: string, params: Document): Promise<unknown> {
 		return await request(`${API_URL}nft`, 'post', token, params);
 	},
-	async getNfts(): Promise<Nft[]> {
-		return await request(`${API_URL}nft`, 'get');
-	},
-	async getAsset(token: string): Promise<Nft[]> {
-		return await request(`${API_URL}nft/asset`, 'get', token);
-	},
-	async getMarket(token: string): Promise<Nft[]> {
-		return await request(`${API_URL}nft/market`, 'get', token);
-	},
-	async getNft(token: string, params: Nft): Promise<string> {
-		return await request(`${API_URL}nft/${params.tokenId}`, 'get', token, params);
-	},
-	async login(params: Key): Promise<Account> {
+	// async getNfts(): Promise<Nft[]> {
+	// 	return await request(`${API_URL}nft`, 'get');
+	// },
+	// async getAsset(token: string): Promise<Nft[]> {
+	// 	return await request(`${API_URL}nft/asset`, 'get', token);
+	// },
+	// async getMarket(token: string): Promise<Nft[]> {
+	// 	return await request(`${API_URL}nft/market`, 'get', token);
+	// },
+	// async getNft(token: string, params: Nft): Promise<string> {
+	// 	return await request(`${API_URL}nft/${params.tokenId}`, 'get', token, params);
+	// },
+	async login(params: Login): Promise<Account> {
 		return await request(`${API_URL}login`, 'post', "", params);
 	},
-	async logout(token: string, params: Token): Promise<string> {
-		return await request(`${API_URL}logout`, 'post', token, params);
-	},
-	async refresh(params: Token): Promise<Account> {
-		return await request(`${API_URL}refresh`, 'post', "", params);
-	},
+	// async logout(token: string, params: Token): Promise<string> {
+	// 	return await request(`${API_URL}logout`, 'post', token, params);
+	// },
+	// async refresh(params: Token): Promise<Account> {
+	// 	return await request(`${API_URL}refresh`, 'post', "", params);
+	// },
 };
