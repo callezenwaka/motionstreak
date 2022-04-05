@@ -10,11 +10,13 @@ export default createStore({
     fees: [] as Fee[],
     address: '',
     token: '',
+    isLoading: false,
   },
   getters: {
     certifier: state => state.certifier,
     fees: state => state.fees,
     address: state => state.address,
+    isLoading: state => state.isLoading,
   },
   actions: {
     async addDocumentImage(context, payload) {
@@ -26,8 +28,20 @@ export default createStore({
         return;
       }
     },
+    async addDocument(context, payload) {
+      try {
+        // TODO: api call
+        context.dispatch('loading', true);
+        await index.addDocument(context.state.token, payload);
+        context.dispatch('getDocuments', payload);
+        context.dispatch('loading', false);
+        return;
+      } catch (error) {
+        return;
+      }
+    },
     async getCertifier(context, payload: string) {
-      console.log(payload);
+      // console.log(payload);
       try {
         // TODO: api call
         // context.dispatch('loading', true);
@@ -40,6 +54,51 @@ export default createStore({
         return;
       }
     },
+    async register(context, payload) {
+			try {
+        // TODO: api call
+        const data = await index.register(payload);
+        // localStorage.setItem('token', data.accessToken);
+        // localStorage.setItem('refresh_token', data.refreshToken);
+        // localStorage.setItem('address', data.address);
+        // context.commit('SET_TOKEN', data.accessToken);
+        // context.commit('SET_REFRESH_TOKEN', data.refreshToken);
+        // context.commit('SET_ADDRESS', data.address);
+        return data;
+      } catch (error) {
+        return;
+      }
+		},
+    async login(context, payload) {
+			try {
+        // TODO: api call
+        const data = await index.login(payload);
+        // localStorage.setItem('token', data.accessToken);
+        // localStorage.setItem('refresh_token', data.refreshToken);
+        // localStorage.setItem('address', data.address);
+        // context.commit('SET_TOKEN', data.accessToken);
+        // context.commit('SET_REFRESH_TOKEN', data.refreshToken);
+        // context.commit('SET_ADDRESS', data.address);
+        return data;
+      } catch (error) {
+        return;
+      }
+		},
+    async logout(context, payload) {
+			try {
+        // TODO: api call
+        const data = await index.login(payload);
+        // localStorage.setItem('token', data.accessToken);
+        // localStorage.setItem('refresh_token', data.refreshToken);
+        // localStorage.setItem('address', data.address);
+        // context.commit('SET_TOKEN', data.accessToken);
+        // context.commit('SET_REFRESH_TOKEN', data.refreshToken);
+        // context.commit('SET_ADDRESS', data.address);
+        return data;
+      } catch (error) {
+        return;
+      }
+		},
   },
   mutations: {
     SET_CERTIFIER(state, certifier: Certifier ) {

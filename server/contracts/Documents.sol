@@ -2,19 +2,15 @@
 
 pragma solidity >=0.8.0 <0.9.0;
 
-import "hardhat/console.sol";
-import "./StringUtils.sol";
-// import "./EmailRegex.sol";
 import "./Accounts.sol";
 
 /** @title Documents. */
 contract Documents {
-    
-  address private owner;
-  address public accountsAddress;
+  // state variables
   Document[] private documents;
+  address payable private owner;
+  address public accountsAddress;
   mapping (address => Count) private counts;
-  mapping (uint => Document) private docs;
   mapping (address => uint) public balances;
   enum Status { Pending, Certified, Verified, Accepted, Rejected }
  
@@ -24,11 +20,12 @@ contract Documents {
     address certifier;
     string name;
     string description;
-    string docAddress;
+    string image;
     uint fee;
+    uint index;
     Status status;
   }
-  
+   
   struct Count {
     uint pending;
     uint certified;
@@ -42,21 +39,21 @@ contract Documents {
   event DocumentCertified(address user);
   event DocumentVerified(address user);
   event DocumentRejected(address user);
-  event Test (uint test);
+  event DocumentTested (uint test);
 
   /** @dev check for document address exists.
-    * @param _docAddress document address.
+    * @param _index document index.
     */
-  modifier docAddressExists(string memory _docAddress) 
-  {
-    bool found = false;
-    for (uint i=0; i<documents.length; i++) {
-      if (StringUtils.equal(documents[i].docAddress, _docAddress)) {
-        found = true;
-        break; 
-      }
-    }
-    require(!found, "Document address found");
+  modifier documentExists(uint _index) {
+    require(documents[_index].index == _index, "Document not found");
+    _;
+  }
+
+  /** @dev check for document address exists.
+    * @param _address account address.
+    */
+  modifier documentsExist(address _address) {
+    require(counts[_address].total > 0, "Documents not found");
     _;
   }
 
@@ -80,146 +77,172 @@ contract Documents {
       balances[addr] += _fee;
     }
   }
+  /** @dev check for contract owner.
+  */
+  modifier onlyOwner {
+    require(msg.sender == owner, "Only owner can call.");
+    _;
+  }
 
-  constructor(address acctAddr)  
-  {
-    owner = msg.sender;
+  constructor(address acctAddr) {
+    owner = payable(msg.sender);
     accountsAddress = acctAddr;
   }
   
   /** @dev add document.
-    * @param _verifier document address.
     * @param _certifier document address.
+    * @param _verifier document address.
     * @param _description document description.
-    * @param _docAddress document address.
     * @param _name document name.
     * @param _fee document fee.
     */
-  function addDocument(address _verifier, address _certifier, string memory _name, string memory _description, string memory _docAddress, uint _fee) 
+  function addDocument(address _certifier, address _verifier, string memory _name, string memory _description, uint _fee) 
   public 
   payable
-  docAddressExists(_docAddress)
   paidEnough(_fee)
   refund(_certifier, _fee)
+  returns(bool success)
   {
+    // TODO: Add document
     emit DocumentAdded(msg.sender);
     documents.push(
       Document({
         verifier: _verifier,
         certifier: _certifier,
         requester: msg.sender,
-        name: _name,
         description: _description,
-        docAddress: _docAddress,
+        name: _name,
+        image: "",
+        index: documents.length,
         fee: _fee,
         status: Status.Pending
       })
     );
-    // get document counts
-    counts[msg.sender].total = counts[msg.sender].total + 1;
-    counts[_certifier].total = counts[_certifier].total + 1;
-    counts[_verifier].total = counts[_verifier].total + 1;
+    // TODO: Update document counts
+    counts[msg.sender].total += 1;
+    counts[_certifier].total += 1;
+    counts[_verifier].total += 1;
+    return true;
   }
 
   /** @dev get documents.
+    * @param _address account address.
     * @return _documents document.
     */  
-  function getDocuments() 
+  function getDocuments(address _address) 
   public 
-  view 
-  returns (Document[] memory _documents) {
-    uint _index = 0;
-    // Document[] memory _documents = new Document[](_index);
+  view
+  documentsExist(_address)
+  returns (Document[] memory) {
+    // TODO: Get documents
+    uint index = 0;
+    uint count = counts[_address].total;
+    Document[] memory items = new Document[](count);
     for (uint i=0; i<documents.length; i++) {
-      if(documents[i].verifier == msg.sender) {
-        _documents[_index] = documents[i];
-        _index++;
-      }
-      if(documents[i].certifier == msg.sender) {
-        _documents[_index] = documents[i];
-        _index++;
-      }
       if(documents[i].requester == msg.sender) {
-        _documents[_index] = documents[i];
-        _index++;
+        Document storage document = documents[i];
+        items[index] = document;
+        index++;
+        continue;
+      }
+      if(documents[i].verifier == _address) {
+        Document storage document = documents[i];
+        items[index] = document;
+        index++;
+        continue;
+      }
+      if(documents[i].certifier == _address) {
+        Document storage document = documents[i];
+        items[index] = document;
+        index++;
+        continue;
       }
     }
-    return (_documents);
+    return items;
   }
 
   /** @dev get document.
-    * @param docAddress document address.
-    * @param index document uint.
+    * @param _index document uint.
     * @return _document document.
     */
-  function getDocument(string memory docAddress, uint index) 
+  function getDocument(uint _index) 
   public 
   view
-  returns(Document memory _document)
+  documentExists(_index)
+  returns(Document memory)
   {
-    // get document
-    for (uint i=index; i<documents.length; i++) {
-      if(StringUtils.equal(documents[i].docAddress, docAddress)) {
-        _document = documents[i];
-        break;
-      }
+    // TODO: Get document
+    Document memory item;
+    if(documents[_index].requester == msg.sender) {
+      Document storage document = documents[_index];
+      return item = document;
     }
-    return (_document);
+    if(documents[_index].verifier == Accounts(accountsAddress).getAdmin(msg.sender)) {
+      Document storage document = documents[_index];
+      return item = document;
+    }
+    if(documents[_index].certifier == Accounts(accountsAddress).getAdmin(msg.sender)) {
+      Document storage document = documents[_index];
+      return item = document;
+    }
+    return item;
   }
 
   /** @dev certify document.
-    * @param _docAddress document docAddress.
+    * @param _image document address.
+    * @param _index document index.
     * @param _fee document fee.
     * @param status document status.
     */
-  function certifyDocument(string memory _docAddress, uint _fee, Status status) 
+  function certifyDocument(string memory _image, uint _index, uint _fee, Status status) 
   public 
   payable
+  returns(bool)
   {
-    for (uint i=0; i<documents.length; i++) {
-      if(StringUtils.equal(documents[i].docAddress, _docAddress) && documents[i].certifier == Accounts(accountsAddress).getAffiliate(msg.sender) && documents[i].status == Status.Pending){
-        // balances[documents[i].certifier] -= _fee;
-        documents[i].status = status;
-        if(status == Status.Certified){
-          emit DocumentCertified(msg.sender);
-          counts[documents[i].requester].certified = counts[documents[i].requester].certified + 1;
-          // send ether to verified account
-          // payable(documents[i].certifier).transfer(_fee);
-        }
-        if(status == Status.Rejected) {
-          emit DocumentRejected(msg.sender);
-          counts[documents[i].requester].rejected = counts[documents[i].requester].rejected + 1;
-          // return the ether for rejection
-          balances[documents[i].certifier] -= _fee;
-          payable(documents[i].requester).transfer(_fee);
-        }
-        break;
+    // TODO: Certify document
+    if(documents[_index].certifier == Accounts(accountsAddress).getAffiliate(msg.sender) && documents[_index].status == Status.Pending){
+      documents[_index].status = status;
+      documents[_index].image = _image;
+      if(status == Status.Certified){
+        emit DocumentCertified(msg.sender);
+        counts[documents[_index].requester].certified += 1;
+        return true;
+      }
+      if(status == Status.Rejected) {
+        emit DocumentRejected(msg.sender);
+        counts[documents[_index].requester].rejected += 1;
+        // return the ether for rejection
+        balances[documents[_index].certifier] -= _fee;
+        payable(documents[_index].requester).transfer(_fee);
       }
     }
+    return true;
   }
 
   /** @dev verify document.
-    * @param docAddress document address.
+    * @param _index document index.
     * @param status document status.
     */   
-  function verifyDocument(string memory docAddress, Status status) 
+  function verifyDocument(uint _index, Status status) 
   public 
   payable
+  returns(bool)
   {
-    for (uint i=0; i<documents.length; i++) {
-      if(StringUtils.equal(documents[i].docAddress, docAddress) && documents[i].verifier == Accounts(accountsAddress).getAffiliate(msg.sender) && documents[i].status == Status.Certified){
-        documents[i].status = status;
-        if(status == Status.Verified){
-          emit DocumentVerified(msg.sender);
-          counts[documents[i].verifier].verified = counts[documents[i].verifier].verified + 1;
-        }
-        if(status == Status.Rejected) {
-          emit DocumentRejected(msg.sender);
-          counts[documents[i].requester].rejected = counts[documents[i].requester].rejected + 1;
-        }
-        break;
+    // TODO: Verify document
+    if(documents[_index].verifier == Accounts(accountsAddress).getAffiliate(msg.sender) && documents[_index].status == Status.Certified){
+      documents[_index].status = status;
+      if(status == Status.Verified){
+        emit DocumentVerified(msg.sender);
+        counts[documents[_index].verifier].verified += 1;
+        counts[documents[_index].requester].verified += 1;
+      }
+      if(status == Status.Rejected) {
+        emit DocumentRejected(msg.sender);
+        counts[documents[_index].verifier].rejected += 1;
+        counts[documents[_index].requester].rejected += 1;
       }
     }
+    return true;
   }
   
   /** @dev get count for users.
@@ -235,15 +258,17 @@ contract Documents {
   view
   returns(uint pending, uint certified, uint verified, uint rejected, uint total) 
   {
+    // TODO: Get document counts
     return (counts[_address].pending, counts[_address].certified, counts[_address].verified, counts[_address].rejected, counts[_address].total);
   }
 
   /** @dev kill smart contract if something bad happens.
     */
-  function kill()
+  function kill() 
   public
   payable
+  onlyOwner
   {
-    if (msg.sender == owner) selfdestruct(payable(owner));
+    selfdestruct(owner);
   }
 }

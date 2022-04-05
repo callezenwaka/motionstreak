@@ -3,163 +3,215 @@
 
 pragma solidity >=0.8.0 <0.9.0;
 
-import "hardhat/console.sol";
-import "./EmailRegex.sol";
-import "./StringUtils.sol";
+// import "hardhat/console.sol";
 
 /** @title Accounts. */
 contract Accounts {
-  address private owner;
+  address payable private owner;
   mapping (address => Account) public accounts;
+  mapping (address => Admin) public admins;
 
   struct Account {
-    string name;
+    string displayName;
+    string phoneNumber;
     string email;
-    string avatar;
+    bool isTenant;
+    bool isActive;
+    bool isActivated;
+  }
+
+  struct Admin {
     address affiliate;
-    string description;
-    string entity;
-    Fee[] fees;
   }
 
-  struct Fee {
-    string doc;
-    uint cost;
-  }
+  event AccountAdded(address user);
+  event AccountUpdated(address user);
 
-  event Registered (address user);
-  
-  /** @dev check for the valid email address.
-    * @param _email email address.
+  /** @dev check for verifier account.
+    * @param _address user address.
     */
-  modifier isEmailValid(string memory _email) 
-  {
-    require(EmailRegex.matches(_email), "Email mis-match");
+  modifier isVerifier(address _address) { 
+    require(admins[_address].affiliate == msg.sender, "Unauthorised verifier");
+    _;
+  }
+
+  /** @dev check for admin account.
+    * @param _address user address.
+    */
+  modifier isAdmin(address _address) {
+    require(admins[_address].affiliate != address(0), "Unauthorised admin");
+    _;
+  }
+
+  /** @dev check for user paid enough.
+    */
+  modifier isTenant() { 
+    require(accounts[msg.sender].isTenant == true, "Forbidden");
+    _;
+  }
+
+  /** @dev check for contract owner.
+  */
+  modifier onlyOwner {
+    require(msg.sender == owner, "Unauthorised.");
     _;
   }
 
   constructor() {
-    owner = msg.sender;
+    owner = payable(msg.sender);
   }
 
-  /** @dev update user account details.
-    * @param _name user name.
-    * @param _email user email.
-    * @param _avatar user avatar.
-    * @param _affiliate user affiliate.
-    * @param _description user description.
-    * @param _entity user entity.
+  function getNoAccount()
+  public
+  pure
+  returns(address)
+  {
+    return address(0);
+  }
+
+  /** @dev add user account details.
+    * @param displayName account name.
+    * @param email account email.
+    * @param phoneNumber account phone.
+    * @param _isTenant account tenant.
+    * @param isActivated account activation.
+    * @return success account success.
     */
-  function register(string memory _name, string memory _email, string memory _avatar, address _affiliate, string memory _description, string memory _entity, Fee memory _fee) 
+  function addAccount(string memory displayName, string memory email, string memory phoneNumber, bool _isTenant, bool isActivated) 
   public 
   payable
-  isEmailValid(_email)
+  returns(bool)
   {
-    emit Registered(msg.sender);
-    accounts[msg.sender].name = _name;
-    accounts[msg.sender].email = _email;
-    accounts[msg.sender].avatar = _avatar;
-    accounts[msg.sender].affiliate = _affiliate;
-    accounts[msg.sender].description = _description;
-    accounts[msg.sender].entity = _entity;
-    accounts[msg.sender].fees.push(_fee);
+    // TODO: Add account
+    emit AccountAdded(msg.sender);
+    accounts[msg.sender].displayName = displayName;
+    accounts[msg.sender].email = email;
+    accounts[msg.sender].phoneNumber = phoneNumber;
+    accounts[msg.sender].isTenant = _isTenant;
+    accounts[msg.sender].isActivated = isActivated;
+    accounts[msg.sender].isActive = true;
+
+    return true;
   }
 
-  /** @dev user account details.
-    * @param _address user address.
-    * @return _account user account.
+  /** @dev add admin account details.
+    * @param _address account address.
+    * @param displayName account name.
+    * @param email account email.
+    * @param phoneNumber account phone.
+    * @param _isTenant account tenant.
+    * @param isActivated account activation.
+    * @return success account success.
+    */
+  function addAdmin(address _address, string memory displayName, string memory email, string memory phoneNumber, bool _isTenant, bool isActivated) 
+  public 
+  payable
+  isTenant()
+  returns(bool)
+  {
+    // TODO: Add account
+    emit AccountAdded(_address);
+    accounts[_address].displayName = displayName;
+    accounts[_address].email = email;
+    accounts[_address].phoneNumber = phoneNumber;
+    accounts[_address].isTenant = _isTenant;
+    accounts[_address].isActivated = isActivated;
+    accounts[_address].isActive = true;
+    admins[_address].affiliate = msg.sender;
+
+    return true;
+  }
+
+  /** @dev get user account details.
+    * @param _address account address.
+    * @return _account account account.
     */
   function getAccount(address _address)
   public 
   view
-  returns (Account memory _account) 
+  returns (Account memory) 
   {
-    _account = accounts[_address];
-    // addr = _address;
-    // name = accounts[_address].name;
-    // email = accounts[_address].email;
-    // avatar = accounts[_address].avatar;
-    // affiliate = accounts[_address].affiliate;
-    // description = accounts[_address].description;
-    // entity = accounts[_address].entity;
-    return (_account);
+    // TODO: Get account
+    Account memory account;
+    account = accounts[_address];
+    return account;
+  }
+
+  /** @dev add admin account details.
+    * @param displayName account name.
+    * @param email account email.
+    * @param phoneNumber account phone.
+    * @return success account success.
+    */
+  function updateAccount(string memory displayName, string memory email, string memory phoneNumber) 
+  public 
+  payable
+  returns(bool)
+  {
+    // TODO: Update account
+    emit AccountUpdated(msg.sender);
+    accounts[msg.sender].displayName = displayName;
+    accounts[msg.sender].email = email;
+    accounts[msg.sender].phoneNumber = phoneNumber;
+
+    return true;
+  }
+
+  /** @dev add admin account details.
+    * @param displayName account name.
+    * @param email account email.
+    * @param phoneNumber account phone.
+    * @param isActive account active.
+    * @return success account success.
+    */
+  function updateAdmin(address _address, string memory displayName, string memory email, string memory phoneNumber, bool isActive) 
+  public 
+  payable
+  isVerifier(_address)
+  returns(bool)
+  {
+    // TODO: Update account
+    emit AccountUpdated(_address);
+    accounts[_address].displayName = displayName;
+    accounts[_address].email = email;
+    accounts[_address].phoneNumber = phoneNumber;
+    accounts[_address].isActive = isActive;
+
+    return true;
   }
 
   /** @dev get verification price of verifier.
-    * @param _address verifier address.
-    * @return affiliate document address.
+    * @return affiliate account address.
     */
   function getAffiliate(address _address)
   public 
   view
-  returns(address affiliate)
+  isAdmin(_address)
+  returns(address)
   {
-    return (accounts[_address].affiliate);
+    // TODO: Get affiliation
+    return (admins[_address].affiliate);
   }
 
   /** @dev get verification price of verifier.
-    * @return fees account fees.
+    * @return affiliate account address.
     */
-  function getFees()
-  public
+  function getAdmin(address _address)
+  public 
   view
-  returns(Fee[] memory fees)
+  returns(address)
   {
-    return accounts[msg.sender].fees;
-  }
-
-  /** @dev get verification price of verifier.
-    * @param _index fee uint.
-    * @return fee account fee.
-    */
-  function getFee(uint _index)
-  public
-  view
-  returns(Fee memory fee)
-  {
-    return accounts[msg.sender].fees[_index];
-  }
-
-  /** @dev get verification price of verifier.
-  * @param _fee fee Fee.
-  */
-  function addFee(Fee memory _fee)
-  public
-  payable
-  {
-    accounts[msg.sender].fees.push(_fee);
-  }
-
-  /** @dev get verification price of verifier.
-    * @param _fee fee Fee.
-    * @param _index fee uint.
-    */
-  function updateFee(Fee memory _fee, uint _index)
-  public
-  payable
-  {
-    accounts[msg.sender].fees[_index] = _fee;
-  }
-
-  /** @dev get verification price of verifier.
-    * @param _index fee uint.
-    */
-  function deleteFee(uint _index)
-  public
-  payable
-  {
-    for(uint i = _index; i < accounts[msg.sender].fees.length-1; i++){
-      accounts[msg.sender].fees[i] = accounts[msg.sender].fees[i+1];      
-    }
-    accounts[msg.sender].fees.pop();
+    // TODO: Get affiliation
+    return (admins[_address].affiliate);
   }
 
   /** @dev kill smart contract if something bad happens.
     */
   function kill() 
-  public 
+  public
+  payable
+  onlyOwner
   {
-    if (msg.sender == owner) selfdestruct(payable(owner));
+    selfdestruct(owner);
   }
-  
 }

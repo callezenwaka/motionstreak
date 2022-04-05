@@ -4,11 +4,9 @@
 import {
   BaseContract,
   BigNumber,
-  BigNumberish,
   BytesLike,
   CallOverrides,
   ContractTransaction,
-  Overrides,
   PayableOverrides,
   PopulatedTransaction,
   Signer,
@@ -19,39 +17,29 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
 export declare namespace Accounts {
-  export type FeeStruct = { doc: string; cost: BigNumberish };
-
-  export type FeeStructOutput = [string, BigNumber] & {
-    doc: string;
-    cost: BigNumber;
-  };
-
   export type AccountStruct = {
-    name: string;
+    displayName: string;
+    phoneNumber: string;
     email: string;
-    avatar: string;
-    affiliate: string;
-    description: string;
-    entity: string;
-    fees: Accounts.FeeStruct[];
+    isTenant: boolean;
+    isActive: boolean;
+    isActivated: boolean;
   };
 
   export type AccountStructOutput = [
     string,
     string,
     string,
-    string,
-    string,
-    string,
-    Accounts.FeeStructOutput[]
+    boolean,
+    boolean,
+    boolean
   ] & {
-    name: string;
+    displayName: string;
+    phoneNumber: string;
     email: string;
-    avatar: string;
-    affiliate: string;
-    description: string;
-    entity: string;
-    fees: Accounts.FeeStructOutput[];
+    isTenant: boolean;
+    isActive: boolean;
+    isActivated: boolean;
   };
 }
 
@@ -59,70 +47,88 @@ export interface AccountsInterface extends utils.Interface {
   contractName: "Accounts";
   functions: {
     "accounts(address)": FunctionFragment;
-    "addFee((string,uint256))": FunctionFragment;
-    "deleteFee(uint256)": FunctionFragment;
+    "addAccount(string,string,string,bool,bool)": FunctionFragment;
+    "addAdmin(address,string,string,string,bool,bool)": FunctionFragment;
+    "admins(address)": FunctionFragment;
     "getAccount(address)": FunctionFragment;
+    "getAdmin(address)": FunctionFragment;
     "getAffiliate(address)": FunctionFragment;
-    "getFee(uint256)": FunctionFragment;
-    "getFees()": FunctionFragment;
+    "getNoAccount()": FunctionFragment;
     "kill()": FunctionFragment;
-    "register(string,string,string,address,string,string,(string,uint256))": FunctionFragment;
-    "updateFee((string,uint256),uint256)": FunctionFragment;
+    "updateAccount(string,string,string)": FunctionFragment;
+    "updateAdmin(address,string,string,string,bool)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "accounts", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "addFee",
-    values: [Accounts.FeeStruct]
+    functionFragment: "addAccount",
+    values: [string, string, string, boolean, boolean]
   ): string;
   encodeFunctionData(
-    functionFragment: "deleteFee",
-    values: [BigNumberish]
+    functionFragment: "addAdmin",
+    values: [string, string, string, string, boolean, boolean]
   ): string;
+  encodeFunctionData(functionFragment: "admins", values: [string]): string;
   encodeFunctionData(functionFragment: "getAccount", values: [string]): string;
+  encodeFunctionData(functionFragment: "getAdmin", values: [string]): string;
   encodeFunctionData(
     functionFragment: "getAffiliate",
     values: [string]
   ): string;
   encodeFunctionData(
-    functionFragment: "getFee",
-    values: [BigNumberish]
+    functionFragment: "getNoAccount",
+    values?: undefined
   ): string;
-  encodeFunctionData(functionFragment: "getFees", values?: undefined): string;
   encodeFunctionData(functionFragment: "kill", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "register",
-    values: [string, string, string, string, string, string, Accounts.FeeStruct]
+    functionFragment: "updateAccount",
+    values: [string, string, string]
   ): string;
   encodeFunctionData(
-    functionFragment: "updateFee",
-    values: [Accounts.FeeStruct, BigNumberish]
+    functionFragment: "updateAdmin",
+    values: [string, string, string, string, boolean]
   ): string;
 
   decodeFunctionResult(functionFragment: "accounts", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "addFee", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "deleteFee", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "addAccount", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "addAdmin", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "admins", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getAccount", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getAdmin", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getAffiliate",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getFee", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getFees", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "getNoAccount",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(functionFragment: "kill", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "register", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "updateFee", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "updateAccount",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "updateAdmin",
+    data: BytesLike
+  ): Result;
 
   events: {
-    "Registered(address)": EventFragment;
+    "AccountAdded(address)": EventFragment;
+    "AccountUpdated(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "Registered"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AccountAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "AccountUpdated"): EventFragment;
 }
 
-export type RegisteredEvent = TypedEvent<[string], { user: string }>;
+export type AccountAddedEvent = TypedEvent<[string], { user: string }>;
 
-export type RegisteredEventFilter = TypedEventFilter<RegisteredEvent>;
+export type AccountAddedEventFilter = TypedEventFilter<AccountAddedEvent>;
+
+export type AccountUpdatedEvent = TypedEvent<[string], { user: string }>;
+
+export type AccountUpdatedEventFilter = TypedEventFilter<AccountUpdatedEvent>;
 
 export interface Accounts extends BaseContract {
   contractName: "Accounts";
@@ -156,69 +162,71 @@ export interface Accounts extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<
-      [string, string, string, string, string, string] & {
-        name: string;
+      [string, string, string, boolean, boolean, boolean] & {
+        displayName: string;
+        phoneNumber: string;
         email: string;
-        avatar: string;
-        affiliate: string;
-        description: string;
-        entity: string;
+        isTenant: boolean;
+        isActive: boolean;
+        isActivated: boolean;
       }
     >;
 
-    addFee(
-      _fee: Accounts.FeeStruct,
+    addAccount(
+      displayName: string,
+      email: string,
+      phoneNumber: string,
+      _isTenant: boolean,
+      isActivated: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    deleteFee(
-      _index: BigNumberish,
+    addAdmin(
+      _address: string,
+      displayName: string,
+      email: string,
+      phoneNumber: string,
+      _isTenant: boolean,
+      isActivated: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
+
+    admins(
+      arg0: string,
+      overrides?: CallOverrides
+    ): Promise<[string] & { affiliate: string }>;
 
     getAccount(
       _address: string,
       overrides?: CallOverrides
-    ): Promise<
-      [Accounts.AccountStructOutput] & {
-        _account: Accounts.AccountStructOutput;
-      }
-    >;
+    ): Promise<[Accounts.AccountStructOutput]>;
+
+    getAdmin(_address: string, overrides?: CallOverrides): Promise<[string]>;
 
     getAffiliate(
       _address: string,
       overrides?: CallOverrides
-    ): Promise<[string] & { affiliate: string }>;
+    ): Promise<[string]>;
 
-    getFee(
-      _index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<[Accounts.FeeStructOutput] & { fee: Accounts.FeeStructOutput }>;
-
-    getFees(
-      overrides?: CallOverrides
-    ): Promise<
-      [Accounts.FeeStructOutput[]] & { fees: Accounts.FeeStructOutput[] }
-    >;
+    getNoAccount(overrides?: CallOverrides): Promise<[string]>;
 
     kill(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    register(
-      _name: string,
-      _email: string,
-      _avatar: string,
-      _affiliate: string,
-      _description: string,
-      _entity: string,
-      _fee: Accounts.FeeStruct,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    updateFee(
-      _fee: Accounts.FeeStruct,
-      _index: BigNumberish,
+    updateAccount(
+      displayName: string,
+      email: string,
+      phoneNumber: string,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    updateAdmin(
+      _address: string,
+      displayName: string,
+      email: string,
+      phoneNumber: string,
+      isActive: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
@@ -227,58 +235,65 @@ export interface Accounts extends BaseContract {
     arg0: string,
     overrides?: CallOverrides
   ): Promise<
-    [string, string, string, string, string, string] & {
-      name: string;
+    [string, string, string, boolean, boolean, boolean] & {
+      displayName: string;
+      phoneNumber: string;
       email: string;
-      avatar: string;
-      affiliate: string;
-      description: string;
-      entity: string;
+      isTenant: boolean;
+      isActive: boolean;
+      isActivated: boolean;
     }
   >;
 
-  addFee(
-    _fee: Accounts.FeeStruct,
+  addAccount(
+    displayName: string,
+    email: string,
+    phoneNumber: string,
+    _isTenant: boolean,
+    isActivated: boolean,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  deleteFee(
-    _index: BigNumberish,
+  addAdmin(
+    _address: string,
+    displayName: string,
+    email: string,
+    phoneNumber: string,
+    _isTenant: boolean,
+    isActivated: boolean,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
+
+  admins(arg0: string, overrides?: CallOverrides): Promise<string>;
 
   getAccount(
     _address: string,
     overrides?: CallOverrides
   ): Promise<Accounts.AccountStructOutput>;
 
+  getAdmin(_address: string, overrides?: CallOverrides): Promise<string>;
+
   getAffiliate(_address: string, overrides?: CallOverrides): Promise<string>;
 
-  getFee(
-    _index: BigNumberish,
-    overrides?: CallOverrides
-  ): Promise<Accounts.FeeStructOutput>;
-
-  getFees(overrides?: CallOverrides): Promise<Accounts.FeeStructOutput[]>;
+  getNoAccount(overrides?: CallOverrides): Promise<string>;
 
   kill(
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  register(
-    _name: string,
-    _email: string,
-    _avatar: string,
-    _affiliate: string,
-    _description: string,
-    _entity: string,
-    _fee: Accounts.FeeStruct,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  updateFee(
-    _fee: Accounts.FeeStruct,
-    _index: BigNumberish,
+  updateAccount(
+    displayName: string,
+    email: string,
+    phoneNumber: string,
+    overrides?: PayableOverrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  updateAdmin(
+    _address: string,
+    displayName: string,
+    email: string,
+    phoneNumber: string,
+    isActive: boolean,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -287,101 +302,127 @@ export interface Accounts extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<
-      [string, string, string, string, string, string] & {
-        name: string;
+      [string, string, string, boolean, boolean, boolean] & {
+        displayName: string;
+        phoneNumber: string;
         email: string;
-        avatar: string;
-        affiliate: string;
-        description: string;
-        entity: string;
+        isTenant: boolean;
+        isActive: boolean;
+        isActivated: boolean;
       }
     >;
 
-    addFee(_fee: Accounts.FeeStruct, overrides?: CallOverrides): Promise<void>;
+    addAccount(
+      displayName: string,
+      email: string,
+      phoneNumber: string,
+      _isTenant: boolean,
+      isActivated: boolean,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
-    deleteFee(_index: BigNumberish, overrides?: CallOverrides): Promise<void>;
+    addAdmin(
+      _address: string,
+      displayName: string,
+      email: string,
+      phoneNumber: string,
+      _isTenant: boolean,
+      isActivated: boolean,
+      overrides?: CallOverrides
+    ): Promise<boolean>;
+
+    admins(arg0: string, overrides?: CallOverrides): Promise<string>;
 
     getAccount(
       _address: string,
       overrides?: CallOverrides
     ): Promise<Accounts.AccountStructOutput>;
 
+    getAdmin(_address: string, overrides?: CallOverrides): Promise<string>;
+
     getAffiliate(_address: string, overrides?: CallOverrides): Promise<string>;
 
-    getFee(
-      _index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<Accounts.FeeStructOutput>;
-
-    getFees(overrides?: CallOverrides): Promise<Accounts.FeeStructOutput[]>;
+    getNoAccount(overrides?: CallOverrides): Promise<string>;
 
     kill(overrides?: CallOverrides): Promise<void>;
 
-    register(
-      _name: string,
-      _email: string,
-      _avatar: string,
-      _affiliate: string,
-      _description: string,
-      _entity: string,
-      _fee: Accounts.FeeStruct,
+    updateAccount(
+      displayName: string,
+      email: string,
+      phoneNumber: string,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
 
-    updateFee(
-      _fee: Accounts.FeeStruct,
-      _index: BigNumberish,
+    updateAdmin(
+      _address: string,
+      displayName: string,
+      email: string,
+      phoneNumber: string,
+      isActive: boolean,
       overrides?: CallOverrides
-    ): Promise<void>;
+    ): Promise<boolean>;
   };
 
   filters: {
-    "Registered(address)"(user?: null): RegisteredEventFilter;
-    Registered(user?: null): RegisteredEventFilter;
+    "AccountAdded(address)"(user?: null): AccountAddedEventFilter;
+    AccountAdded(user?: null): AccountAddedEventFilter;
+
+    "AccountUpdated(address)"(user?: null): AccountUpdatedEventFilter;
+    AccountUpdated(user?: null): AccountUpdatedEventFilter;
   };
 
   estimateGas: {
     accounts(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    addFee(
-      _fee: Accounts.FeeStruct,
+    addAccount(
+      displayName: string,
+      email: string,
+      phoneNumber: string,
+      _isTenant: boolean,
+      isActivated: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    deleteFee(
-      _index: BigNumberish,
+    addAdmin(
+      _address: string,
+      displayName: string,
+      email: string,
+      phoneNumber: string,
+      _isTenant: boolean,
+      isActivated: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
+
+    admins(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     getAccount(_address: string, overrides?: CallOverrides): Promise<BigNumber>;
+
+    getAdmin(_address: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     getAffiliate(
       _address: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getFee(_index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
-
-    getFees(overrides?: CallOverrides): Promise<BigNumber>;
+    getNoAccount(overrides?: CallOverrides): Promise<BigNumber>;
 
     kill(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    register(
-      _name: string,
-      _email: string,
-      _avatar: string,
-      _affiliate: string,
-      _description: string,
-      _entity: string,
-      _fee: Accounts.FeeStruct,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    updateFee(
-      _fee: Accounts.FeeStruct,
-      _index: BigNumberish,
+    updateAccount(
+      displayName: string,
+      email: string,
+      phoneNumber: string,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    updateAdmin(
+      _address: string,
+      displayName: string,
+      email: string,
+      phoneNumber: string,
+      isActive: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -392,17 +433,36 @@ export interface Accounts extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    addFee(
-      _fee: Accounts.FeeStruct,
+    addAccount(
+      displayName: string,
+      email: string,
+      phoneNumber: string,
+      _isTenant: boolean,
+      isActivated: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    deleteFee(
-      _index: BigNumberish,
+    addAdmin(
+      _address: string,
+      displayName: string,
+      email: string,
+      phoneNumber: string,
+      _isTenant: boolean,
+      isActivated: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    admins(
+      arg0: string,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getAccount(
+      _address: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getAdmin(
       _address: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -412,31 +472,25 @@ export interface Accounts extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getFee(
-      _index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getFees(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getNoAccount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     kill(
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    register(
-      _name: string,
-      _email: string,
-      _avatar: string,
-      _affiliate: string,
-      _description: string,
-      _entity: string,
-      _fee: Accounts.FeeStruct,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    updateFee(
-      _fee: Accounts.FeeStruct,
-      _index: BigNumberish,
+    updateAccount(
+      displayName: string,
+      email: string,
+      phoneNumber: string,
+      overrides?: PayableOverrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    updateAdmin(
+      _address: string,
+      displayName: string,
+      email: string,
+      phoneNumber: string,
+      isActive: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

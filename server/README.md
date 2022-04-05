@@ -11,6 +11,7 @@ npx hardhat accounts
 npx hardhat compile
 npx hardhat clean
 npx hardhat test
+npx hardhat test ./test/Accounts.test.ts
 npx hardhat node
 npx hardhat help
 REPORT_GAS=true npx hardhat test

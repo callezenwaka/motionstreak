@@ -1,14 +1,10 @@
 interface Account {
-  address: string;
-  itemId?: number;
-  description: string;
-  image: string;
-  name: string;
-  owner?: string;
-  seller?: string;
-  price: string;
-  tokenId: number;
-  sold?: boolean;
+  displayName: string;
+  phoneNumber: string;
+  photoURL: string;
+  email: string;
+  password: string;
+  entity: string;
 }
 
 export default Account;

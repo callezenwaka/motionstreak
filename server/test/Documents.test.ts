@@ -1,81 +1,72 @@
 import { expect } from "chai";
-import { sign } from "crypto";
-import { BigNumber } from "ethers";
-import { formatUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
 
-describe("Documents", function () {
-  let stringUtils: any;
-  let emailRegex: any;
+describe("Documents", async function () {
   let accounts: any;
   let documents: any;
+  const phoneNumber: string = '+2348033330000';
+  const name: string = 'Transcript';
+  const description: string = 'Transcript';
+  const displayName: string = 'User Account';
+  const email: string = 'user@mail.com';
 
   before(async () => {
-    const StringUtils = await ethers.getContractFactory("StringUtils");
-    stringUtils = await StringUtils.deploy();
-    await stringUtils.deployed();
-    console.log("StringUtils deployed to:", stringUtils.address);
-
-    const EmailRegex = await ethers.getContractFactory("EmailRegex");
-    emailRegex = await EmailRegex.deploy();
-    await emailRegex.deployed();
-    console.log("EmailRegex deployed to:", emailRegex.address);
-
-    const Accounts = await ethers.getContractFactory("Accounts", {
-      libraries: {
-        EmailRegex: emailRegex.address,
-      },
-    });
+    const Accounts = await ethers.getContractFactory("Accounts");
     accounts = await Accounts.deploy();
     await accounts.deployed();
     console.log("Accounts deployed to:", accounts.address);
 
-    const Documents = await ethers.getContractFactory("Documents", {
-      libraries: {
-        StringUtils: stringUtils.address,
-      },
-    });
+    const Documents = await ethers.getContractFactory("Documents");
     documents = await Documents.deploy(accounts.address);
     await documents.deployed();
     console.log("Documents deployed to:", documents.address);
   });
 
   it("Should add new document", async function () {
-    const [owner, addr1] = await ethers.getSigners();
-    // await greeter.connect(addr1).setGreeting("Hallo, Erde!");
-    const signer = documents.connect(addr1);
-    // console.log(signer);
-    // console.log(signer.balanceOf(addr1.address));
-    // const balance = await ethers.provider.getBalance(addr1.address);
-    // console.log(ethers.utils.formatEther(balance));
-    // console.log(msg.value);
-    // console.log(ethers.utils.parseEther(BigNumber.from(balance)));
-    // ethers.utils.parseUnits('0.05', 'ether')
-    // console.log(balance.toString());
-    // ethers.utils.parseUnits('0.05', 'ether')
-    // ethers.utils.parseEther
+    const [owner, addr1, addr2, addr3] = await ethers.getSigners();
+    const user = await accounts.connect(addr3).addAccount(displayName, email, phoneNumber, false, true);
+    await user.wait();
 
-    const result = await documents.connect(addr1).addDocument('0xdD2FD4581271e230360230F9337D5c0430Bf44C0', '0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199', 'Transcrript', 'Test', 'docAddress', 0);
-    // const res = await result.wait();
-    // console.log(owner.address);
-    // console.log(addr1.address);
-    // console.log(res);
+    const document = await documents.connect(addr3).addDocument(addr1.address, addr2.address, name, description, 1, { value: 1 });
+    const res = await document.wait();
 
-    // expect(res.from).to.equal(owner.address);
-    // expect(res.to).to.equal(accounts.address);
-    // expect(res.contractAddress).to.equal(null);
-    // expect(res.transactionIndex).to.equal(0);
+    expect(res.from).to.equal(addr3.address);
+    expect(res.to).to.equal(documents.address);
+    expect(res.contractAddress).to.equal(null);
+    expect(res.transactionIndex).to.equal(0);
   });
 
-  // it("Should return an acccount", async function () {
-  //   const [owner] = await ethers.getSigners();
-  //   const result = await accounts.getAccount(owner.address);
-  //   expect(result.name).to.equal('John Doe');
-  //   expect(result.email).to.equal('john.doe@mail.com');
-  //   expect(result.avatar).to.equal('avatar');
-  //   expect(result.affiliate).to.equal('0x8626f6940E2eb28930eFb4CeF49B2d1F2C9C1199');
-  //   expect(result.description).to.equal('Test');
-  //   expect(result.entity).to.equal('requester');
-  //   expect(result.fees.length).to.equal(1);
-  // });
+  it("Should return a user documents", async function () {
+    const [owner, addr1, addr2, addr3] = await ethers.getSigners();
+    const res = await documents.connect(addr3).getDocuments(addr3.address);
+
+    expect(res).to.be.an('array').that.is.not.empty;
+  });
+
+  it("Should return a user document", async function () {
+    const [owner, addr1, addr2, addr3] = await ethers.getSigners();
+    const res = await documents.connect(addr3).getDocument(0);
+
+    expect(res).to.be.an('array').that.is.not.empty;
+    expect(res.requester).to.equal(addr3.address);
+    expect(res.certifier).to.equal(addr1.address);
+    expect(res.verifier).to.equal(addr2.address);
+    expect(res.name).to.equal(name);
+    expect(res.description).to.equal(description);
+    expect(res.image).to.equal('');
+    expect(res.fee).to.equal(1);
+    expect(res.index).to.equal(0);
+    expect(res.status).to.equal(0);
+  });
+
+  it("Should return a user document count", async function () {
+    const [owner, addr1, addr2, addr3] = await ethers.getSigners();
+    const res = await documents.connect(addr3).getCounts(addr3.address);
+
+    expect(res.pending).to.equal(0);
+    expect(res.certified).to.equal(0);
+    expect(res.verified).to.equal(0);
+    expect(res.rejected).to.equal(0);
+    expect(res.total).to.equal(1);
+  });
 });

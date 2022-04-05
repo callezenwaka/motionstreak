@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from "axios";
 type method = "get" | "GET" | "delete" | "DELETE" | "head" | "HEAD" | "options" | "OPTIONS" | "post" | "POST" | "put" | "PUT" | "patch" | "PATCH" | "purge" | "PURGE" | "link" | "LINK" | "unlink" | "UNLINK" | undefined;
 
 // export default apiClient;
-// import Certifier from '@/types/Certifier';
+import Register from '@/types/Register';
 import Login from '@/types/Login';
 import Account from '@/types/Account';
 import Document from '@/types/Document';
@@ -23,15 +23,15 @@ export const request = async <T = never, R = AxiosResponse<T>>(url: string, meth
 };
 
 // Uncomment for local development
-// export const API_URL = 'http://localhost:4000/';
-export const API_URL = `https://fullstack-nft.herokuapp.com/`;
+export const API_URL = 'http://localhost:4000/';
+// export const API_URL = `https://fullstack-nft.herokuapp.com/`;
 
 export default {
 	async addDocumentImage(token: string, params: File): Promise<string> {
-		return await request(`${API_URL}nft/image`, 'post', token, params);
+		return await request(`${API_URL}document/image`, 'post', token, params);
 	},
-	async addNft(token: string, params: Document): Promise<unknown> {
-		return await request(`${API_URL}nft`, 'post', token, params);
+	async addDocument(token: string, params: Document): Promise<unknown> {
+		return await request(`${API_URL}document`, 'post', token, params);
 	},
 	// async getNfts(): Promise<Nft[]> {
 	// 	return await request(`${API_URL}nft`, 'get');
@@ -45,6 +45,9 @@ export default {
 	// async getNft(token: string, params: Nft): Promise<string> {
 	// 	return await request(`${API_URL}nft/${params.tokenId}`, 'get', token, params);
 	// },
+	async register(params: Register): Promise<Account> {
+		return await request(`${API_URL}register`, 'post', "", params);
+	},
 	async login(params: Login): Promise<Account> {
 		return await request(`${API_URL}login`, 'post', "", params);
 	},
