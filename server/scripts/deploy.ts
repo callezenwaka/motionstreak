@@ -16,20 +16,25 @@ const main = async () => {
   // await greeter.deployed();
   // console.log("Greeter deployed to:", greeter.address);
 
-  const StringUtils = await ethers.getContractFactory("StringUtils");
-  const stringUtils = await StringUtils.deploy();
-  await stringUtils.deployed();
-  console.log("StringUtils deployed to:", stringUtils.address);
+  // const StringUtils = await ethers.getContractFactory("StringUtils");
+  // const stringUtils = await StringUtils.deploy();
+  // await stringUtils.deployed();
+  // console.log("StringUtils deployed to:", stringUtils.address);
 
-  const EmailRegex = await ethers.getContractFactory("EmailRegex");
-  const emailRegex = await EmailRegex.deploy();
-  await emailRegex.deployed();
-  console.log("EmailRegex deployed to:", emailRegex.address);
+  // const EmailRegex = await ethers.getContractFactory("EmailRegex");
+  // const emailRegex = await EmailRegex.deploy();
+  // await emailRegex.deployed();
+  // console.log("EmailRegex deployed to:", emailRegex.address);
 
   const Accounts = await ethers.getContractFactory("Accounts");
   const accounts = await Accounts.deploy();
   await accounts.deployed();
   console.log("Accounts deployed to:", accounts.address);
+
+  const Profiles = await ethers.getContractFactory("Profiles");
+  const profiles = await Profiles.deploy(accounts.address);
+  await profiles.deployed();
+  console.log("Documents deployed to:", profiles.address);
 
   const Documents = await ethers.getContractFactory("Documents");
   const documents = await Documents.deploy(accounts.address);

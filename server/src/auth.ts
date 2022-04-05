@@ -8,7 +8,7 @@ const admin = require('firebase-admin');
  * @param {object} res Express response context.
  * @param {object} next Express next context.
  */
-const getAuthToken = (req, res, next) => {
+const getAuthToken = (req: any, res: any, next: any) => {
 	console.log(req.headers.authorization);
 	if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
 		req.authToken = req.headers.authorization.split(' ')[1];
@@ -26,7 +26,7 @@ const getAuthToken = (req, res, next) => {
  * @param {object} next Express next context.
  * Define auth middleware.
  */
-const isAuthenticated = (req, res, next) => {
+const isAuthenticated = (req: any, res: any, next: any) => {
 	getAuthToken(req, res, async () => {
 		try {
 			const { authToken } = req;

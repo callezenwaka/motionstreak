@@ -2,12 +2,17 @@
   "compilerOptions": {
     "target": "es2018",
     "module": "commonjs",
+    "sourceMap": true,
+    "baseUrl": "./",
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "outDir": "dist",
+    "rootDirs": ["./src", "./scripts", "./test"],
     "declaration": true
   },
-  "include": ["./scripts", "./test", "./typechain"],
+  "exclude": ["dist", "node_modules"],
+  "include": ["./test", "./src", "./scripts"],
   "files": ["./hardhat.config.ts"]
 }

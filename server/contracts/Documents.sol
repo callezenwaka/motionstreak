@@ -27,11 +27,6 @@ contract Documents {
   }
    
   struct Count {
-    uint pending;
-    uint certified;
-    uint verified;
-    uint accepted;
-    uint rejected;
     uint total;
   }
 
@@ -54,6 +49,15 @@ contract Documents {
     */
   modifier documentsExist(address _address) {
     require(counts[_address].total > 0, "Documents not found");
+    _;
+  }
+
+  /** @dev check for admin account.
+    * @param _address user address.
+    */
+  modifier isAdmin(address _address) {
+    require(Accounts(accountsAddress).getAccount(_address).affiliate != address(0), "Unauthorised Access");
+    require(Accounts(accountsAddress).getAccount(_address).affiliate != msg.sender, "Unauthorised admin");
     _;
   }
 
@@ -177,69 +181,55 @@ contract Documents {
       Document storage document = documents[_index];
       return item = document;
     }
-    if(documents[_index].verifier == Accounts(accountsAddress).getAdmin(msg.sender)) {
+    if(documents[_index].verifier == Accounts(accountsAddress).getAccount(msg.sender).affiliate) {
       Document storage document = documents[_index];
       return item = document;
     }
-    if(documents[_index].certifier == Accounts(accountsAddress).getAdmin(msg.sender)) {
+    if(documents[_index].certifier == Accounts(accountsAddress).getAccount(msg.sender).affiliate) {
       Document storage document = documents[_index];
       return item = document;
     }
     return item;
   }
 
-  /** @dev certify document.
+  /** @dev update document.
     * @param _image document address.
     * @param _index document index.
     * @param _fee document fee.
     * @param status document status.
     */
-  function certifyDocument(string memory _image, uint _index, uint _fee, Status status) 
+  function updateDocument(string memory _image, uint _index, uint _fee, Status status) 
   public 
   payable
+  isAdmin(msg.sender)
   returns(bool)
   {
     // TODO: Certify document
-    if(documents[_index].certifier == Accounts(accountsAddress).getAffiliate(msg.sender) && documents[_index].status == Status.Pending){
+    if(documents[_index].verifier == Accounts(accountsAddress).getAccount(msg.sender).affiliate && documents[_index].status == Status.Certified){
       documents[_index].status = status;
-      documents[_index].image = _image;
-      if(status == Status.Certified){
-        emit DocumentCertified(msg.sender);
-        counts[documents[_index].requester].certified += 1;
+      if(status == Status.Verified){
+        emit DocumentVerified(msg.sender);
         return true;
       }
       if(status == Status.Rejected) {
         emit DocumentRejected(msg.sender);
-        counts[documents[_index].requester].rejected += 1;
-        // return the ether for rejection
-        balances[documents[_index].certifier] -= _fee;
-        payable(documents[_index].requester).transfer(_fee);
+        return true;
       }
     }
-    return true;
-  }
 
-  /** @dev verify document.
-    * @param _index document index.
-    * @param status document status.
-    */   
-  function verifyDocument(uint _index, Status status) 
-  public 
-  payable
-  returns(bool)
-  {
-    // TODO: Verify document
-    if(documents[_index].verifier == Accounts(accountsAddress).getAffiliate(msg.sender) && documents[_index].status == Status.Certified){
+    if(documents[_index].certifier == Accounts(accountsAddress).getAccount(msg.sender).affiliate && documents[_index].status == Status.Pending){
       documents[_index].status = status;
-      if(status == Status.Verified){
-        emit DocumentVerified(msg.sender);
-        counts[documents[_index].verifier].verified += 1;
-        counts[documents[_index].requester].verified += 1;
+      documents[_index].image = _image;
+      if(status == Status.Certified){
+        emit DocumentCertified(msg.sender);
+        return true;
       }
       if(status == Status.Rejected) {
         emit DocumentRejected(msg.sender);
-        counts[documents[_index].verifier].rejected += 1;
-        counts[documents[_index].requester].rejected += 1;
+        // return the ether for rejection
+        balances[documents[_index].certifier] -= _fee;
+        payable(documents[_index].requester).transfer(_fee);
+        return true;
       }
     }
     return true;
@@ -247,19 +237,15 @@ contract Documents {
   
   /** @dev get count for users.
     * @param _address user address.
-    * @return pending count.
-    * @return certified count.
-    * @return verified count.
-    * @return rejected count.
-    * @return total count.
+    * @return total count total.
     */ 
-  function getCounts (address _address) 
+  function getTotal (address _address) 
   public 
   view
-  returns(uint pending, uint certified, uint verified, uint rejected, uint total) 
+  returns(uint total) 
   {
     // TODO: Get document counts
-    return (counts[_address].pending, counts[_address].certified, counts[_address].verified, counts[_address].rejected, counts[_address].total);
+    return counts[_address].total;
   }
 
   /** @dev kill smart contract if something bad happens.

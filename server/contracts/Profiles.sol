@@ -52,7 +52,7 @@ contract Profiles {
     * @param photoURL account photo.
     * @return success account success.
     */
-  function addProfile(string memory photoURL) 
+  function addProfile(string memory photoURL)
   public 
   payable
   isTenant()
