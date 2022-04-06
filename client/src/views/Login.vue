@@ -1,5 +1,6 @@
 <template>
   <div class="login">
+    <Header></Header>
     <form class="form--container" @submit.prevent="handleLogin">
       <div class="form--header">
         <h2 class="form--title">Log in to your account</h2>
@@ -24,6 +25,7 @@
 
 <script lang="ts">
 // @ is an alias to /src
+import Header from "@/components/partials/Header.vue";
 import { computed, defineComponent, reactive } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from 'vue-router';
@@ -31,6 +33,7 @@ import Login from '@/types/Login';
 export default defineComponent({
   name: "Login",
   components: {
+    Header
   },
   setup() {
     const store = useStore();
@@ -79,7 +82,7 @@ export default defineComponent({
 <style scoped>
 /* login */
 .login {
-  padding: 1rem;
+  /* padding: 1rem; */
   height: 100%;
   min-height: 100vh;
   background-position: center;
@@ -112,6 +115,7 @@ export default defineComponent({
 .form--label {
   font-size: 14px;
   color: rgb(61, 79, 88);
+  /* color: var(--dark-theme-color); */
   position: relative;
   height: 16px;
   text-align: left;

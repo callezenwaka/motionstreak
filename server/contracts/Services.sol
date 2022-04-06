@@ -50,24 +50,10 @@ contract Services {
   function getFees(address _address)
   public
   view
-  returns(Fee[] memory fees)
+  returns(Fee[] memory)
   {
     // TODO: Get fees
     return services[_address].fees;
-  }
-
-  /** @dev get verification price of verifier.
-    * @param _index fee uint.
-    * @return fee account fee.
-    */
-  function getFee(uint _index)
-  public
-  view
-  isTenant()
-  returns(Fee memory fee)
-  {
-    // TODO: Get fee
-    return services[msg.sender].fees[_index];
   }
 
   /** @dev get verification price of verifier.
@@ -86,6 +72,20 @@ contract Services {
     services[msg.sender].fees.push(Fee({name: name, cost: cost}));
 
     return true;
+  }
+
+  /** @dev get verification price of verifier.
+    * @param _index fee uint.
+    * @return fee account fee.
+    */
+  function getFee(uint _index)
+  public
+  view
+  isTenant()
+  returns(Fee memory fee)
+  {
+    // TODO: Get fee
+    return services[msg.sender].fees[_index];
   }
 
   /** @dev get verification price of verifier.

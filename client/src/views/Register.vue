@@ -1,5 +1,6 @@
 <template>
   <div class="register">
+    <Header></Header>
     <form class="form--container" @submit.prevent="handleRegister">
       <div class="form--header">
         <h2 class="form--title">Register</h2>
@@ -9,7 +10,7 @@
       </div>
       <div class="form--item">
         <label class="form--label" for="name">Full Name: </label>
-        <input class="form--input" type="text" name="name" id="name" v-model="user.displayName" @blur="handleBlur($event)" placeholder="Enter your gull name" required />
+        <input class="form--input" type="text" name="name" id="name" v-model="user.displayName" @blur="handleBlur($event)" placeholder="Enter your full name" required />
       </div>
       <div class="form--item">
         <label class="form--label" for="phone">Phone Number: </label>
@@ -28,8 +29,8 @@
         <input class="form--input" type="checkbox" name="tenant" id="tenant" v-model="user.isTenent" @blur="handleBlur($event)" placeholder="Enter your email" required />
       </div> -->
       <div class="form--item" style="flex-direction: row; align-items: center;">
-        <label class="form--label" for="tenant">Organization Account </label>&nbsp;<span class="register--tip"><span class="register--blink tooltip">&quest;<span class="tooltiptext">Check if organization account.</span></span></span>: 
-        <input class="form--inputs" type="checkbox" name="tenant" id="tenant" v-model="user.isTenent" @blur="handleBlur($event)" placeholder="Enter your email" required />
+        <label class="form--label" for="tenant">Organization Account </label>&nbsp;<span class="register--tip"><span class="register--blink tooltip">&quest;<span class="tooltiptext">Check if organization account.</span></span></span>:&nbsp;&nbsp; 
+        <input class="form--inputs" style="width: 16px; height: 16px;" type="checkbox" name="tenant" id="tenant" v-model="user.isTenent" @blur="handleBlur($event)" placeholder="Enter your email" required />
       </div>
       <!-- <div class="form--item">
         <label class="form--label" for="email">Email: </label>
@@ -44,6 +45,7 @@
 
 <script lang="ts">
 // @ is an alias to /src
+import Header from "@/components/partials/Header.vue";
 import { computed, defineComponent, reactive } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from 'vue-router';
@@ -51,21 +53,23 @@ import Register from '@/types/Register';
 export default defineComponent({
   name: "Register",
   components: {
+    Header
   },
   setup() {
     const store = useStore();
     // const route = useRoute();
     const router = useRouter();
     let validations = reactive<string[]>([]);
+    // const avatar = computed(() => !user.isTenent);
     const register = (register: Register) => store.dispatch('register', register);
     let user = reactive({
       displayName: '',
       phoneNumber: '',
-      photoURL: '',
+      photoURL: 'https://ipfs.infuria.io/ipfs/QmakHdxH44vEMZXkNGkEwZr9usFCe9CraHgWDsgQbYPWYV',
       email: '',
       password: '',
       isTenent: false,
-      isActivated: false,
+      isActivated: true,
     });
     const isValid = computed(() => {
       return (
@@ -109,7 +113,7 @@ export default defineComponent({
 <style scoped>
 /* register */
 .register {
-  padding: 1rem;
+  /* padding: 1rem; */
   height: 100%;
   min-height: 100vh;
   background-position: center;
@@ -142,6 +146,7 @@ export default defineComponent({
 .form--label {
   font-size: 14px;
   color: rgb(61, 79, 88);
+  color: var(--dark-theme-color);
   position: relative;
   height: 16px;
   text-align: left;
@@ -198,6 +203,7 @@ export default defineComponent({
 .register--blink {
   animation: blink-animation 1s steps(5, start) infinite;
   -webkit-animation: blink-animation 1s steps(5, start) infinite;
+  color: var(--dark-theme-color);
 }
 @keyframes blink-animation {
   to {

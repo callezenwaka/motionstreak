@@ -1,5 +1,6 @@
 <template>
   <div class="document">
+    <Header></Header>
     <form class="form--container" @submit.prevent="handleDocument">
       <div class="form--header">
         <h2 class="form--title">Submit Document</h2>
@@ -51,6 +52,7 @@
 
 <script lang="ts">
 // @ is an alias to /src
+import Header from "@/components/partials/Header.vue";
 import { computed, defineComponent, reactive } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from 'vue-router';
@@ -59,6 +61,7 @@ import Document from '@/types/Document';
 export default defineComponent({
   name: "Document",
   components: {
+    Header
   },
   setup() {
     const store = useStore();
@@ -156,7 +159,7 @@ export default defineComponent({
 <style scoped>
 /* document */
 .document {
-  padding: 1rem;
+  /* padding: 1rem; */
   height: 100%;
   min-height: 100vh;
   background-position: center;

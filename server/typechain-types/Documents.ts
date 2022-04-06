@@ -59,12 +59,11 @@ export interface DocumentsInterface extends utils.Interface {
     "accountsAddress()": FunctionFragment;
     "addDocument(address,address,string,string,uint256)": FunctionFragment;
     "balances(address)": FunctionFragment;
-    "certifyDocument(string,uint256,uint256,uint8)": FunctionFragment;
-    "getCounts(address)": FunctionFragment;
     "getDocument(uint256)": FunctionFragment;
     "getDocuments(address)": FunctionFragment;
+    "getTotal(address)": FunctionFragment;
     "kill()": FunctionFragment;
-    "verifyDocument(uint256,uint8)": FunctionFragment;
+    "updateDocument(string,uint256,uint256,uint8)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -77,11 +76,6 @@ export interface DocumentsInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "balances", values: [string]): string;
   encodeFunctionData(
-    functionFragment: "certifyDocument",
-    values: [string, BigNumberish, BigNumberish, BigNumberish]
-  ): string;
-  encodeFunctionData(functionFragment: "getCounts", values: [string]): string;
-  encodeFunctionData(
     functionFragment: "getDocument",
     values: [BigNumberish]
   ): string;
@@ -89,10 +83,11 @@ export interface DocumentsInterface extends utils.Interface {
     functionFragment: "getDocuments",
     values: [string]
   ): string;
+  encodeFunctionData(functionFragment: "getTotal", values: [string]): string;
   encodeFunctionData(functionFragment: "kill", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "verifyDocument",
-    values: [BigNumberish, BigNumberish]
+    functionFragment: "updateDocument",
+    values: [string, BigNumberish, BigNumberish, BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -105,11 +100,6 @@ export interface DocumentsInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "balances", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "certifyDocument",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getCounts", data: BytesLike): Result;
-  decodeFunctionResult(
     functionFragment: "getDocument",
     data: BytesLike
   ): Result;
@@ -117,9 +107,10 @@ export interface DocumentsInterface extends utils.Interface {
     functionFragment: "getDocuments",
     data: BytesLike
   ): Result;
+  decodeFunctionResult(functionFragment: "getTotal", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "kill", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "verifyDocument",
+    functionFragment: "updateDocument",
     data: BytesLike
   ): Result;
 
@@ -202,27 +193,6 @@ export interface Documents extends BaseContract {
 
     balances(arg0: string, overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    certifyDocument(
-      _image: string,
-      _index: BigNumberish,
-      _fee: BigNumberish,
-      status: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    getCounts(
-      _address: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        pending: BigNumber;
-        certified: BigNumber;
-        verified: BigNumber;
-        rejected: BigNumber;
-        total: BigNumber;
-      }
-    >;
-
     getDocument(
       _index: BigNumberish,
       overrides?: CallOverrides
@@ -233,12 +203,19 @@ export interface Documents extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[Documents.DocumentStructOutput[]]>;
 
+    getTotal(
+      _address: string,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber] & { total: BigNumber }>;
+
     kill(
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    verifyDocument(
+    updateDocument(
+      _image: string,
       _index: BigNumberish,
+      _fee: BigNumberish,
       status: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -257,27 +234,6 @@ export interface Documents extends BaseContract {
 
   balances(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-  certifyDocument(
-    _image: string,
-    _index: BigNumberish,
-    _fee: BigNumberish,
-    status: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  getCounts(
-    _address: string,
-    overrides?: CallOverrides
-  ): Promise<
-    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-      pending: BigNumber;
-      certified: BigNumber;
-      verified: BigNumber;
-      rejected: BigNumber;
-      total: BigNumber;
-    }
-  >;
-
   getDocument(
     _index: BigNumberish,
     overrides?: CallOverrides
@@ -288,12 +244,16 @@ export interface Documents extends BaseContract {
     overrides?: CallOverrides
   ): Promise<Documents.DocumentStructOutput[]>;
 
+  getTotal(_address: string, overrides?: CallOverrides): Promise<BigNumber>;
+
   kill(
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  verifyDocument(
+  updateDocument(
+    _image: string,
     _index: BigNumberish,
+    _fee: BigNumberish,
     status: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -312,27 +272,6 @@ export interface Documents extends BaseContract {
 
     balances(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    certifyDocument(
-      _image: string,
-      _index: BigNumberish,
-      _fee: BigNumberish,
-      status: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-
-    getCounts(
-      _address: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber] & {
-        pending: BigNumber;
-        certified: BigNumber;
-        verified: BigNumber;
-        rejected: BigNumber;
-        total: BigNumber;
-      }
-    >;
-
     getDocument(
       _index: BigNumberish,
       overrides?: CallOverrides
@@ -343,10 +282,14 @@ export interface Documents extends BaseContract {
       overrides?: CallOverrides
     ): Promise<Documents.DocumentStructOutput[]>;
 
+    getTotal(_address: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     kill(overrides?: CallOverrides): Promise<void>;
 
-    verifyDocument(
+    updateDocument(
+      _image: string,
       _index: BigNumberish,
+      _fee: BigNumberish,
       status: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -383,16 +326,6 @@ export interface Documents extends BaseContract {
 
     balances(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    certifyDocument(
-      _image: string,
-      _index: BigNumberish,
-      _fee: BigNumberish,
-      status: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    getCounts(_address: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     getDocument(
       _index: BigNumberish,
       overrides?: CallOverrides
@@ -403,12 +336,16 @@ export interface Documents extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
+    getTotal(_address: string, overrides?: CallOverrides): Promise<BigNumber>;
+
     kill(
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    verifyDocument(
+    updateDocument(
+      _image: string,
       _index: BigNumberish,
+      _fee: BigNumberish,
       status: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -431,19 +368,6 @@ export interface Documents extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    certifyDocument(
-      _image: string,
-      _index: BigNumberish,
-      _fee: BigNumberish,
-      status: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    getCounts(
-      _address: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     getDocument(
       _index: BigNumberish,
       overrides?: CallOverrides
@@ -454,12 +378,19 @@ export interface Documents extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
+    getTotal(
+      _address: string,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
     kill(
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    verifyDocument(
+    updateDocument(
+      _image: string,
       _index: BigNumberish,
+      _fee: BigNumberish,
       status: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

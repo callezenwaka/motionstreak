@@ -1,8 +1,10 @@
 import { createStore } from 'vuex'
 import index from '@/services';
+import account from './modules/account';
 import Certifier from '@/types/Certifier';
 import Fee from '@/types/Fee';
 import { certifiers } from '../data/certifiers';
+
 export default createStore({
   state: {
     requester: '',
@@ -107,5 +109,6 @@ export default createStore({
     },
   },
   modules: {
+    account
   }
 })

@@ -17,46 +17,24 @@ import { FunctionFragment, Result, EventFragment } from "@ethersproject/abi";
 import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
-export declare namespace Profiles {
-  export type FeeStruct = { doc: string; cost: BigNumberish };
+export declare namespace Services {
+  export type FeeStruct = { name: string; cost: BigNumberish };
 
   export type FeeStructOutput = [string, BigNumber] & {
-    doc: string;
+    name: string;
     cost: BigNumber;
-  };
-
-  export type ProfileStruct = {
-    displayName: string;
-    email: string;
-    photoURL: string;
-    fees: Profiles.FeeStruct[];
-  };
-
-  export type ProfileStructOutput = [
-    string,
-    string,
-    string,
-    Profiles.FeeStructOutput[]
-  ] & {
-    displayName: string;
-    email: string;
-    photoURL: string;
-    fees: Profiles.FeeStructOutput[];
   };
 }
 
-export interface ProfilesInterface extends utils.Interface {
-  contractName: "Profiles";
+export interface ServicesInterface extends utils.Interface {
+  contractName: "Services";
   functions: {
     "accountsAddress()": FunctionFragment;
     "addFee(string,uint256)": FunctionFragment;
-    "addProfile(string)": FunctionFragment;
     "deleteFee(uint256)": FunctionFragment;
     "getFee(uint256)": FunctionFragment;
-    "getFees()": FunctionFragment;
-    "getProfile(address)": FunctionFragment;
+    "getFees(address)": FunctionFragment;
     "kill()": FunctionFragment;
-    "profiles(address)": FunctionFragment;
     "updateFee(string,uint256,uint256)": FunctionFragment;
   };
 
@@ -68,7 +46,6 @@ export interface ProfilesInterface extends utils.Interface {
     functionFragment: "addFee",
     values: [string, BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "addProfile", values: [string]): string;
   encodeFunctionData(
     functionFragment: "deleteFee",
     values: [BigNumberish]
@@ -77,10 +54,8 @@ export interface ProfilesInterface extends utils.Interface {
     functionFragment: "getFee",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "getFees", values?: undefined): string;
-  encodeFunctionData(functionFragment: "getProfile", values: [string]): string;
+  encodeFunctionData(functionFragment: "getFees", values: [string]): string;
   encodeFunctionData(functionFragment: "kill", values?: undefined): string;
-  encodeFunctionData(functionFragment: "profiles", values: [string]): string;
   encodeFunctionData(
     functionFragment: "updateFee",
     values: [string, BigNumberish, BigNumberish]
@@ -91,39 +66,42 @@ export interface ProfilesInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "addFee", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "addProfile", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "deleteFee", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getFee", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "getFees", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "getProfile", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "kill", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "profiles", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "updateFee", data: BytesLike): Result;
 
   events: {
-    "ProfileAdded(address)": EventFragment;
-    "ProfileUpdated(address)": EventFragment;
+    "FeeAdded(address)": EventFragment;
+    "FeeDeleted(address)": EventFragment;
+    "FeeUpdated(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "ProfileAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ProfileUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeeAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeeDeleted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeeUpdated"): EventFragment;
 }
 
-export type ProfileAddedEvent = TypedEvent<[string], { user: string }>;
+export type FeeAddedEvent = TypedEvent<[string], { user: string }>;
 
-export type ProfileAddedEventFilter = TypedEventFilter<ProfileAddedEvent>;
+export type FeeAddedEventFilter = TypedEventFilter<FeeAddedEvent>;
 
-export type ProfileUpdatedEvent = TypedEvent<[string], { user: string }>;
+export type FeeDeletedEvent = TypedEvent<[string], { user: string }>;
 
-export type ProfileUpdatedEventFilter = TypedEventFilter<ProfileUpdatedEvent>;
+export type FeeDeletedEventFilter = TypedEventFilter<FeeDeletedEvent>;
 
-export interface Profiles extends BaseContract {
-  contractName: "Profiles";
+export type FeeUpdatedEvent = TypedEvent<[string], { user: string }>;
+
+export type FeeUpdatedEventFilter = TypedEventFilter<FeeUpdatedEvent>;
+
+export interface Services extends BaseContract {
+  contractName: "Services";
   connect(signerOrProvider: Signer | Provider | string): this;
   attach(addressOrName: string): this;
   deployed(): Promise<this>;
 
-  interface: ProfilesInterface;
+  interface: ServicesInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
@@ -148,13 +126,8 @@ export interface Profiles extends BaseContract {
     accountsAddress(overrides?: CallOverrides): Promise<[string]>;
 
     addFee(
-      doc: string,
+      name: string,
       cost: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-
-    addProfile(
-      photoURL: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -166,36 +139,21 @@ export interface Profiles extends BaseContract {
     getFee(
       _index: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[Profiles.FeeStructOutput] & { fee: Profiles.FeeStructOutput }>;
+    ): Promise<[Services.FeeStructOutput] & { fee: Services.FeeStructOutput }>;
 
     getFees(
-      overrides?: CallOverrides
-    ): Promise<
-      [Profiles.FeeStructOutput[]] & { fees: Profiles.FeeStructOutput[] }
-    >;
-
-    getProfile(
       _address: string,
       overrides?: CallOverrides
-    ): Promise<[Profiles.ProfileStructOutput]>;
+    ): Promise<
+      [Services.FeeStructOutput[]] & { fees: Services.FeeStructOutput[] }
+    >;
 
     kill(
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    profiles(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, string, string] & {
-        displayName: string;
-        email: string;
-        photoURL: string;
-      }
-    >;
-
     updateFee(
-      doc: string,
+      name: string,
       cost: BigNumberish,
       _index: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -205,13 +163,8 @@ export interface Profiles extends BaseContract {
   accountsAddress(overrides?: CallOverrides): Promise<string>;
 
   addFee(
-    doc: string,
+    name: string,
     cost: BigNumberish,
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
-
-  addProfile(
-    photoURL: string,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -223,32 +176,19 @@ export interface Profiles extends BaseContract {
   getFee(
     _index: BigNumberish,
     overrides?: CallOverrides
-  ): Promise<Profiles.FeeStructOutput>;
+  ): Promise<Services.FeeStructOutput>;
 
-  getFees(overrides?: CallOverrides): Promise<Profiles.FeeStructOutput[]>;
-
-  getProfile(
+  getFees(
     _address: string,
     overrides?: CallOverrides
-  ): Promise<Profiles.ProfileStructOutput>;
+  ): Promise<Services.FeeStructOutput[]>;
 
   kill(
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  profiles(
-    arg0: string,
-    overrides?: CallOverrides
-  ): Promise<
-    [string, string, string] & {
-      displayName: string;
-      email: string;
-      photoURL: string;
-    }
-  >;
-
   updateFee(
-    doc: string,
+    name: string,
     cost: BigNumberish,
     _index: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -258,12 +198,10 @@ export interface Profiles extends BaseContract {
     accountsAddress(overrides?: CallOverrides): Promise<string>;
 
     addFee(
-      doc: string,
+      name: string,
       cost: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
-
-    addProfile(photoURL: string, overrides?: CallOverrides): Promise<boolean>;
 
     deleteFee(
       _index: BigNumberish,
@@ -273,30 +211,17 @@ export interface Profiles extends BaseContract {
     getFee(
       _index: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<Profiles.FeeStructOutput>;
+    ): Promise<Services.FeeStructOutput>;
 
-    getFees(overrides?: CallOverrides): Promise<Profiles.FeeStructOutput[]>;
-
-    getProfile(
+    getFees(
       _address: string,
       overrides?: CallOverrides
-    ): Promise<Profiles.ProfileStructOutput>;
+    ): Promise<Services.FeeStructOutput[]>;
 
     kill(overrides?: CallOverrides): Promise<void>;
 
-    profiles(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<
-      [string, string, string] & {
-        displayName: string;
-        email: string;
-        photoURL: string;
-      }
-    >;
-
     updateFee(
-      doc: string,
+      name: string,
       cost: BigNumberish,
       _index: BigNumberish,
       overrides?: CallOverrides
@@ -304,24 +229,22 @@ export interface Profiles extends BaseContract {
   };
 
   filters: {
-    "ProfileAdded(address)"(user?: null): ProfileAddedEventFilter;
-    ProfileAdded(user?: null): ProfileAddedEventFilter;
+    "FeeAdded(address)"(user?: null): FeeAddedEventFilter;
+    FeeAdded(user?: null): FeeAddedEventFilter;
 
-    "ProfileUpdated(address)"(user?: null): ProfileUpdatedEventFilter;
-    ProfileUpdated(user?: null): ProfileUpdatedEventFilter;
+    "FeeDeleted(address)"(user?: null): FeeDeletedEventFilter;
+    FeeDeleted(user?: null): FeeDeletedEventFilter;
+
+    "FeeUpdated(address)"(user?: null): FeeUpdatedEventFilter;
+    FeeUpdated(user?: null): FeeUpdatedEventFilter;
   };
 
   estimateGas: {
     accountsAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     addFee(
-      doc: string,
+      name: string,
       cost: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-
-    addProfile(
-      photoURL: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -332,18 +255,14 @@ export interface Profiles extends BaseContract {
 
     getFee(_index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
-    getFees(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getProfile(_address: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getFees(_address: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     kill(
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    profiles(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
-
     updateFee(
-      doc: string,
+      name: string,
       cost: BigNumberish,
       _index: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -354,13 +273,8 @@ export interface Profiles extends BaseContract {
     accountsAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     addFee(
-      doc: string,
+      name: string,
       cost: BigNumberish,
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-
-    addProfile(
-      photoURL: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -374,9 +288,7 @@ export interface Profiles extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getFees(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getProfile(
+    getFees(
       _address: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -385,13 +297,8 @@ export interface Profiles extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    profiles(
-      arg0: string,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
     updateFee(
-      doc: string,
+      name: string,
       cost: BigNumberish,
       _index: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }

@@ -1,17 +1,17 @@
 // import packages and dependencies
 // import { authenticate } from '../utils/auth';
-import index from "../controllers/index";
+import document from "../controllers/document";
 import express from "express";
 const router = express();
 
-router.get('/', index.getTests);
+router.get('/', document.getDocuments);
 
-router.post('/', index.postTest);
+router.post('/', document.addDocument);
 
-// router.get('/', index.getTransactions);
+router.post('/image', document.postImage);
 
-// router.get('/count', index.getTransactionCount);
+router.put('/:index', document.updateDocument);
 
-// router.post('/', index.sendTransaction);
+router.get('/:index', document.getDocument);
  
 export default router;

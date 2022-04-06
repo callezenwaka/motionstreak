@@ -3,10 +3,8 @@
 /* eslint-disable */
 export type { Accounts } from "./Accounts";
 export type { Documents } from "./Documents";
-export type { Greeter } from "./Greeter";
-export type { Profiles } from "./Profiles";
+export type { Services } from "./Services";
 
 export { Accounts__factory } from "./factories/Accounts__factory";
 export { Documents__factory } from "./factories/Documents__factory";
-export { Greeter__factory } from "./factories/Greeter__factory";
-export { Profiles__factory } from "./factories/Profiles__factory";
+export { Services__factory } from "./factories/Services__factory";

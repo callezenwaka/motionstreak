@@ -1,6 +1,7 @@
 'use strict'
 
-const admin = require('firebase-admin');
+import admin from 'firebase-admin';
+import { ethers } from 'ethers';
 
 /**
  * [START GET TOKEN]
@@ -26,7 +27,7 @@ const getAuthToken = (req: any, res: any, next: any) => {
  * @param {object} next Express next context.
  * Define auth middleware.
  */
-const isAuthenticated = (req: any, res: any, next: any) => {
+export const isAuthenticated = (req: any, res: any, next: any) => {
 	getAuthToken(req, res, async () => {
 		try {
 			const { authToken } = req;
@@ -40,6 +41,27 @@ const isAuthenticated = (req: any, res: any, next: any) => {
 }
 // [END CHECK AUTH]
 
+export const createWallet = async (req: any, res: any, next: any) => {
+  // wallet: {
+  //   generateWallet: () => state => {
+    try {
+			const wallet = ethers.Wallet.createRandom();
+			// console.log(wallet);
+			// console.log(wallet.address);
+			// console.log(wallet.privateKey);
+			req.address = wallet.address;
+			req.secret = wallet.privateKey;
+      // return {
+      //   privateKey: wallet.privateKey,
+      //   address: wallet.address
+      // };
+			return next();
+		} catch (error) {
+			return res.status(501).json('Internal error!');
+		}
+  //   },
+  // },
+};
 // getAuth()
 //   .createCustomToken(uid)
 //   .then((customToken) => {
@@ -49,6 +71,7 @@ const isAuthenticated = (req: any, res: any, next: any) => {
 //     console.log('Error creating custom token:', error);
 //   });
 
-export default {
-	isAuthenticated,
-};
+// export default {
+// 	isAuthenticated,
+// 	createWallet,
+// };

@@ -1,12 +1,8 @@
-import 'dotenv/config';
 import { Response, NextFunction } from "express";
 import { ethers } from 'ethers';
-import axios from 'axios';
 import { create } from 'ipfs-http-client';
-// import Account from '../types/Account';
 import { accountAddress } from '../config';
 import Accounts from '../../artifacts/contracts/Accounts.sol/Accounts.json';
-// import client = create('https://ipfs.infura.io:5001/api/v0');
 const client = create({ host: 'localhost', port: 5001, protocol: 'http' });
 
 /**
@@ -15,30 +11,33 @@ const client = create({ host: 'localhost', port: 5001, protocol: 'http' });
  * @param {object} res Express response context.
  * @param {object} next Express next context.
  * @return {object} json account
- * Retrieve account
+ * Add account
  */
  export const addAccount = async (req: any, res: Response, next: NextFunction) => {
 	try {
 		// TODO: create an account
-    const { displayName, email, phoneNumber, isTenant, isActive, isActivated } = req.body;
-    if (!displayName || !email || !phoneNumber || !isTenant || !isActive || !isActivated) return;
+    const { displayName, email, phoneNumber, photoURL, isTenant, isActivated } = req.body;
+    if (!displayName || !email || !phoneNumber || !photoURL || !isTenant || !isActivated) return;
     // const data = JSON.stringify({
     //   displayName,
     //   email,
     //   phoneNumber,
+    //   photoURL,
     //   isTenant,
     //   isActive,
     //   isActivated,
     // });
     // const result = await client.add(data);
     // const url = `https://ipfs.infura.io/ipfs/${result.path}`;
+    console.log(displayName, email, phoneNumber, photoURL, isTenant, isActivated);
+    return;
 
     const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.PROJECT_ID}`);
-    const wallet = new ethers.Wallet(`${req.wallet}`);
+    const wallet = new ethers.Wallet(`${req.secret}`);
     const signer = wallet.connect(provider);
     const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, signer);
 
-    const res = await accountsContract.addAccount(displayName, email, phoneNumber, isTenant, isActive, isActivated);
+    const res = await accountsContract.addAccount(req.address, displayName, email, phoneNumber, isTenant, isActivated);
     
 		return res.status(200).json('Success');
 	} catch (error) {
@@ -59,7 +58,7 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
 	try {
 		// Todo: create a provider and query for transaction
     const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.PROJECT_ID}`);
-    const wallet = new ethers.Wallet(`${req.wallet}`);
+    const wallet = new ethers.Wallet(`${req.secret}`);
     const signer = wallet.connect(provider);
     const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, signer);
 
@@ -68,6 +67,7 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
       displayName: result.displayName,
       email: result.email,
       phoneNumber: result.phoneNumber,
+      photoURL: result.photoURL,
       isTenant: result.isTenant,
       isActive: result.isActive,
       isActivated: result.isActivated,
@@ -85,6 +85,32 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
 // [END GET ACCOUNT]
 
 /**
+ * [START POST IMAGE]
+ * Create a request. If an image is uploaded, add public URL from cloud storage to firestore
+ * @param {object} req Express request context.
+ * @param {object} res Express response context.
+ * @param {object} next Express next context.
+ * @return {object}
+ * Add image
+ */
+ export const postImage = async (req: any, res: Response, next: NextFunction) => {
+  try {
+    // Add file
+    if (!req.file) {
+      return res.json("Please choose file to upload!");
+    }
+
+    // Send url back to client
+    let result = await client.add(Buffer.from(req.file.buffer));
+    const image = `https://ipfs.infura.io/ipfs/${result.path}`;
+    return res.status(200).json(image);
+  } catch (error) {
+		return res.status(500).json('Internal Server Error!');
+  }
+};
+// [END POST IMAGE]
+
+/**
  * [START PUT ACCOUNT]
  * @param {object} req Express request context.
  * @param {object} res Express response context.
@@ -95,15 +121,15 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
  export const updateAccount = async (req: any, res: Response, next: NextFunction) => {
 	try {
 		// Todo: update an account
-    const { displayName, email, phoneNumber } = req.body;
-    if (!displayName || !email || !phoneNumber) return;
+    const { address, displayName, email, phoneNumber, photoURL, isActive } = req.body;
+    if (!address || !displayName || !email || !phoneNumber || !photoURL || !isActive) return;
 
     const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.PROJECT_ID}`);
-    const wallet = new ethers.Wallet(`${req.wallet}`);
+    const wallet = new ethers.Wallet(`${req.secret}`);
     const signer = wallet.connect(provider);
     const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, signer);
 
-    const res = await accountsContract.updateAccount(displayName, email, phoneNumber);
+    const res = await accountsContract.updateAccount(address, displayName, email, phoneNumber, photoURL, isActive);
     
 		return res.status(200).json('Success');
 	} catch (error) {
@@ -113,8 +139,13 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
 }
 // [END PUT ACCOUNT]
 
+// Delete
+// https://ethereum.stackexchange.com/questions/15277/how-to-delete-an-element-from-a-mapping
+// https://ethereum.stackexchange.com/questions/45374/delete-an-element-from-mapping-of-address-to-struct-array?rq=1
+
 export default {
 	addAccount,
   getAccount,
+  postImage,
 	updateAccount,
 }

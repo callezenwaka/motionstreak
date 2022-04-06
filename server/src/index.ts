@@ -3,28 +3,30 @@ import 'dotenv/config';
 import express, {Application, Request, Response, NextFunction} from "express";
 import admin from 'firebase-admin';
 import cors from "cors";
-import os from "os";
-import index from "./routes/index";
-// import { cert } from 'firebase-admin/app';
-// import auth from "./routes/auth";
+import document from "./routes/document";
+import service from "./routes/service";
+import account from "./routes/account";
+const fs = require('fs');
+const path = require('path');
+// import { isAuthenticated, createWallet } from './auth';
 
 const app: Application = express();
 
-admin.initializeApp({
-  credential: admin.credential.cert({
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    privateKey: process?.env?.FIREBASE_PRIVATE_KEY?.replace(/\\n/g,'\n'),
-    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-  }),
-});
+// admin.initializeApp({
+//   credential: admin.credential.cert({
+//     projectId: process.env.FIREBASE_PROJECT_ID,
+//     privateKey: process?.env?.FIREBASE_PRIVATE_KEY?.replace(/\\n/g,'\n'),
+//     clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+//   }),
+// });
 
 // Route middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Ping home route
-app.get('/', (req: Request, res: Response) => {
+// Ping healthz route
+app.get('/healthz',async (req: Request, res: Response) => {
   try {
     return res.status(200).json('Ok');
   } catch (error) {
@@ -33,8 +35,19 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 // Verify request
-app.use('/index', index);
 // app.use('/', auth);
+app.use('/account', account);
+app.use('/service', service);
+app.use('/document', document);
+
+// Ping home route
+app.get('/', (req: Request, res: Response) => {
+  try {
+    return res.status(200).json('createWallet');
+  } catch (error) {
+    return res.status(500).json('Internal Server Error!');
+  }
+});
 
 // notfound route handler
 app.use((req: Request, res: Response, next: NextFunction) => {
@@ -45,12 +58,11 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next(error);
 })
 
-const network = os?.networkInterfaces()?.en0?.find(elm => elm.family=='IPv4')?.address;
 // Set up port and start the server
 app.listen( process.env.PORT, () => {
   console.log(`Server running at:`);
   console.log(`- Local: http://localhost:${process.env.PORT}`);
-  console.log(`- Network: http://${network}:${process.env.PORT}`);
+  console.log(`- Network: http://000.000.0.000:${process.env.PORT}`);
 });
 
 export default app;

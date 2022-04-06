@@ -1,17 +1,17 @@
 // import packages and dependencies
-// import { authenticate } from '../utils/auth';
-import index from "../controllers/index";
+import { isAuthenticated, createWallet } from '../auth';
+import account from "../controllers/account";
 import express from "express";
 const router = express();
 
-router.get('/', index.getTests);
+// router.get('/', index.getTests);
 
-router.post('/', index.postTest);
+router.post('/', createWallet, account.addAccount);
 
-// router.get('/', index.getTransactions);
+router.get('/:address', account.getAccount);
 
-// router.get('/count', index.getTransactionCount);
+router.post('/image', account.postImage);
 
-// router.post('/', index.sendTransaction);
+router.put('/', account.updateAccount);
  
 export default router;
