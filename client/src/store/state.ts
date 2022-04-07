@@ -4,8 +4,9 @@ export type Account = {
   photoURL: string;
   email: string;
   isTenant: boolean,
-  isActive?: boolean,
+  isActive: boolean,
   isActivated: boolean,
+  address?: string,
 };
 
 export type Document = {
@@ -49,6 +50,7 @@ export type Login = {
 export type State = {
   documents: Document[];
   document: Document;
+  accounts: Account[];
   account: Account;
   services: Service[];
   service: Service;
@@ -59,6 +61,7 @@ export type State = {
 export const state: State = {
   documents: [],
   document: {} as Document,
+  accounts: [],
   account: {} as Account,
   services: [],
   service: {} as Service,
