@@ -18,11 +18,12 @@ contract Services {
   struct Fee {
     string name;
     uint cost;
+    uint index;
   }
 
-  event FeeAdded(address user);
-  event FeeUpdated(address user);
-  event FeeDeleted(address user);
+  event ServiceAdded(address user);
+  event ServiceUpdated(address user);
+  event ServiceDeleted(address user);
 
   /** @dev check for user paid enough.
     */
@@ -43,81 +44,82 @@ contract Services {
     accountsAddress = acctAddr;
   }
 
-  /** @dev get verification price of verifier.
-    * @param _address fee uint.
-    * @return fees account fees.
+  /** @dev get processing charges of certifier.
+    * @param _address account address.
+    * @return services account services.
     */
-  function getFees(address _address)
+  function getServices(address _address)
   public
   view
   returns(Fee[] memory)
   {
-    // TODO: Get fees
+    // TODO: Get services
     return services[_address].fees;
   }
 
-  /** @dev get verification price of verifier.
-  * @param name fee Fee.
-  * @param cost fee Fee.
+  /** @dev add processing charge of certifier.
+  * @param name service name.
+  * @param cost service cost.
   */
-  function addFee(string memory name, uint cost)
+  function addService(string memory name, uint cost)
   public
   payable
   isTenant()
   returns(bool)
   {
-    // TODO: Add fee
-    emit FeeAdded(msg.sender);
-    // profiles[msg.sender].fees.push(_fee);
-    services[msg.sender].fees.push(Fee({name: name, cost: cost}));
+    // TODO: Add service
+    emit ServiceAdded(msg.sender);
+    uint index = services[msg.sender].fees.length;
+    services[msg.sender].fees.push(Fee({ name, cost, index }));
 
     return true;
   }
 
-  /** @dev get verification price of verifier.
-    * @param _index fee uint.
-    * @return fee account fee.
+  /** @dev get processing charge of certifier.
+    * @param _index service index.
+    * @return service account service.
     */
-  function getFee(uint _index)
+  function getService(uint _index)
   public
   view
   isTenant()
-  returns(Fee memory fee)
+  returns(Fee memory)
   {
-    // TODO: Get fee
+    // TODO: Get service
     return services[msg.sender].fees[_index];
   }
 
-  /** @dev get verification price of verifier.
-    * @param name fee Fee.
-    * @param cost fee Fee.
-    * @param _index fee uint.
+  /** @dev update processing charge of certifier.
+    * @param name service name.
+    * @param cost service cost.
+    * @param _index service index.
     */
-  function updateFee(string memory name, uint cost, uint _index)
+  function updateService(string memory name, uint cost, uint _index)
   public
   payable
   isTenant()
   returns(bool)
   {
-    // TODO: Update fee
-    emit FeeUpdated(msg.sender);
+    // TODO: Update service
+    emit ServiceUpdated(msg.sender);
     services[msg.sender].fees[_index] = Fee({name: name, cost: cost});
 
     return true;
   }
 
-  /** @dev get verification price of verifier.
-    * @param _index fee uint.
+  /** @dev delete processing charge of certifier.
+    * @param _index service index.
     */
-  function deleteFee(uint _index)
+  function deleteService(uint _index)
   public
   payable
   isTenant()
   returns(bool)
   {
-    // TODO: Delete fee
-    emit FeeDeleted(msg.sender);
+    // TODO: Delete service
+    emit ServiceDeleted(msg.sender);
     uint length = services[msg.sender].fees.length-1;
+    services[msg.sender].fees[length].index = _index;
     services[msg.sender].fees[_index] = services[msg.sender].fees[length];
     services[msg.sender].fees.pop();
 

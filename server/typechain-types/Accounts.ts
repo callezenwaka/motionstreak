@@ -53,22 +53,22 @@ export interface AccountsInterface extends utils.Interface {
   contractName: "Accounts";
   functions: {
     "accounts(address)": FunctionFragment;
-    "addAccount(address,string,string,string,bool,bool)": FunctionFragment;
+    "addAccount(address,string,string,string,string,bool,bool)": FunctionFragment;
     "getAccount(address)": FunctionFragment;
     "kill()": FunctionFragment;
-    "updateAccount(address,string,string,string,bool)": FunctionFragment;
+    "updateAccount(address,string,string,string,string,bool)": FunctionFragment;
   };
 
   encodeFunctionData(functionFragment: "accounts", values: [string]): string;
   encodeFunctionData(
     functionFragment: "addAccount",
-    values: [string, string, string, string, boolean, boolean]
+    values: [string, string, string, string, string, boolean, boolean]
   ): string;
   encodeFunctionData(functionFragment: "getAccount", values: [string]): string;
   encodeFunctionData(functionFragment: "kill", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "updateAccount",
-    values: [string, string, string, string, boolean]
+    values: [string, string, string, string, string, boolean]
   ): string;
 
   decodeFunctionResult(functionFragment: "accounts", data: BytesLike): Result;
@@ -152,6 +152,7 @@ export interface Accounts extends BaseContract {
       displayName: string,
       email: string,
       phoneNumber: string,
+      photoURL: string,
       _isTenant: boolean,
       isActivated: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -171,6 +172,7 @@ export interface Accounts extends BaseContract {
       displayName: string,
       email: string,
       phoneNumber: string,
+      photoURL: string,
       isActive: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -197,6 +199,7 @@ export interface Accounts extends BaseContract {
     displayName: string,
     email: string,
     phoneNumber: string,
+    photoURL: string,
     _isTenant: boolean,
     isActivated: boolean,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -216,6 +219,7 @@ export interface Accounts extends BaseContract {
     displayName: string,
     email: string,
     phoneNumber: string,
+    photoURL: string,
     isActive: boolean,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -242,6 +246,7 @@ export interface Accounts extends BaseContract {
       displayName: string,
       email: string,
       phoneNumber: string,
+      photoURL: string,
       _isTenant: boolean,
       isActivated: boolean,
       overrides?: CallOverrides
@@ -259,6 +264,7 @@ export interface Accounts extends BaseContract {
       displayName: string,
       email: string,
       phoneNumber: string,
+      photoURL: string,
       isActive: boolean,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -283,6 +289,7 @@ export interface Accounts extends BaseContract {
       displayName: string,
       email: string,
       phoneNumber: string,
+      photoURL: string,
       _isTenant: boolean,
       isActivated: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -299,6 +306,7 @@ export interface Accounts extends BaseContract {
       displayName: string,
       email: string,
       phoneNumber: string,
+      photoURL: string,
       isActive: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -315,6 +323,7 @@ export interface Accounts extends BaseContract {
       displayName: string,
       email: string,
       phoneNumber: string,
+      photoURL: string,
       _isTenant: boolean,
       isActivated: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -334,6 +343,7 @@ export interface Accounts extends BaseContract {
       displayName: string,
       email: string,
       phoneNumber: string,
+      photoURL: string,
       isActive: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

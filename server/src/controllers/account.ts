@@ -62,7 +62,7 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
     const signer = wallet.connect(provider);
     const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, signer);
 
-    const result = await accountsContract.getAccount(req.address);
+    const result = await accountsContract.getAccount(req.params.address);
     let account = {
       displayName: result.displayName,
       email: result.email,

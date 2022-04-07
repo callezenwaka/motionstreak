@@ -1,19 +1,19 @@
 // import packages and dependencies
-// import { authenticate } from '../utils/auth';
+// import { isAuthenticated } from '../auth';
 import service from "../controllers/service";
 import express from "express";
 const router = express();
 
-router.get('/', service.getFees);
+router.get('/', service.getServices);
 
-router.post('/', service.addFee);
+router.post('/', service.addService);
 
-router.put('/:index', service.updateFee);
+router.put('/:index', service.updateService);
 
-router.get('/:index', service.getFee);
+router.get('/:index', service.getService);
 
-router.delete('/:index', service.deleteFee);
+router.delete('/:index', service.deleteService);
 
-// router.get('/:id', isAgent('update'), service.updateOne);
+// router.get('/', isAuthenticated, service.getServices);
  
 export default router;

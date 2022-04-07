@@ -1,5 +1,5 @@
 // import packages and dependencies
-// import { authenticate } from '../utils/auth';
+// import { isAuthenticated } from '../auth';
 import document from "../controllers/document";
 import express from "express";
 const router = express();

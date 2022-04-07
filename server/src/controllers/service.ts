@@ -1,24 +1,20 @@
 import { Response, NextFunction } from "express";
 import { ethers } from 'ethers';
-// import axios from 'axios';
-// import { create } from 'ipfs-http-client';
-import Fee from '../types/Fee';
+import Service from '../types/Service';
 import { serviceAddress } from '../config';
 import Services from '../../artifacts/contracts/Services.sol/Services.json';
-// import client = create('https://ipfs.infura.io:5001/api/v0');
-// const client = create({ host: 'localhost', port: 5001, protocol: 'http' });
 
 /**
- * [START GET FEES]
+ * [START GET SERVICES]
  * @param {object} req Express request context.
  * @param {object} res Express response context.
  * @param {object} next Express next context.
  * @return {object} json account
  * Retrieve items
  */
- export const getFees = async (req: any, res: Response, next: NextFunction) => {
+ export const getServices = async (req: any, res: Response, next: NextFunction) => {
 	try {
-		// Todo: create a provider and query for fees
+		// Todo: create a provider and query for services
     const { address } = req.query;
     if (!address) return;
     const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.PROJECT_ID}`);
@@ -26,36 +22,38 @@ import Services from '../../artifacts/contracts/Services.sol/Services.json';
     const signer = wallet.connect(provider);
     const accountsContract = new ethers.Contract(serviceAddress, Services.abi, signer);
 
-    let fees:Fee[] = [];
-    const results = await accountsContract.getFees(address);
+    let services:Service[] = [];
+    const results = await accountsContract.getServices(address);
     if (!results.length) {
 			return res.status(200).json([]);
 		}
-    fees = await results.map(async (result:any) => {
+    services = await results.map(async (result:any) => {
+      console.log(result);
       return {
         name: result.name,
         cost: result.cost,
+        index: result.index,
       }
     });
     
-		return res.status(200).json(fees);
+		return res.status(200).json(services);
 	} catch (error) {
 		return res.status(500).json('Internal Server Error!');
 	}
 }
-// [END GET FEES]
+// [END GET SERVICES]
 
 /**
- * [START POST FEE]
+ * [START POST SERVICE]
  * @param {object} req Express request context.
  * @param {object} res Express response context.
  * @param {object} next Express next context.
  * @return {object} json account
  * Add item
  */
- export const addFee = async (req: any, res: Response, next: NextFunction) => {
+ export const addService = async (req: any, res: Response, next: NextFunction) => {
 	try {
-		// TODO: create a provider and  add a fee
+		// TODO: create a provider and  add a service
     const { name, cost } = req.body;
     if (!name || !cost) return;
 
@@ -64,7 +62,7 @@ import Services from '../../artifacts/contracts/Services.sol/Services.json';
     const signer = wallet.connect(provider);
     const servicesContract = new ethers.Contract(serviceAddress, Services.abi, signer);
 
-    const res = await servicesContract.addFee(name, cost);
+    const res = await servicesContract.addService(name, cost);
     await res.wait();
     
 		return res.status(200).json('Success');
@@ -72,21 +70,21 @@ import Services from '../../artifacts/contracts/Services.sol/Services.json';
 		return res.status(500).json('Internal Server Error!');
 	}
 }
-// [END POST FEE]
+// [END POST SERVICE]
 
 
 
 /**
- * [START GET FEE]
+ * [START GET SERVICE]
  * @param {object} req Express request context.
  * @param {object} res Express response context.
  * @param {object} next Express next context.
  * @return {object} json account
  * Retrieve item
  */
-export const getFee = async (req: any, res: Response, next: NextFunction) => {
+export const getService = async (req: any, res: Response, next: NextFunction) => {
 	try {
-		// Todo: create a provider and query for fee
+		// Todo: create a provider and query for service
     const { index } = req.params;
     if (!index) return;
     const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.PROJECT_ID}`);
@@ -94,42 +92,42 @@ export const getFee = async (req: any, res: Response, next: NextFunction) => {
     const signer = wallet.connect(provider);
     const servicesContract = new ethers.Contract(serviceAddress, Services.abi, signer);
 
-    const result = await servicesContract.getFee(index);
+    const result = await servicesContract.getService(index);
     if (!result) {
 			return res.status(200).json({});
 		}
-    let fee = { 
+    let service = { 
       name: result.name,
       cost: result.cost
     }
     
-		return res.status(200).json(fee);
+		return res.status(200).json(service);
 	} catch (error) {
 		return res.status(500).json('Internal Server Error!');
 	}
 }
-// [END GET FEE]
+// [END GET SERVICE]
 
 /**
- * [START UPDATE FEE]
+ * [START UPDATE SERVICE]
  * @param {object} req Express request context.
  * @param {object} res Express response context.
  * @param {object} next Express next context.
  * @return {object} json account
  * Updatea item
  */
-export const updateFee = async (req: any, res: Response, next: NextFunction) => {
+export const updateService = async (req: any, res: Response, next: NextFunction) => {
 	try {
-		// TODO: create a provider and update a fee
-    const { name, cost, index } = req.body;
-    if (!name || !cost || !index) return;
+		// TODO: create a provider and update a service
+    const { name, cost } = req.body;
+    if (!name || !cost) return;
 
     const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.PROJECT_ID}`);
     const wallet = new ethers.Wallet(`${req.secret}`);
     const signer = wallet.connect(provider);
     const servicesContract = new ethers.Contract(serviceAddress, Services.abi, signer);
 
-    const res = await servicesContract.updateFee(name, cost, index);
+    const res = await servicesContract.updateService(name, cost, req.params.index);
     await res.wait();
     
 		return res.status(200).json('Success');
@@ -137,19 +135,19 @@ export const updateFee = async (req: any, res: Response, next: NextFunction) => 
 		return res.status(500).json('Internal Server Error!');
 	}
 }
-// [END UPDATE FEE]
+// [END UPDATE SERVICE]
 
 /**
- * [START DELETE FEE]
+ * [START DELETE SERVICE]
  * @param {object} req Express request context.
  * @param {object} res Express response context.
  * @param {object} next Express next context.
  * @return {object} json account
  * Remove item
  */
-export const deleteFee = async (req: any, res: Response, next: NextFunction) => {
+export const deleteService = async (req: any, res: Response, next: NextFunction) => {
 	try {
-		// TODO: create a provider and remove a fee
+		// TODO: create a provider and remove a service
     const { index } = req.params;
     if (!index) return;
 
@@ -158,7 +156,7 @@ export const deleteFee = async (req: any, res: Response, next: NextFunction) => 
     const signer = wallet.connect(provider);
     const servicesContract = new ethers.Contract(serviceAddress, Services.abi, signer);
 
-    const res = await servicesContract.deleteFee(index);
+    const res = await servicesContract.deleteService(index);
     await res.wait();
     
 		return res.status(200).json('Success');
@@ -166,12 +164,12 @@ export const deleteFee = async (req: any, res: Response, next: NextFunction) => 
 		return res.status(500).json('Internal Server Error!');
 	}
 }
-// [END DELETE FEE]
+// [END DELETE SERVICE]
 
 export default {
-  getFees,
-	addFee,
-  getFee,
-  updateFee,
-  deleteFee,
+  getServices,
+	addService,
+  getService,
+  updateService,
+  deleteService,
 }

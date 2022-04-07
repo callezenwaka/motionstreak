@@ -144,9 +144,7 @@ export interface Services extends BaseContract {
     getFees(
       _address: string,
       overrides?: CallOverrides
-    ): Promise<
-      [Services.FeeStructOutput[]] & { fees: Services.FeeStructOutput[] }
-    >;
+    ): Promise<[Services.FeeStructOutput[]]>;
 
     kill(
       overrides?: PayableOverrides & { from?: string | Promise<string> }
