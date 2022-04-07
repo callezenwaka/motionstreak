@@ -6,6 +6,7 @@ interface Account {
   isTenant: boolean,
   isActive: boolean,
   isActivated: boolean,
+  address?: string,
 }
 
 export default Account;

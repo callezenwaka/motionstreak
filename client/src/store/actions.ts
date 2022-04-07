@@ -2,6 +2,8 @@ import { ActionContext, ActionTree } from 'vuex'
 import { Mutations, MutationType } from './mutations'
 import { State, Account, Document, Service } from './state'
 import account from '@/services/account';
+import service from '@/services/service';
+import document from '@/services/document';
 
 export enum ActionTypes {
   // account
@@ -42,7 +44,7 @@ export type Actions = {
   // account
   [ActionTypes.AddAccountImage](context: ActionAugments, payload: File): void;
   [ActionTypes.AddAccount](context: ActionAugments, payload: Account): void;
-  [ActionTypes.GetAccounts](context: ActionAugments, payload: string): void;
+  [ActionTypes.GetAccounts](context: ActionAugments): void;
   [ActionTypes.GetAccount](context: ActionAugments, payload: string): void;
   [ActionTypes.UpdateAccount](context: ActionAugments, payload: Account): void;
 
@@ -61,8 +63,8 @@ export type Actions = {
   [ActionTypes.DeleteService](context: ActionAugments, payload: number): void;
 
   // others
-  [ActionTypes.SetIsLoading](context: ActionAugments): void;
-  [ActionTypes.SetIdToken](context: ActionAugments): void;
+  [ActionTypes.SetIsLoading](context: ActionAugments, payload: boolean): void;
+  [ActionTypes.SetIdToken](context: ActionAugments, payload: string): void;
 
 }
 
@@ -92,30 +94,169 @@ export const actions: ActionTree<State, State> & Actions = {
       return error
     }
   },
-  async [ActionTypes.GetTaskItems]({ commit }) {
-    commit(MutationType.SetLoading, true)
-
-    await sleep(1000)
-
-    commit(MutationType.SetLoading, false)
-    commit(MutationType.SetTasks, [
-      {
-        id: 1,
-        title: 'Create a new programming language',
-        description: "The programing language should have full typescript support ",
-        createdBy: "Emmanuel John",
-        assignedTo: "Saviour Peter",
-        completed: false,
-        editing: false
-
-      }
-    ])
+  async [ActionTypes.GetAccounts](context) {
+    try {
+      context.commit(MutationType.SetIsLoading, true)
+      // await sleep(1000);
+      const data = await account.getAccounts(context.rootGetters.idToken);
+      context.commit(MutationType.SetIsLoading, false)
+      if (!Array.isArray(data)) return;
+      context.commit(MutationType.SetAccounts, data);
+      return data;
+    } catch (error) {
+      return error
+    }
+  },
+  async [ActionTypes.GetAccount](context, payload) {
+    try {
+      context.commit(MutationType.SetIsLoading, true)
+      // await sleep(1000);
+      const data = await account.getAccount(context.rootGetters.idToken, payload);
+      context.commit(MutationType.SetIsLoading, false)
+      if (typeof data != 'object') return;
+      context.commit(MutationType.SetAccount, data);
+      return data;
+    } catch (error) {
+      return error
+    }
+  },
+  async [ActionTypes.UpdateAccount](context, payload) {
+    try {
+      context.commit(MutationType.SetIsLoading, true)
+      // await sleep(1000);
+      const data = await account.updateAccount(context.rootGetters.idToken, payload);
+      context.commit(MutationType.SetIsLoading, false)
+      return data;
+    } catch (error) {
+      return error
+    }
   },
 
-  async [ActionTypes.SetCreateModal]({ commit }) {
-    commit(MutationType.SetCreateModal, true)
+  // document
+  async [ActionTypes.AddDocumentImage](context, payload) {
+    try {
+      context.commit(MutationType.SetIsLoading, true)
+      // await sleep(1000);
+      const data = await document.addDocumentImage(context.rootGetters.idToken, payload);
+      context.commit(MutationType.SetIsLoading, false)
+      return data;
+    } catch (error) {
+      return error
+    }
   },
-  async [ActionTypes.SetEditModal]({ commit }) {
-    commit(MutationType.SetEditModal, {showModal: true, taskId: 1})
+  async [ActionTypes.AddDocument](context, payload) {
+    try {
+      context.commit(MutationType.SetIsLoading, true)
+      // await sleep(1000);
+      const data = await document.addDocument(context.rootGetters.idToken, payload);
+      context.commit(MutationType.SetIsLoading, false)
+      return data;
+    } catch (error) {
+      return error
+    }
+  },
+  async [ActionTypes.GetDocuments](context) {
+    try {
+      context.commit(MutationType.SetIsLoading, true)
+      // await sleep(1000);
+      const data = await document.getDocuments(context.rootGetters.idToken);
+      context.commit(MutationType.SetIsLoading, false)
+      if (!Array.isArray(data)) return;
+      context.commit(MutationType.SetDocuments, data);
+      return data;
+    } catch (error) {
+      return error
+    }
+  },
+  async [ActionTypes.GetDocument](context, payload) {
+    try {
+      context.commit(MutationType.SetIsLoading, true)
+      // await sleep(1000);
+      const data = await document.getDocument(context.rootGetters.idToken, payload);
+      context.commit(MutationType.SetIsLoading, false)
+      if (typeof data != 'object') return;
+      context.commit(MutationType.SetDocument, data);
+      return data;
+    } catch (error) {
+      return error
+    }
+  },
+  async [ActionTypes.UpdateDocument](context, payload) {
+    try {
+      context.commit(MutationType.SetIsLoading, true)
+      // await sleep(1000);
+      const data = await document.updateDocument(context.rootGetters.idToken, payload);
+      context.commit(MutationType.SetIsLoading, false)
+      return data;
+    } catch (error) {
+      return error
+    }
+  },
+  // service
+  async [ActionTypes.AddService](context, payload) {
+    try {
+      context.commit(MutationType.SetIsLoading, true)
+      // await sleep(1000);
+      const data = await service.addService(context.rootGetters.idToken, payload);
+      context.commit(MutationType.SetIsLoading, false)
+      return data;
+    } catch (error) {
+      return error
+    }
+  },
+  async [ActionTypes.GetServices](context) {
+    try {
+      context.commit(MutationType.SetIsLoading, true)
+      // await sleep(1000);
+      const data = await service.getServices(context.rootGetters.idToken);
+      context.commit(MutationType.SetIsLoading, false)
+      if (!Array.isArray(data)) return;
+      context.commit(MutationType.SetServices, data);
+      return data;
+    } catch (error) {
+      return error
+    }
+  },
+  async [ActionTypes.GetService](context, payload) {
+    try {
+      context.commit(MutationType.SetIsLoading, true)
+      // await sleep(1000);
+      const data = await service.getService(context.rootGetters.idToken, payload);
+      context.commit(MutationType.SetIsLoading, false)
+      if (typeof data != 'object') return;
+      context.commit(MutationType.SetService, data);
+      return data;
+    } catch (error) {
+      return error
+    }
+  },
+  async [ActionTypes.UpdateService](context, payload) {
+    try {
+      context.commit(MutationType.SetIsLoading, true)
+      // await sleep(1000);
+      const data = await service.updateService(context.rootGetters.idToken, payload);
+      context.commit(MutationType.SetIsLoading, false)
+      return data;
+    } catch (error) {
+      return error;
+    }
+  },
+  async [ActionTypes.DeleteService](context, payload) {
+    try {
+      context.commit(MutationType.SetIsLoading, true)
+      // await sleep(1000);
+      const data = await service.deleteService(context.rootGetters.idToken, payload);
+      context.commit(MutationType.SetIsLoading, false)
+      return data;
+    } catch (error) {
+      return error;
+    }
+  },
+  // others
+  async [ActionTypes.SetIsLoading](context, payload) {
+    context.commit(MutationType.SetIsLoading, payload);
+  },
+  async [ActionTypes.SetIdToken](context, payload) {
+    context.commit(MutationType.SetIdToken, payload);
   }
 }

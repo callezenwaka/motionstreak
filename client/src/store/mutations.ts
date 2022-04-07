@@ -2,23 +2,23 @@ import { MutationTree } from 'vuex'
 import { State, Account, Document, Service } from './state'
 
 export enum MutationType {
-  AddAccount = `ADD_ACCOUNT`,
+  // AddAccount = `ADD_ACCOUNT`,
   SetAccounts = `SET_ACCOUNTS`,
   SetAccount = `SET_ACCOUNT`,
-  UpdateAccount = `UPDATE_ACCOUNT`,
+  // UpdateAccount = `UPDATE_ACCOUNT`,
 
-  AddDocument = `ADD_DOCUMENT`,
+  // AddDocument = `ADD_DOCUMENT`,
   SetDocuments = `SET_DOCUMENTS`,
   SetDocument = `SET_DOCUMENT`,
   // EditDocument = 'EDIT_DOCUMENT',
-  UpdateDocument = `UPDATE_DOCUMENT`,
+  // UpdateDocument = `UPDATE_DOCUMENT`,
 
-  AddService = `ADD_SERVICE`,
+  // AddService = `ADD_SERVICE`,
   SetServices = `SET_SERVICES`,
   SetService = `SET_SERVICE`,
   // EditService = 'EDIT_SERVICE',
-  UpdateService = `UPDATE_SERVICE`,
-  DeleteService = `DELETE_SERVICE`,
+  // UpdateService = `UPDATE_SERVICE`,
+  // DeleteService = `DELETE_SERVICE`,
 
   SetIsLoading = 'SET_IS_LOADING',
   SetIdToken = 'SET_ID_TOKEN',

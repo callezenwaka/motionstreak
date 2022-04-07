@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from "axios";
 type method = "get" | "GET" | "delete" | "DELETE" | "head" | "HEAD" | "options" | "OPTIONS" | "post" | "POST" | "put" | "PUT" | "patch" | "PATCH" | "purge" | "PURGE" | "link" | "LINK" | "unlink" | "UNLINK" | undefined;
 
 // export default apiClient;
-import Account from '@/types/Account';
+import Document from '@/types/Document';
 export const request = async <T = never, R = AxiosResponse<T>>(url: string, method: method, token?: string, data?: unknown): Promise<R> => {
   const res = await axios({
     method: method,
@@ -24,19 +24,19 @@ export const API_URL = 'http://localhost:4000/';
 // export const API_URL = `https://fullstack-nft.herokuapp.com/`;
 
 export default {
-	async addAccountImage(token: string, params: File): Promise<string> {
-		return await request(`${API_URL}account/image`, 'post', token, params);
+	async addDocumentImage(token: string, params: File): Promise<string> {
+		return await request(`${API_URL}Document/image`, 'post', token, params);
 	},
-	async addAccount(token: string, params: Account): Promise<string> {
-		return await request(`${API_URL}account`, 'post', token, params);
+	async addDocument(token: string, params: Document): Promise<string> {
+		return await request(`${API_URL}Document`, 'post', token, params);
 	},
-	async getAccounts(token: string): Promise<Account[]> {
-		return await request(`${API_URL}account`, 'get', token, '');
+	async getDocuments(token: string): Promise<Document[]> {
+		return await request(`${API_URL}Document`, 'get', token, '');
 	},
-	async getAccount(token: string, address: string): Promise<Account> {
-		return await request(`${API_URL}account/${address}`, 'get', token, '');
+	async getDocument(token: string, index: number): Promise<Document> {
+		return await request(`${API_URL}Document/${index}`, 'get', token, '');
 	},
-	async updateAccount(token: string, params: Account): Promise<string> {
-		return await request(`${API_URL}account/${params.address}`, 'post', token, params);
+	async updateDocument(token: string, params: Document): Promise<string> {
+		return await request(`${API_URL}Document/${params.index}`, 'post', token, params);
 	},
 };

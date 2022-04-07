@@ -4,7 +4,7 @@ import axios, { AxiosResponse } from "axios";
 type method = "get" | "GET" | "delete" | "DELETE" | "head" | "HEAD" | "options" | "OPTIONS" | "post" | "POST" | "put" | "PUT" | "patch" | "PATCH" | "purge" | "PURGE" | "link" | "LINK" | "unlink" | "UNLINK" | undefined;
 
 // export default apiClient;
-import Account from '@/types/Account';
+import Service from '@/types/Service';
 export const request = async <T = never, R = AxiosResponse<T>>(url: string, method: method, token?: string, data?: unknown): Promise<R> => {
   const res = await axios({
     method: method,
@@ -24,19 +24,19 @@ export const API_URL = 'http://localhost:4000/';
 // export const API_URL = `https://fullstack-nft.herokuapp.com/`;
 
 export default {
-	async addAccountImage(token: string, params: File): Promise<string> {
-		return await request(`${API_URL}account/image`, 'post', token, params);
+	async addService(token: string, params: Service): Promise<string> {
+		return await request(`${API_URL}Service`, 'post', token, params);
 	},
-	async addAccount(token: string, params: Account): Promise<string> {
-		return await request(`${API_URL}account`, 'post', token, params);
+	async getServices(token: string): Promise<Service[]> {
+		return await request(`${API_URL}Service`, 'get', token, '');
 	},
-	async getAccounts(token: string): Promise<Account[]> {
-		return await request(`${API_URL}account`, 'get', token, '');
+	async getService(token: string, index: number): Promise<Service> {
+		return await request(`${API_URL}Service/${index}`, 'get', token, '');
 	},
-	async getAccount(token: string, address: string): Promise<Account> {
-		return await request(`${API_URL}account/${address}`, 'get', token, '');
+	async updateService(token: string, params: Service): Promise<string> {
+		return await request(`${API_URL}Service/${params.index}`, 'post', token, params);
 	},
-	async updateAccount(token: string, params: Account): Promise<string> {
-		return await request(`${API_URL}account/${params.address}`, 'post', token, params);
+	async deleteService(token: string, index: number): Promise<string> {
+		return await request(`${API_URL}Service/${index}`, 'post', token, '');
 	},
 };
