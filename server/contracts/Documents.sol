@@ -12,7 +12,7 @@ contract Documents {
   address public accountsAddress;
   mapping (address => Count) private counts;
   mapping (address => uint) public balances;
-  enum Status { Pending, Certified, Verified, Accepted, Rejected }
+  enum Status { PENDING, CERTIFIED, VERIFIED, REJECTED }
  
   struct Document {
     address requester;
@@ -20,7 +20,7 @@ contract Documents {
     address certifier;
     string name;
     string description;
-    string image;
+    string imageURL;
     uint fee;
     uint index;
     Status status;
@@ -116,10 +116,10 @@ contract Documents {
         requester: msg.sender,
         description: _description,
         name: _name,
-        image: "",
+        imageURL: "",
         index: documents.length,
         fee: _fee,
-        status: Status.Pending
+        status: Status.PENDING
       })
     );
     // TODO: Update document counts
@@ -193,38 +193,38 @@ contract Documents {
   }
 
   /** @dev update document.
-    * @param _image document address.
+    * @param _imageURL document address.
     * @param _index document index.
     * @param _fee document fee.
     * @param status document status.
     */
-  function updateDocument(string memory _image, uint _index, uint _fee, Status status) 
+  function updateDocument(string memory _imageURL, uint _index, uint _fee, Status status) 
   public 
   payable
   isAdmin(msg.sender)
   returns(bool)
   {
     // TODO: Certify document
-    if(documents[_index].verifier == Accounts(accountsAddress).getAccount(msg.sender).affiliate && documents[_index].status == Status.Certified){
+    if(documents[_index].verifier == Accounts(accountsAddress).getAccount(msg.sender).affiliate && documents[_index].status == Status.CERTIFIED){
       documents[_index].status = status;
-      if(status == Status.Verified){
+      if(status == Status.VERIFIED){
         emit DocumentVerified(msg.sender);
         return true;
       }
-      if(status == Status.Rejected) {
+      if(status == Status.REJECTED) {
         emit DocumentRejected(msg.sender);
         return true;
       }
     }
 
-    if(documents[_index].certifier == Accounts(accountsAddress).getAccount(msg.sender).affiliate && documents[_index].status == Status.Pending){
+    if(documents[_index].certifier == Accounts(accountsAddress).getAccount(msg.sender).affiliate && documents[_index].status == Status.PENDING){
       documents[_index].status = status;
-      documents[_index].image = _image;
-      if(status == Status.Certified){
+      documents[_index].imageURL = _imageURL;
+      if(status == Status.CERTIFIED){
         emit DocumentCertified(msg.sender);
         return true;
       }
-      if(status == Status.Rejected) {
+      if(status == Status.REJECTED) {
         emit DocumentRejected(msg.sender);
         // return the ether for rejection
         balances[documents[_index].certifier] -= _fee;

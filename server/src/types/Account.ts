@@ -2,7 +2,8 @@ interface Account {
   displayName: string;
   phoneNumber: string;
   email: string;
-  isTenant: boolean;
+  role: string;  
+  affiliate: string,
   isActive: boolean;
   isActivated: boolean;
 }

@@ -1,4 +1,4 @@
-interface Account {
+interface Profile {
   displayName: string;
   phoneNumber: string;
   photoURL: string;
@@ -6,8 +6,9 @@ interface Account {
   role: string;
   isActive: boolean;
   isActivated: boolean;
-  address?: string;
-  affiliate?: string;
+  address: string;
+  affiliate: string;
+  token: string;
 }
 
-export default Account;
+export default Profile;

@@ -24,6 +24,7 @@
     "express": "^4.17.3",
     "ipfs-http-client": "^50.1.2",
     "firebase-admin": "^10.0.0",
+    "@google-cloud/firestore": "^5.0.1",
     "hardhat": "^2.8.4",
     "hardhat-gas-reporter": "^1.0.8",
     "jsonwebtoken": "^8.5.1",

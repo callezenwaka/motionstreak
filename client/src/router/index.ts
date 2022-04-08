@@ -4,32 +4,37 @@ import Home from '../views/Home.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    name: 'HomeView',
+    name: 'Home',
     component: Home
   },
   {
     path: '/about',
-    name: 'AboutView',
+    name: 'About',
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
     path: '/dashboard',
-    name: 'DashboardView',
-    component: () => import(/* webpackChunkName: "document" */ '../views/Dashboard.vue')
+    name: 'Dashboard',
+    component: () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue')
   },
-  {
-    path: '/document',
-    name: 'DocumentView',
-    component: () => import(/* webpackChunkName: "document" */ '../views/Document.vue')
-  },
+  // {
+  //   path: '/document',
+  //   name: 'Document',
+  //   component: () => import(/* webpackChunkName: "document" */ '../components/dashboard/Document.vue')
+  // },
+  // {
+  //   path: '/service',
+  //   name: 'Service',
+  //   component: () => import(/* webpackChunkName: "service" */ '../components/dashboard/Service.vue')
+  // },
   {
     path: '/register',
-    name: 'RegisterView',
+    name: 'Register',
     component: () => import(/* webpackChunkName: "register" */ '../views/Register.vue')
   },
   {
     path: '/login',
-    name: 'LoginView',
+    name: 'Login',
     component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue')
   }
 ]

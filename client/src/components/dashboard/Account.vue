@@ -1,5 +1,5 @@
 <template>
-  <div class="profile">
+  <div class="account">
     <h1>This is an about page</h1>
   </div>
 </template>
@@ -7,19 +7,17 @@
 <script lang="ts">
 // @ is an alias to /src
 import { defineComponent } from 'vue';
-// import HelloWorld from '@/components/HelloWorld.vue';
 
 export default defineComponent({
-  name: 'ProfileView',
+  name: 'AccountView',
   components: {
-    // HelloWorld,
   },
 });
 </script>
 
 <style scoped>
-/* profile */
-.profile {
+/* account */
+.account {
   /* padding: 1rem; */
   height: 100%;
   min-height: 100vh;

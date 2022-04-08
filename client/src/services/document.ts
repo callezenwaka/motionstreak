@@ -24,19 +24,19 @@ export const API_URL = 'http://localhost:4000/';
 // export const API_URL = `https://fullstack-nft.herokuapp.com/`;
 
 export default {
-	async addDocumentImage(token: string, params: File): Promise<string> {
-		return await request(`${API_URL}Document/image`, 'post', token, params);
+	async addDocumentImage(token: string, params: FormData): Promise<string> {
+		return await request(`${API_URL}document/image`, 'post', token, params);
 	},
 	async addDocument(token: string, params: Document): Promise<string> {
-		return await request(`${API_URL}Document`, 'post', token, params);
+		return await request(`${API_URL}document`, 'post', token, params);
 	},
 	async getDocuments(token: string): Promise<Document[]> {
-		return await request(`${API_URL}Document`, 'get', token, '');
+		return await request(`${API_URL}document`, 'get', token, '');
 	},
 	async getDocument(token: string, index: number): Promise<Document> {
-		return await request(`${API_URL}Document/${index}`, 'get', token, '');
+		return await request(`${API_URL}document/${index}`, 'get', token, '');
 	},
 	async updateDocument(token: string, params: Document): Promise<string> {
-		return await request(`${API_URL}Document/${params.index}`, 'post', token, params);
+		return await request(`${API_URL}document/${params.index}`, 'post', token, params);
 	},
 };

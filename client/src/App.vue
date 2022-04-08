@@ -1,4 +1,16 @@
 <template>
+    <div class="dark-light">
+      <svg
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+        stroke-width="1.5"
+        fill="none"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+      </svg>
+    </div>
   <!-- <div id="nav">
     <router-link to="/">Home</router-link> |
     <router-link to="/document">Document</router-link> |
@@ -176,5 +188,6 @@ body.light-mode .video-bg:before {
   text-align: center;
   color: #2c3e50;
   color: #e7e9ea;
+  min-width: 100%;
 }
 </style>

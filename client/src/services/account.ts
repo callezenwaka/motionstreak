@@ -6,6 +6,7 @@ type method = "get" | "GET" | "delete" | "DELETE" | "head" | "HEAD" | "options" 
 // export default apiClient;
 import Account from '@/types/Account';
 export const request = async <T = never, R = AxiosResponse<T>>(url: string, method: method, token?: string, data?: unknown): Promise<R> => {
+	console.log(token);
   const res = await axios({
     method: method,
     url: `${url}`,
@@ -16,6 +17,7 @@ export const request = async <T = never, R = AxiosResponse<T>>(url: string, meth
       'Authorization': `Bearer ${token}`,
     }
   });
+	console.log(res);
 	return res.data;
 };
 
@@ -24,7 +26,7 @@ export const API_URL = 'http://localhost:4000/';
 // export const API_URL = `https://fullstack-nft.herokuapp.com/`;
 
 export default {
-	async addAccountImage(token: string, params: File): Promise<string> {
+	async addAccountImage(token: string, params: FormData): Promise<string> {
 		return await request(`${API_URL}account/image`, 'post', token, params);
 	},
 	async addAccount(token: string, params: Account): Promise<string> {
@@ -37,6 +39,6 @@ export default {
 		return await request(`${API_URL}account/${address}`, 'get', token, '');
 	},
 	async updateAccount(token: string, params: Account): Promise<string> {
-		return await request(`${API_URL}account/${params.address}`, 'post', token, params);
+		return await request(`${API_URL}account/${params.address}`, 'put', token, params);
 	},
 };

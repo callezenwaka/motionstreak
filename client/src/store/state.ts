@@ -1,12 +1,29 @@
+export const imageURL = `https://i.pinimg.com/736x/8a/8d/e9/8a8de9aa2e54526fecb40182e510e856.jpg`;
+export const photoURL = `https://cdn2.iconfinder.com/data/icons/user-people-4/48/5-512.png`;
+
+export type Profile = {
+  displayName: string;
+  phoneNumber: string;
+  photoURL: string;
+  email: string;
+  role: string;
+  isActive: boolean;
+  isActivated: boolean;
+  address: string;
+  token: string;
+  affiliate: string;
+}
+
 export type Account = {
   displayName: string;
   phoneNumber: string;
   photoURL: string;
   email: string;
-  isTenant: boolean,
-  isActive: boolean,
-  isActivated: boolean,
-  address?: string,
+  role: string;
+  isActive: boolean;
+  isActivated: boolean;
+  address?: string;
+  affiliate?: string;
 };
 
 export type Document = {
@@ -14,8 +31,7 @@ export type Document = {
   verifier: string;
   certifier: string;
   name: string;
-  description: string;
-  image?: string;
+  imageURL?: string;
   fee: number;
   index?: number;
   status?: number;
@@ -54,17 +70,37 @@ export type State = {
   account: Account;
   services: Service[];
   service: Service;
-  idToken: string;
+  profile: Profile;
   isLoading: boolean;
 };
 
 export const state: State = {
   documents: [],
-  document: {} as Document,
+  document: {
+    requester: '0xbDA5747bFD65F08deb54cb465eB87D40e51B197E',
+		certifier: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+		verifier: '0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65',
+		name: 'Certificate',
+		imageURL: imageURL,
+		fee: 0.25,
+		index: 0,
+		status: 0,
+  } as Document,
   accounts: [],
   account: {} as Account,
   services: [],
   service: {} as Service,
-  idToken: '',
+  profile: {
+    displayName: 'John Doe',
+    phoneNumber: '+2348030003000',
+    photoURL: photoURL,
+    email: 'john.doe@mail.com',
+    role: 'user',
+    isActive: true,
+    isActivated: true,
+    address: '0xbDA5747bFD65F08deb54cb465eB87D40e51B197E',
+    affiliate: '0xbDA5747bFD65F08deb54cb465eB87D40e51B197E',
+    token: 'ej0xbDA5747bFD65F08deb54cb465eB87D40e51B197E0xbDA5747bFD65F08deb54cb465eB87D40e51B197E',
+  } as Profile,
   isLoading: false,
 };

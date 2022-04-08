@@ -17,7 +17,7 @@ import Services from '../../artifacts/contracts/Services.sol/Services.json';
 		// Todo: create a provider and query for services
     const { address } = req.query;
     if (!address) return;
-    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.PROJECT_ID}`);
+    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
     const wallet = new ethers.Wallet(`${req.secret}`);
     const signer = wallet.connect(provider);
     const accountsContract = new ethers.Contract(serviceAddress, Services.abi, signer);
@@ -57,7 +57,7 @@ import Services from '../../artifacts/contracts/Services.sol/Services.json';
     const { name, cost } = req.body;
     if (!name || !cost) return;
 
-    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.PROJECT_ID}`);
+    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
     const wallet = new ethers.Wallet(`${req.secret}`);
     const signer = wallet.connect(provider);
     const servicesContract = new ethers.Contract(serviceAddress, Services.abi, signer);
@@ -87,7 +87,7 @@ export const getService = async (req: any, res: Response, next: NextFunction) =>
 		// Todo: create a provider and query for service
     const { index } = req.params;
     if (!index) return;
-    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.PROJECT_ID}`);
+    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
     const wallet = new ethers.Wallet(`${req.secret}`);
     const signer = wallet.connect(provider);
     const servicesContract = new ethers.Contract(serviceAddress, Services.abi, signer);
@@ -122,7 +122,7 @@ export const updateService = async (req: any, res: Response, next: NextFunction)
     const { name, cost } = req.body;
     if (!name || !cost) return;
 
-    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.PROJECT_ID}`);
+    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
     const wallet = new ethers.Wallet(`${req.secret}`);
     const signer = wallet.connect(provider);
     const servicesContract = new ethers.Contract(serviceAddress, Services.abi, signer);
@@ -151,7 +151,7 @@ export const deleteService = async (req: any, res: Response, next: NextFunction)
     const { index } = req.params;
     if (!index) return;
 
-    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.PROJECT_ID}`);
+    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
     const wallet = new ethers.Wallet(`${req.secret}`);
     const signer = wallet.connect(provider);
     const servicesContract = new ethers.Contract(serviceAddress, Services.abi, signer);

@@ -1,35 +1,38 @@
 <template>
   <div class="login">
     <Header></Header>
-    <form class="form--container" @submit.prevent="handleLogin">
-      <div class="form--header">
-        <h2 class="form--title">Log in to your account</h2>
-      </div>
-      <div v-if="!!validations.length" class="validations">
-        <ul style="text-align: left;"><li style="list-style-type: disc;" v-for="(validation, index) in validations" :key="index">{{validation}}</li></ul>
-      </div>
-      <div class="form--item">
-        <label class="form--label" for="email">Email: </label>
-        <input class="form--input" type="email" name="email" id="email" v-model="user.email" @blur="handleBlur($event)" placeholder="Enter your email" required />
-      </div>
-      <div class="form--item">
-        <label class="form--label" for="password">Password: </label>
-        <input class="form--input" type="password" name="key" id="key" v-model="user.password" @blur="handleBlur($event)" placeholder="Enter your password" required />
-      </div>
-      <div class="form--item">
-        <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Login</button>
-      </div>
-    </form>
+    <div class="app">
+      <form class="form--container" @submit.prevent="handleLogin">
+        <div class="form--header">
+          <h2 class="form--title">Log in to your account</h2>
+        </div>
+        <div v-if="!!validations.length" class="validations">
+          <ul style="text-align: left;"><li style="list-style-type: disc;" v-for="(validation, index) in validations" :key="index">{{validation}}</li></ul>
+        </div>
+        <div class="form--item">
+          <label class="form--label" for="email">Email: </label>
+          <input class="form--input" type="email" name="email" id="email" v-model="user.email" @blur="handleBlur($event)" placeholder="Enter your email" required />
+        </div>
+        <div class="form--item">
+          <label class="form--label" for="password">Password: </label>
+          <input class="form--input" type="password" name="key" id="key" v-model="user.password" @blur="handleBlur($event)" placeholder="Enter your password" required />
+        </div>
+        <div class="form--item">
+          <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Sign In</button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 // @ is an alias to /src
-import Header from "@/components/partials/HeaderView.vue";
+import Header from "@/components/partials/Header.vue";
 import { computed, defineComponent, reactive } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from 'vue-router';
 import Login from '@/types/Login';
+import { ActionTypes } from "@/store/actions";
 export default defineComponent({
   name: "LoginView",
   components: {
@@ -40,7 +43,7 @@ export default defineComponent({
     // const route = useRoute();
     const router = useRouter();
     let validations = reactive<string[]>([]);
-    const login = (login: Login) => store.dispatch('login', login);
+    const login = (login: Login) => store.dispatch(ActionTypes.Login, login);
     let user = reactive({
       email: '',
       password: '',
@@ -67,7 +70,7 @@ export default defineComponent({
     const handleLogin = async () => {
       if (!handleValidation()) return;
       try {
-        await login(user);
+        await login({...user});
         router.push({ name: "Home" });
       } catch (error) {
         console.log(error);
@@ -90,11 +93,27 @@ export default defineComponent({
   background-repeat: no-repeat;
   transition: all 500ms linear;
 }
+.app {
+  background-color: var(--theme-bg-color);
+  /* min-width: 1250px; */
+  max-width: 1250px;
+  /* max-height: 860px; */
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: 100%;
+  /* border-radius: 14px; */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  font-size: 15px;
+  font-weight: 500;
+}
 .form--container {
   width: 100%;
   margin: 50px auto;
-      margin: 5rem auto 0;
-    padding: 0 1rem;
+  margin: 0rem auto 0;
+  padding: 0 1rem;
 }
 .form--title {
   text-align: center;
@@ -169,9 +188,26 @@ export default defineComponent({
   .form--container {
     width: 410px;
     margin: 0 auto;
+    margin: 10rem auto 0
   }
 }
 /* max */
 @media only screen and (min-width: 981px) {
+  .app {
+    background-color: var(--theme-bg-color);
+    min-width: 1250px;
+    max-width: 1250px;
+    /* max-height: 860px; */
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    width: 100%;
+    /* border-radius: 14px; */
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    font-size: 15px;
+    font-weight: 500;
+  }
 }
 </style>
