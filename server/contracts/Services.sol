@@ -70,7 +70,7 @@ contract Services {
     // TODO: Add service
     emit ServiceAdded(msg.sender);
     uint index = services[msg.sender].fees.length;
-    services[msg.sender].fees.push(Fee({ name, cost, index }));
+    services[msg.sender].fees.push(Fee({ name:name, cost: cost, index: index }));
 
     return true;
   }
@@ -102,7 +102,7 @@ contract Services {
   {
     // TODO: Update service
     emit ServiceUpdated(msg.sender);
-    services[msg.sender].fees[_index] = Fee({name: name, cost: cost});
+    services[msg.sender].fees[_index] = Fee({name: name, cost: cost, index: _index});
 
     return true;
   }
