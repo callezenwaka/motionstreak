@@ -6,11 +6,13 @@ import cors from "cors";
 import document from "./routes/document";
 import service from "./routes/service";
 import account from "./routes/account";
-const fs = require('fs');
-const path = require('path');
 // import { isAuthenticated, createWallet } from './auth';
 
 const app: Application = express();
+// Initialize firebase admin sdk config
+admin.initializeApp({
+  'credential': admin.credential.applicationDefault(),
+});
 
 // admin.initializeApp({
 //   credential: admin.credential.cert({

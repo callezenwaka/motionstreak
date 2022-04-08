@@ -3,8 +3,7 @@ interface Document {
   verifier: string;
   certifier: string;
   name: string;
-  description: string;
-  image?: string;
+  imageURL?: string;
   fee: number;
   index?: number;
   status?: number;

@@ -21,21 +21,13 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Documents__factory>;
     getContractFactory(
-      name: "EmailRegex",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.EmailRegex__factory>;
-    getContractFactory(
-      name: "Greeter",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.Greeter__factory>;
-    getContractFactory(
       name: "Services",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.Services__factory>;
     getContractFactory(
-      name: "StringUtils",
+      name: "Utils",
       signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.StringUtils__factory>;
+    ): Promise<Contracts.Utils__factory>;
 
     getContractAt(
       name: "Accounts",
@@ -48,25 +40,15 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.Documents>;
     getContractAt(
-      name: "EmailRegex",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.EmailRegex>;
-    getContractAt(
-      name: "Greeter",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.Greeter>;
-    getContractAt(
       name: "Services",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.Services>;
     getContractAt(
-      name: "StringUtils",
+      name: "Utils",
       address: string,
       signer?: ethers.Signer
-    ): Promise<Contracts.StringUtils>;
+    ): Promise<Contracts.Utils>;
 
     // default types
     getContractFactory(

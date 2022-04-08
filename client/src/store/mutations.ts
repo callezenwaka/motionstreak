@@ -1,18 +1,21 @@
 import { MutationTree } from 'vuex'
-import { State, Account, Document, Service } from './state'
+import { State, Account, Document, Service, Profile } from './state'
 
 export enum MutationType {
+  // account
   // AddAccount = `ADD_ACCOUNT`,
   SetAccounts = `SET_ACCOUNTS`,
   SetAccount = `SET_ACCOUNT`,
   // UpdateAccount = `UPDATE_ACCOUNT`,
 
+  // document
   // AddDocument = `ADD_DOCUMENT`,
   SetDocuments = `SET_DOCUMENTS`,
   SetDocument = `SET_DOCUMENT`,
   // EditDocument = 'EDIT_DOCUMENT',
   // UpdateDocument = `UPDATE_DOCUMENT`,
 
+  // service
   // AddService = `ADD_SERVICE`,
   SetServices = `SET_SERVICES`,
   SetService = `SET_SERVICE`,
@@ -20,8 +23,13 @@ export enum MutationType {
   // UpdateService = `UPDATE_SERVICE`,
   // DeleteService = `DELETE_SERVICE`,
 
-  SetIsLoading = 'SET_IS_LOADING',
-  SetIdToken = 'SET_ID_TOKEN',
+  // auth
+  Logout = `LOGOUT`,
+
+  // others
+  SetProfile = `SET_PROFILE`,
+  SetIsLoading = `SET_IS_LOADING`,
+  SetIdToken = `SET_ID_TOKEN`,
 }
 
 export type Mutations = {
@@ -55,6 +63,11 @@ export type Mutations = {
   //   service: Partial<Service> & { index: number }
   // ): void;
 
+  // auth
+  [MutationType.Logout](state: State, value: Profile): void;
+
+  // others
+  [MutationType.SetProfile](state: State, value: Profile): void;
   [MutationType.SetIsLoading](state: State, value: boolean): void;
   [MutationType.SetIdToken](state: State, value: string): void;
 };
@@ -84,7 +97,15 @@ export const mutations: MutationTree<State> & Mutations = {
     state.service = service;
   },
 
+  // auth 
+  [MutationType.Logout](state, value) {
+    state.profile = value;
+  },
+
   // others
+  [MutationType.SetProfile](state, value) {
+    state.profile = value;
+  },
   [MutationType.SetIsLoading](state, value) {
     state.isLoading = value;
   },

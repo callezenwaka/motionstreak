@@ -1,9 +1,14 @@
 import { ActionContext, ActionTree } from 'vuex'
 import { Mutations, MutationType } from './mutations'
 import { State, Account, Document, Service } from './state'
+import firebase from 'firebase';
 import account from '@/services/account';
 import service from '@/services/service';
 import document from '@/services/document';
+import { services, documents } from '../data/data';
+import Profile from '@/types/Profile';
+import Register from '@/types/Register';
+import Login from '@/types/Login';
 
 export enum ActionTypes {
   // account
@@ -27,7 +32,13 @@ export enum ActionTypes {
   UpdateService = `UPDATE_SERVICE`,
   DeleteService = `DELETE_SERVICE`,
 
+  // auth
+  Register = `REGISTER`,
+  Login = `LOGIN`,
+  Logout = `LOGOUT`,
+
   // others
+  SetProfile = `SET_Profile`,
   SetIsLoading = 'SET_IS_LOADING',
   SetIdToken = 'SET_ID_TOKEN'
 }
@@ -62,13 +73,19 @@ export type Actions = {
   [ActionTypes.UpdateService](context: ActionAugments, payload: Service): void;
   [ActionTypes.DeleteService](context: ActionAugments, payload: number): void;
 
+  // auth
+  [ActionTypes.Register](context: ActionAugments, payload: Register): void;
+  [ActionTypes.Login](context: ActionAugments, payload: Login): void;
+  [ActionTypes.Logout](context: ActionAugments, payload: Profile): void;
+
   // others
   [ActionTypes.SetIsLoading](context: ActionAugments, payload: boolean): void;
+  [ActionTypes.SetProfile](context: ActionAugments, payload: Profile): void;
   [ActionTypes.SetIdToken](context: ActionAugments, payload: string): void;
 
 }
 
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
+// const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 export const actions: ActionTree<State, State> & Actions = {
   // account
@@ -85,6 +102,9 @@ export const actions: ActionTree<State, State> & Actions = {
   },
   async [ActionTypes.AddAccount](context, payload) {
     try {
+      // TODO: add account
+      console.log(payload);
+      return;
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
       const data = await account.addAccount(context.rootGetters.idToken, payload);
@@ -146,6 +166,9 @@ export const actions: ActionTree<State, State> & Actions = {
   },
   async [ActionTypes.AddDocument](context, payload) {
     try {
+      // TODO: add document
+      console.log(payload);
+      return;
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
       const data = await document.addDocument(context.rootGetters.idToken, payload);
@@ -159,7 +182,8 @@ export const actions: ActionTree<State, State> & Actions = {
     try {
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
-      const data = await document.getDocuments(context.rootGetters.idToken);
+      // const data = await document.getDocuments(context.rootGetters.idToken);      
+      const data = documents;
       context.commit(MutationType.SetIsLoading, false)
       if (!Array.isArray(data)) return;
       context.commit(MutationType.SetDocuments, data);
@@ -195,6 +219,9 @@ export const actions: ActionTree<State, State> & Actions = {
   // service
   async [ActionTypes.AddService](context, payload) {
     try {
+      // add service
+      console.log(payload);
+      return;
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
       const data = await service.addService(context.rootGetters.idToken, payload);
@@ -204,14 +231,21 @@ export const actions: ActionTree<State, State> & Actions = {
       return error
     }
   },
-  async [ActionTypes.GetServices](context) {
+  async [ActionTypes.GetServices](context, payload) {
     try {
+      console.log(payload);
       context.commit(MutationType.SetIsLoading, true)
-      // await sleep(1000);
-      const data = await service.getServices(context.rootGetters.idToken);
+      const data = services.find(service => {
+        if (service.address == payload) {
+          return service.fees;
+        }
+      });
+      console.log(data);
+      // const data = await service.getServices(context.rootGetters.idToken);
       context.commit(MutationType.SetIsLoading, false)
-      if (!Array.isArray(data)) return;
-      context.commit(MutationType.SetServices, data);
+      // if (!Array.isArray(data)) return;
+      if(!data) return;
+      context.commit(MutationType.SetServices, data.fees);
       return data;
     } catch (error) {
       return error
@@ -253,6 +287,54 @@ export const actions: ActionTree<State, State> & Actions = {
     }
   },
   // others
+  async [ActionTypes.Register](context, payload) {
+    try {
+      // TODO: register account
+      const { displayName, phoneNumber, photoURL, email, password, role, isActivated } = payload;
+      console.log(displayName, phoneNumber, photoURL, email, password, role, isActivated);
+      return;
+      context.commit(MutationType.SetIsLoading, true)
+      // await sleep(1000);
+      // const data = await service.addService(context.rootGetters.idToken, payload);
+      const { user } = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      if (!user) return;
+      context.dispatch(ActionTypes.AddAccount, {
+        displayName,
+        phoneNumber,
+        photoURL,
+        email,
+        role,
+        isActivated,
+      })
+      context.commit(MutationType.SetIsLoading, false)
+      return user;
+    } catch (error) {
+      return error
+    }
+  },
+  async [ActionTypes.Login](context, payload) {
+    try {
+      const { email, password } = payload;
+      console.log(email, password);
+      return;
+      context.commit(MutationType.SetIsLoading, true)
+      // await sleep(1000);
+      const { user } = await firebase.auth().signInWithEmailAndPassword(email, password);
+      if(!user) return;
+      context.commit(MutationType.SetIsLoading, false)
+      return user;
+    } catch (error) {
+      return error
+    }
+  },
+  async [ActionTypes.Logout](context, payload) {
+    context.commit(MutationType.Logout, payload);
+  },
+
+  // others
+  async [ActionTypes.SetProfile](context, payload) {
+    context.commit(MutationType.SetProfile, payload);
+  },
   async [ActionTypes.SetIsLoading](context, payload) {
     context.commit(MutationType.SetIsLoading, payload);
   },

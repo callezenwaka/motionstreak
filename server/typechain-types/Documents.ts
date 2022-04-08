@@ -24,7 +24,7 @@ export declare namespace Documents {
     certifier: string;
     name: string;
     description: string;
-    image: string;
+    imageURL: string;
     fee: BigNumberish;
     index: BigNumberish;
     status: BigNumberish;
@@ -46,7 +46,7 @@ export declare namespace Documents {
     certifier: string;
     name: string;
     description: string;
-    image: string;
+    imageURL: string;
     fee: BigNumber;
     index: BigNumber;
     status: number;
@@ -213,7 +213,7 @@ export interface Documents extends BaseContract {
     ): Promise<ContractTransaction>;
 
     updateDocument(
-      _image: string,
+      _imageURL: string,
       _index: BigNumberish,
       _fee: BigNumberish,
       status: BigNumberish,
@@ -251,7 +251,7 @@ export interface Documents extends BaseContract {
   ): Promise<ContractTransaction>;
 
   updateDocument(
-    _image: string,
+    _imageURL: string,
     _index: BigNumberish,
     _fee: BigNumberish,
     status: BigNumberish,
@@ -287,7 +287,7 @@ export interface Documents extends BaseContract {
     kill(overrides?: CallOverrides): Promise<void>;
 
     updateDocument(
-      _image: string,
+      _imageURL: string,
       _index: BigNumberish,
       _fee: BigNumberish,
       status: BigNumberish,
@@ -343,7 +343,7 @@ export interface Documents extends BaseContract {
     ): Promise<BigNumber>;
 
     updateDocument(
-      _image: string,
+      _imageURL: string,
       _index: BigNumberish,
       _fee: BigNumberish,
       status: BigNumberish,
@@ -388,7 +388,7 @@ export interface Documents extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     updateDocument(
-      _image: string,
+      _imageURL: string,
       _index: BigNumberish,
       _fee: BigNumberish,
       status: BigNumberish,

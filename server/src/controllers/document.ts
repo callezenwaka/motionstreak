@@ -1,11 +1,11 @@
 import { Response, NextFunction } from "express";
 import { ethers } from 'ethers';
-// import axios from 'axios';
 import { create } from 'ipfs-http-client';
 import Document from '../types/Document';
 import { documentAddress } from '../config';
 import Documents from '../../artifacts/contracts/Documents.sol/Documents.json';
 const client = create({ host: 'localhost', port: 5001, protocol: 'http' });
+
 
 /**
  * [START GET DOCUMENTS]
@@ -37,7 +37,7 @@ const client = create({ host: 'localhost', port: 5001, protocol: 'http' });
         certifier: result.certifier,
         name: result.name,
         description: result.description,
-        image: result.image,
+        imageURL: result.imageURL,
         fee: result.fee,
         index: result.index,
         status: result.status,
@@ -72,6 +72,7 @@ const client = create({ host: 'localhost', port: 5001, protocol: 'http' });
 
     const res = await documentContract.addDocument(certifier, verifier, name, description, fee);
     await res.wait();
+    console.log(res.blockNumber);
     
 		return res.status(200).json('Success');
 	} catch (error) {
@@ -108,7 +109,7 @@ export const getDocument = async (req: any, res: Response, next: NextFunction) =
       certifier: result.certifier,
       name: result.name,
       description: result.description,
-      image: result.image,
+      imageURL: result.imageURL,
       fee: result.fee,
       index: result.index,
       status: result.status,
@@ -139,8 +140,8 @@ export const getDocument = async (req: any, res: Response, next: NextFunction) =
 
     // Send url back to client
     let result = await client.add(Buffer.from(req.file.buffer));
-    const image = `https://ipfs.infura.io/ipfs/${result.path}`;
-    return res.status(200).json(image);
+    const imageURL = `https://ipfs.infura.io/ipfs/${result.path}`;
+    return res.status(200).json(imageURL);
   } catch (error) {
 		return res.status(500).json('Internal Server Error!');
   }
@@ -158,15 +159,15 @@ export const getDocument = async (req: any, res: Response, next: NextFunction) =
 export const updateDocument = async (req: any, res: Response, next: NextFunction) => {
 	try {
 		// TODO: create a provider and update a fee
-    const { image, fee, status, index } = req.body;
-    if (!image || !fee || !status || !index) return;
+    const { imageURL, fee, status, index } = req.body;
+    if (!imageURL || !fee || !status || !index) return;
 
     const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.PROJECT_ID}`);
     const wallet = new ethers.Wallet(`${req.secret}`);
     const signer = wallet.connect(provider);
     const documentContract = new ethers.Contract(documentAddress, Documents.abi, signer);
 
-    const res = await documentContract.updateDocument(image, index, fee, status);
+    const res = await documentContract.updateDocument(imageURL, index, fee, status);
     await res.wait();
     
 		return res.status(200).json('Success');
