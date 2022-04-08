@@ -3,7 +3,6 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 import "hardhat/console.sol";
-import "./Utils.sol";
 import "./Accounts.sol";
 
 contract Services {
@@ -29,14 +28,14 @@ contract Services {
   /** @dev check for user paid enough.
     */
   modifier isTenant() {
-    require(Utils.isEqual(Accounts(accountsAddress).getAccount(msg.sender).role, "Tenant"), "Access Forbidden");
+    require(Accounts(accountsAddress).getAccount(msg.sender).isTenant == true, "Forbidden");
     _;
   }
 
   /** @dev check for contract owner.
   */
   modifier onlyOwner {
-    require(msg.sender == owner, "Unauthorised Access.");
+    require(msg.sender == owner, "Unauthorised.");
     _;
   }
 
@@ -71,7 +70,7 @@ contract Services {
     // TODO: Add service
     emit ServiceAdded(msg.sender);
     uint index = services[msg.sender].fees.length;
-    services[msg.sender].fees.push(Fee({ name: name, cost: cost, index: index }));
+    services[msg.sender].fees.push(Fee({ name, cost, index }));
 
     return true;
   }
@@ -93,9 +92,9 @@ contract Services {
   /** @dev update processing charge of certifier.
     * @param name service name.
     * @param cost service cost.
-    * @param index service index.
+    * @param _index service index.
     */
-  function updateService(string memory name, uint cost, uint index)
+  function updateService(string memory name, uint cost, uint _index)
   public
   payable
   isTenant()
@@ -103,7 +102,7 @@ contract Services {
   {
     // TODO: Update service
     emit ServiceUpdated(msg.sender);
-    services[msg.sender].fees[index] = Fee({name: name, cost: cost, index: index});
+    services[msg.sender].fees[_index] = Fee({name: name, cost: cost});
 
     return true;
   }

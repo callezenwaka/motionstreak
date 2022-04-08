@@ -18,16 +18,11 @@ import { Listener, Provider } from "@ethersproject/providers";
 import { TypedEventFilter, TypedEvent, TypedListener, OnEvent } from "./common";
 
 export declare namespace Services {
-  export type FeeStruct = {
-    name: string;
-    cost: BigNumberish;
-    index: BigNumberish;
-  };
+  export type FeeStruct = { name: string; cost: BigNumberish };
 
-  export type FeeStructOutput = [string, BigNumber, BigNumber] & {
+  export type FeeStructOutput = [string, BigNumber] & {
     name: string;
     cost: BigNumber;
-    index: BigNumber;
   };
 }
 
@@ -35,12 +30,12 @@ export interface ServicesInterface extends utils.Interface {
   contractName: "Services";
   functions: {
     "accountsAddress()": FunctionFragment;
-    "addService(string,uint256)": FunctionFragment;
-    "deleteService(uint256)": FunctionFragment;
-    "getService(uint256)": FunctionFragment;
-    "getServices(address)": FunctionFragment;
+    "addFee(string,uint256)": FunctionFragment;
+    "deleteFee(uint256)": FunctionFragment;
+    "getFee(uint256)": FunctionFragment;
+    "getFees(address)": FunctionFragment;
     "kill()": FunctionFragment;
-    "updateService(string,uint256,uint256)": FunctionFragment;
+    "updateFee(string,uint256,uint256)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -48,21 +43,21 @@ export interface ServicesInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "addService",
+    functionFragment: "addFee",
     values: [string, BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "deleteService",
+    functionFragment: "deleteFee",
     values: [BigNumberish]
   ): string;
   encodeFunctionData(
-    functionFragment: "getService",
+    functionFragment: "getFee",
     values: [BigNumberish]
   ): string;
-  encodeFunctionData(functionFragment: "getServices", values: [string]): string;
+  encodeFunctionData(functionFragment: "getFees", values: [string]): string;
   encodeFunctionData(functionFragment: "kill", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "updateService",
+    functionFragment: "updateFee",
     values: [string, BigNumberish, BigNumberish]
   ): string;
 
@@ -70,44 +65,35 @@ export interface ServicesInterface extends utils.Interface {
     functionFragment: "accountsAddress",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "addService", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "deleteService",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getService", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getServices",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "addFee", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "deleteFee", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getFee", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getFees", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "kill", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "updateService",
-    data: BytesLike
-  ): Result;
+  decodeFunctionResult(functionFragment: "updateFee", data: BytesLike): Result;
 
   events: {
-    "ServiceAdded(address)": EventFragment;
-    "ServiceDeleted(address)": EventFragment;
-    "ServiceUpdated(address)": EventFragment;
+    "FeeAdded(address)": EventFragment;
+    "FeeDeleted(address)": EventFragment;
+    "FeeUpdated(address)": EventFragment;
   };
 
-  getEvent(nameOrSignatureOrTopic: "ServiceAdded"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ServiceDeleted"): EventFragment;
-  getEvent(nameOrSignatureOrTopic: "ServiceUpdated"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeeAdded"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeeDeleted"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FeeUpdated"): EventFragment;
 }
 
-export type ServiceAddedEvent = TypedEvent<[string], { user: string }>;
+export type FeeAddedEvent = TypedEvent<[string], { user: string }>;
 
-export type ServiceAddedEventFilter = TypedEventFilter<ServiceAddedEvent>;
+export type FeeAddedEventFilter = TypedEventFilter<FeeAddedEvent>;
 
-export type ServiceDeletedEvent = TypedEvent<[string], { user: string }>;
+export type FeeDeletedEvent = TypedEvent<[string], { user: string }>;
 
-export type ServiceDeletedEventFilter = TypedEventFilter<ServiceDeletedEvent>;
+export type FeeDeletedEventFilter = TypedEventFilter<FeeDeletedEvent>;
 
-export type ServiceUpdatedEvent = TypedEvent<[string], { user: string }>;
+export type FeeUpdatedEvent = TypedEvent<[string], { user: string }>;
 
-export type ServiceUpdatedEventFilter = TypedEventFilter<ServiceUpdatedEvent>;
+export type FeeUpdatedEventFilter = TypedEventFilter<FeeUpdatedEvent>;
 
 export interface Services extends BaseContract {
   contractName: "Services";
@@ -139,23 +125,23 @@ export interface Services extends BaseContract {
   functions: {
     accountsAddress(overrides?: CallOverrides): Promise<[string]>;
 
-    addService(
+    addFee(
       name: string,
       cost: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    deleteService(
+    deleteFee(
       _index: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    getService(
+    getFee(
       _index: BigNumberish,
       overrides?: CallOverrides
-    ): Promise<[Services.FeeStructOutput]>;
+    ): Promise<[Services.FeeStructOutput] & { fee: Services.FeeStructOutput }>;
 
-    getServices(
+    getFees(
       _address: string,
       overrides?: CallOverrides
     ): Promise<[Services.FeeStructOutput[]]>;
@@ -164,33 +150,33 @@ export interface Services extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
-    updateService(
+    updateFee(
       name: string,
       cost: BigNumberish,
-      index: BigNumberish,
+      _index: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
   };
 
   accountsAddress(overrides?: CallOverrides): Promise<string>;
 
-  addService(
+  addFee(
     name: string,
     cost: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  deleteService(
+  deleteFee(
     _index: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  getService(
+  getFee(
     _index: BigNumberish,
     overrides?: CallOverrides
   ): Promise<Services.FeeStructOutput>;
 
-  getServices(
+  getFees(
     _address: string,
     overrides?: CallOverrides
   ): Promise<Services.FeeStructOutput[]>;
@@ -199,90 +185,84 @@ export interface Services extends BaseContract {
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
-  updateService(
+  updateFee(
     name: string,
     cost: BigNumberish,
-    index: BigNumberish,
+    _index: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   callStatic: {
     accountsAddress(overrides?: CallOverrides): Promise<string>;
 
-    addService(
+    addFee(
       name: string,
       cost: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    deleteService(
+    deleteFee(
       _index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
-    getService(
+    getFee(
       _index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<Services.FeeStructOutput>;
 
-    getServices(
+    getFees(
       _address: string,
       overrides?: CallOverrides
     ): Promise<Services.FeeStructOutput[]>;
 
     kill(overrides?: CallOverrides): Promise<void>;
 
-    updateService(
+    updateFee(
       name: string,
       cost: BigNumberish,
-      index: BigNumberish,
+      _index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
   };
 
   filters: {
-    "ServiceAdded(address)"(user?: null): ServiceAddedEventFilter;
-    ServiceAdded(user?: null): ServiceAddedEventFilter;
+    "FeeAdded(address)"(user?: null): FeeAddedEventFilter;
+    FeeAdded(user?: null): FeeAddedEventFilter;
 
-    "ServiceDeleted(address)"(user?: null): ServiceDeletedEventFilter;
-    ServiceDeleted(user?: null): ServiceDeletedEventFilter;
+    "FeeDeleted(address)"(user?: null): FeeDeletedEventFilter;
+    FeeDeleted(user?: null): FeeDeletedEventFilter;
 
-    "ServiceUpdated(address)"(user?: null): ServiceUpdatedEventFilter;
-    ServiceUpdated(user?: null): ServiceUpdatedEventFilter;
+    "FeeUpdated(address)"(user?: null): FeeUpdatedEventFilter;
+    FeeUpdated(user?: null): FeeUpdatedEventFilter;
   };
 
   estimateGas: {
     accountsAddress(overrides?: CallOverrides): Promise<BigNumber>;
 
-    addService(
+    addFee(
       name: string,
       cost: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    deleteService(
+    deleteFee(
       _index: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    getService(
-      _index: BigNumberish,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    getFee(_index: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
-    getServices(
-      _address: string,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
+    getFees(_address: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     kill(
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
-    updateService(
+    updateFee(
       name: string,
       cost: BigNumberish,
-      index: BigNumberish,
+      _index: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
   };
@@ -290,23 +270,23 @@ export interface Services extends BaseContract {
   populateTransaction: {
     accountsAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    addService(
+    addFee(
       name: string,
       cost: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    deleteService(
+    deleteFee(
       _index: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    getService(
+    getFee(
       _index: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getServices(
+    getFees(
       _address: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
@@ -315,10 +295,10 @@ export interface Services extends BaseContract {
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
-    updateService(
+    updateFee(
       name: string,
       cost: BigNumberish,
-      index: BigNumberish,
+      _index: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
   };

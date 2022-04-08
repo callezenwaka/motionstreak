@@ -1,39 +1,50 @@
 <template>
-  <div class="certify">
-    <!-- <Header></Header> -->
-    <form class="form--container" @submit.prevent="handleCertify">
+  <div class="document">
+    <Header></Header>
+    <form class="form--container" @submit.prevent="handleDocument">
       <div class="form--header">
-        <h2 class="form--title">Certify Document</h2>
+        <h2 class="form--title">Submit Document</h2>
       </div>
       <div v-if="!!validations.length" class="validations">
         <ul style="text-align: left;"><li style="list-style-type: disc;" v-for="(validation, index) in validations" :key="index">{{validation}}</li></ul>
       </div>
       <div class="form--item">
-        <label class="form--label" for="address">Destination Address: </label>
-        <input class="form--input" type="text" name="address" id="address" v-model="certify.verifier" @blur="handleBlur($event)" readonly required />
+        <label class="form--label" for="requester">User Address: </label>
+        <input class="form--input" type="text" name="requester" id="requester" v-model="document.requester" @blur="handleBlur($event)" placeholder="Enter your address" required />
       </div>
       <div class="form--item">
+        <label class="form--label" for="verifier">Destination School Address: </label>
+        <input class="form--input" type="text" name="verifier" id="verifier" v-model="document.verifier" @blur="handleBlur($event)" placeholder="Enter destination school address" required />
+      </div>
+      <div class="form--item">
+        <label class="form--label" for="certifier">Source School Address: </label>
+        <input class="form--input" type="text" name="certifier" id="certifier" v-model="document.certifier" @blur="handleBlur($event)"  @input="handleCertifier($event)" placeholder="Enter source school address" required />
+      </div>
+      <!-- <div class="form--item">
         <label class="form--label" for="name">Document Name: </label>
-        <input class="form--input" type="text" name="name" id="name" v-model="certify.name" @blur="handleBlur($event)" readonly required />
+        <input class="form--input" type="text" name="name" id="name" v-model="document.name" @blur="handleBlur($event)" placeholder="Enter document name" required />
+      </div> -->
+      <div class="form--item">
+        <label for="fee" class="form--label">Document Name: </label><br>
+        <select name="fee" id="fee" ref="fee" class="form--input" @change="handleFee($event)">
+          <option value="" selected disabled>Select Document</option>
+          <option :value="{name: service.name, cost: service.cost}" v-for="(service) in services" :key="service.index">{{ service.name }}</option>
+        </select>
       </div>
       <div class="form--item">
         <label class="form--label" for="fee">Processing Fee: </label>
-        <input class="form--input" type="text" name="fee" id="fee" v-model="certify.fee" @blur="handleBlur($event)" readonly required />
+        <input class="form--input" type="text" name="fee" id="fee" v-model="document.fee" @blur="handleBlur($event)" placeholder="Enter processing fee" readonly required />
       </div>
       <div class="form--item">
-        <label for="status" class="form--label">Document Status: </label>
-        <select class="form--input" name="status" id="status" v-model="certify.status">
-          <option value="" selected disabled>Select Status</option>
-          <option :value="status.CERTIFIED">CERTIFIED</option>
-          <option :value="status.REJECTED">REJECTED</option>
-        </select>
+        <label class="form--label" for="description">Document Description: </label>
+        <input class="form--input" type="text" name="description" id="description" v-model="document.description" @blur="handleBlur($event)" placeholder="Enter description" required />
       </div>
       <div class="form--item">
         <label class="form--label" for="file">Document Image: </label>
         <input class="form--input" type="file" name="file" id="file" @change="handleImage" @blur="handleBlur($event)" required />
       </div>
       <div class="form--item">
-        <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Send</button>
+        <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Document</button>
       </div>
     </form>
   </div>
@@ -41,58 +52,65 @@
 
 <script lang="ts">
 // @ is an alias to /src
-// import Header from "@/components/partials/Header.vue";
+import Header from "@/components/partials/HeaderView.vue";
 import { computed, defineComponent, reactive } from "vue";
-// import { useStore } from "vuex";
-import { useStore } from '@/store'
-import { ActionTypes } from '@/store/actions'
+import { useStore } from "vuex";
 import { useRouter } from 'vue-router';
+import Service from '@/types/Service';
 import Document from '@/types/Document';
 export default defineComponent({
-  name: "CertifyView",
+  name: "DocumentView",
   components: {
-    // Header
+    Header
   },
   setup() {
     const store = useStore();
     // const route = useRoute();
     const router = useRouter();
-    enum status { CERTIFIED = 1, VERIFIED, REJECTED }
     let validations = reactive<string[]>([]);
-    const document = computed((): Document => store.getters.document);
-    const isLoading = computed((): boolean => store.state.isLoading)
-    const updateDocument = (document: Document) => store.dispatch(ActionTypes.UpdateDocument, document);
-    // const addDocumentImage = (file: FormData) => store.dispatch('addDocumentImage', file);
-    let certify = reactive({
-      requester: document.value.requester,
-      verifier: document.value.verifier,
-      certifier: document.value.certifier,
-      name: document.value.name,
-      imageURL: '',
-      fee: document.value.fee,
-      index: document.value.index,
-      status: 0,
+    const services = computed((): Service[] => store.getters.services);
+    const getCertifier = (address: string) => store.dispatch('getCertifier', address);
+    const addDocument = (document: Document) => store.dispatch('addDocument', document);
+    const addDocumentImage = (file: FormData) => store.dispatch('addDocumentImage', file);
+    let document = reactive({
+      requester: '',
+      verifier: '',
+      certifier: '',
+      name: '',
+      description: "",
+      image: '',
+      fee: 0,
     });
     const isValid = computed(() => {
       return (
-        certify.requester !== "" && 
-        certify.verifier !== "" && 
-        certify.certifier !== "" && 
-        certify.name !== "" && 
-        certify.imageURL !== "" && 
-        certify.fee !== 0 &&
-        certify.status !== 0
+        document.requester !== "" && 
+        document.verifier !== "" && 
+        document.certifier !== "" && 
+        document.name !== "" && 
+        document.description !== "" && 
+        document.image !== "" && 
+        document.fee !== 0
       );
     });
+    const handleFee = async (event: Event) => {
+      const target = event.target as HTMLSelectElement;
+      let item = services.value[target.selectedIndex-1]
+      document.name = item.name;
+      document.fee = item.cost;
+    }
     const handleBlur = (event: Event) => {
       const target = event.target as HTMLInputElement;
       target.style.borderColor = target.value
         ? "rgba(229,231,235, 1)"
         : "rgba(255, 0, 0, 1)";
     };
+    const handleCertifier = async (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      await getCertifier(target.value);
+    };
     const handleValidation = (): boolean => {
       validations = [];
-      if (!certify.requester) {
+      if (!document.requester) {
         validations.push("Your address is required!");
       }
       setTimeout(() => (validations = []), 5000);
@@ -106,15 +124,15 @@ export default defineComponent({
       let formData = new FormData();
       formData.append("file", file);
       try {
-        // document.imageURL = await addDocumentImage(formData);
+        document.image = await addDocumentImage(formData);
       } catch (error) {
         console.log(error);
       }
     }
-    const handleCertify = async () => {
+    const handleDocument = async () => {
       if (!handleValidation()) return;
       try {
-        await updateDocument({...certify});
+        await addDocument(document);
         router.push({ name: "Home" });
       } catch (error) {
         console.log(error);
@@ -122,24 +140,24 @@ export default defineComponent({
     };
 
     return {
-      isLoading,
+      services,
       validations, 
-      document,
-      certify,
+      document, 
       isValid,
-      status,
-      handleBlur,
+      handleFee,
+      handleBlur, 
+      handleCertifier,
       handleValidation, 
       handleImage, 
-      handleCertify 
+      handleDocument 
     };
   },
 });
 </script>
 
 <style scoped>
-/* certify */
-.certify {
+/* document */
+.document {
   /* padding: 1rem; */
   height: 100%;
   min-height: 100vh;
@@ -151,7 +169,6 @@ export default defineComponent({
 .form--container {
   width: 100%;
   margin: 50px auto;
-  padding: 0 .5rem;
 }
 .form--title {
   text-align: center;
@@ -220,7 +237,6 @@ export default defineComponent({
 .form--button.isValid:hover {
   opacity: 0.5;
 }
-
 /* mini */
 @media only screen and (min-width: 481px) {
   .form--container {

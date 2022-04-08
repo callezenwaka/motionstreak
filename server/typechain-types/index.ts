@@ -3,10 +3,14 @@
 /* eslint-disable */
 export type { Accounts } from "./Accounts";
 export type { Documents } from "./Documents";
+export type { EmailRegex } from "./EmailRegex";
+export type { Greeter } from "./Greeter";
 export type { Services } from "./Services";
-export type { Utils } from "./Utils";
+export type { StringUtils } from "./StringUtils";
 
 export { Accounts__factory } from "./factories/Accounts__factory";
 export { Documents__factory } from "./factories/Documents__factory";
+export { EmailRegex__factory } from "./factories/EmailRegex__factory";
+export { Greeter__factory } from "./factories/Greeter__factory";
 export { Services__factory } from "./factories/Services__factory";
-export { Utils__factory } from "./factories/Utils__factory";
+export { StringUtils__factory } from "./factories/StringUtils__factory";

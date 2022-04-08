@@ -24,12 +24,20 @@
         <label class="form--label" for="password">Password: </label>
         <input class="form--input" type="password" name="key" id="key" v-model="user.password" @blur="handleBlur($event)" placeholder="Enter your password" required />
       </div>
+      <!-- <div class="form--item">
+        <label class="form--label" for="tenant">Organization Account <span class="register--tip"><span class="register--blink tooltip">&quest;<span class="tooltiptext">Check if organization account.</span></span></span>: </label>
+        <input class="form--input" type="checkbox" name="tenant" id="tenant" v-model="user.isTenent" @blur="handleBlur($event)" placeholder="Enter your email" required />
+      </div> -->
       <div class="form--item" style="flex-direction: row; align-items: center;">
-        <label class="form--label" for="role">Organization Account? </label>&nbsp;<span class="register--tip"><span class="register--blink tooltip">&quest;<span class="tooltiptext">Check if organization account.</span></span></span>:&nbsp;&nbsp; 
-        <input class="form--checkbox" type="checkbox" name="role" id="role" v-model="user.role" true-value="Tenant" false-value="User" />
+        <label class="form--label" for="tenant">Organization Account </label>&nbsp;<span class="register--tip"><span class="register--blink tooltip">&quest;<span class="tooltiptext">Check if organization account.</span></span></span>:&nbsp;&nbsp; 
+        <input class="form--inputs" style="width: 16px; height: 16px;" type="checkbox" name="tenant" id="tenant" v-model="user.isTenent" @blur="handleBlur($event)" placeholder="Enter your email" required />
       </div>
+      <!-- <div class="form--item">
+        <label class="form--label" for="email">Email: </label>
+        <input class="form--input" type="email" name="email" id="email" v-model="user.email" @blur="handleBlur($event)" placeholder="Enter your email" required />
+      </div> -->
       <div class="form--item">
-        <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Sign Up</button>
+        <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Register</button>
       </div>
     </form>
   </div>
@@ -37,12 +45,11 @@
 
 <script lang="ts">
 // @ is an alias to /src
-import Header from "@/components/partials/Header.vue";
+import Header from "@/components/partials/HeaderView.vue";
 import { computed, defineComponent, reactive } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from 'vue-router';
 import Register from '@/types/Register';
-import { ActionTypes } from "@/store/actions";
 export default defineComponent({
   name: "RegisterView",
   components: {
@@ -53,14 +60,15 @@ export default defineComponent({
     // const route = useRoute();
     const router = useRouter();
     let validations = reactive<string[]>([]);
-    const register = (register: Register) => store.dispatch(ActionTypes.Register, register);
+    // const avatar = computed(() => !user.isTenent);
+    const register = (register: Register) => store.dispatch('register', register);
     let user = reactive({
       displayName: '',
       phoneNumber: '',
       photoURL: 'https://ipfs.infuria.io/ipfs/QmakHdxH44vEMZXkNGkEwZr9usFCe9CraHgWDsgQbYPWYV',
       email: '',
       password: '',
-      role: 'User',
+      isTenent: false,
       isActivated: true,
     });
     const isValid = computed(() => {
@@ -68,8 +76,7 @@ export default defineComponent({
         user.displayName !== "" && 
         user.phoneNumber !== "" && 
         user.email !== "" && 
-        user.password !== ""  && 
-        user.role !== "" 
+        user.password !== "" 
       );
     });
     const handleBlur = (event: Event) => {
@@ -92,7 +99,7 @@ export default defineComponent({
       if (!handleValidation()) return;
       try {
         await register({...user});
-        router.push({ name: "Home" });
+        router.push({ name: "HomeView" });
       } catch (error) {
         console.log(error);
       }
@@ -117,8 +124,8 @@ export default defineComponent({
 .form--container {
   width: 100%;
   margin: 50px auto;
-  margin: 0rem auto 0;
-  padding: 0 1rem;
+      margin: 5rem auto 0;
+    padding: 0 1rem;
 }
 .form--title {
   text-align: center;
@@ -148,10 +155,6 @@ export default defineComponent({
   font-weight: bold;
   line-height: 16px;
   letter-spacing: 0.02em;
-}
-.form--checkbox {
-  width: 16px;
-  height: 16px;
 }
 .form--input {
   background-color: rgb(255, 255, 255);
@@ -255,7 +258,6 @@ export default defineComponent({
   .form--container {
     width: 410px;
     margin: 0 auto;
-    margin: 10rem auto 0
   }
 }
 /* max */

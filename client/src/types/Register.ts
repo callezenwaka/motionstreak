@@ -4,7 +4,7 @@ interface Register {
   photoURL: string;
   email: string;
   password: string;
-  role: string;
+  isTenent: boolean;
   isActivated: boolean;
 }
 

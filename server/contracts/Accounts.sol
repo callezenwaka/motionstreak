@@ -3,7 +3,6 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 // import "hardhat/console.sol";
-import "./Utils.sol";
 
 /** @title Accounts. */
 contract Accounts {
@@ -15,10 +14,10 @@ contract Accounts {
     string phoneNumber;
     string email;
     string photoURL;
-    string role;
+    address affiliate;
+    bool isTenant;
     bool isActive;
     bool isActivated;
-    address affiliate;
   }
 
   event AccountAdded(address user);
@@ -44,8 +43,8 @@ contract Accounts {
 
   /** @dev check for user paid enough.
     */
-  modifier isTenant(string memory role) { 
-    require(Utils.isEqual(accounts[msg.sender].role, "Tenant"), "Access Forbidden");
+  modifier isTenant() { 
+    require(accounts[msg.sender].isTenant == true, "Forbidden");
     _;
   }
 
@@ -65,11 +64,11 @@ contract Accounts {
     * @param displayName account name.
     * @param email account email.
     * @param phoneNumber account phone.
-    * @param role account tenant.
+    * @param _isTenant account tenant.
     * @param isActivated account activation.
     * @return success account success.
     */
-  function addAccount(address _address, string memory displayName, string memory email, string memory phoneNumber, string memory photoURL, string memory role, bool isActivated) 
+  function addAccount(address _address, string memory displayName, string memory email, string memory phoneNumber, string memory photoURL, bool _isTenant, bool isActivated) 
   public 
   payable
   returns(bool)
@@ -80,7 +79,7 @@ contract Accounts {
     accounts[_address].email = email;
     accounts[_address].phoneNumber = phoneNumber;
     accounts[_address].photoURL = photoURL;
-    accounts[_address].role = role;
+    accounts[_address].isTenant = _isTenant;
     accounts[_address].isActivated = isActivated;
     accounts[_address].isActive = true;
     accounts[_address].affiliate = msg.sender;
@@ -124,7 +123,7 @@ contract Accounts {
     accounts[_address].email = email;
     accounts[_address].phoneNumber = phoneNumber;
     accounts[_address].photoURL = photoURL;
-    if(Utils.isEqual(accounts[msg.sender].role, "Tenant") && accounts[_address].affiliate == msg.sender) {
+    if(accounts[msg.sender].isTenant && _address != msg.sender) {
       accounts[_address].isActive = isActive;
     }
 

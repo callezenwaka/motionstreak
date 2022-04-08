@@ -3,11 +3,10 @@ interface Account {
   phoneNumber: string;
   photoURL: string;
   email: string;
-  role: string;
-  isActive: boolean;
-  isActivated: boolean;
-  address?: string;
-  affiliate?: string;
+  isTenant: boolean,
+  isActive: boolean,
+  isActivated: boolean,
+  address?: string,
 }
 
 export default Account;
