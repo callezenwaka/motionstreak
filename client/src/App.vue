@@ -11,14 +11,9 @@
         <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
       </svg>
     </div>
-  <!-- <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/document">Document</router-link> |
-    <router-link to="/register">Register</router-link> |
-    <router-link to="/login">Login</router-link> |
-    <router-link to="/about">About</router-link>
-  </div> -->
-  <router-view/>
+    <div class="app">
+      <router-view/>
+    </div>
 </template>
 
 <style>
@@ -180,7 +175,6 @@ body.light-mode .video-bg:before {
   -webkit-backdrop-filter: saturate(3);
   backdrop-filter: saturate(3);
 }
-
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -189,5 +183,22 @@ body.light-mode .video-bg:before {
   color: #2c3e50;
   color: #e7e9ea;
   min-width: 100%;
+}
+.app {
+  background-color: var(--theme-bg-color);
+  /* min-width: 1250px; */
+  max-width: 1250px;
+  max-width: 100%;
+  /* max-height: 860px; */
+  /* height: 100vh; */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  width: 100%;
+  /* border-radius: 14px; */
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  font-size: 15px;
+  font-weight: 500;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="login">
     <Header></Header>
-    <div class="app">
+    <div class="">
       <form class="form--container" @submit.prevent="handleLogin">
         <div class="form--header">
           <h2 class="form--title">Log in to your account</h2>
@@ -92,22 +92,6 @@ export default defineComponent({
   background-size: contain;
   background-repeat: no-repeat;
   transition: all 500ms linear;
-}
-.app {
-  background-color: var(--theme-bg-color);
-  /* min-width: 1250px; */
-  max-width: 1250px;
-  /* max-height: 860px; */
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  width: 100%;
-  /* border-radius: 14px; */
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  font-size: 15px;
-  font-weight: 500;
 }
 .form--container {
   width: 100%;

@@ -137,10 +137,10 @@ export const getDocument = async (req: any, res: Response, next: NextFunction) =
     if (!req.file) {
       return res.json("Please choose file to upload!");
     }
-
     // Send url back to client
     let result = await client.add(Buffer.from(req.file.buffer));
     const imageURL = `https://ipfs.infura.io/ipfs/${result.path}`;
+    console.log(imageURL);
     return res.status(200).json(imageURL);
   } catch (error) {
 		return res.status(500).json('Internal Server Error!');

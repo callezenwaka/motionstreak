@@ -1,37 +1,39 @@
 <template>
   <div class="register">
     <Header></Header>
-    <form class="form--container" @submit.prevent="handleRegister">
-      <div class="form--header">
-        <h2 class="form--title">Register</h2>
-      </div>
-      <div v-if="!!validations.length" class="validations">
-        <ul style="text-align: left;"><li style="list-style-type: disc;" v-for="(validation, index) in validations" :key="index">{{validation}}</li></ul>
-      </div>
-      <div class="form--item">
-        <label class="form--label" for="name">Full Name: </label>
-        <input class="form--input" type="text" name="name" id="name" v-model="user.displayName" @blur="handleBlur($event)" placeholder="Enter your full name" required />
-      </div>
-      <div class="form--item">
-        <label class="form--label" for="phone">Phone Number: </label>
-        <input class="form--input" type="tel" name="phone" id="phone" v-model="user.phoneNumber" @blur="handleBlur($event)" placeholder="Enter your phone number" required />
-      </div>
-      <div class="form--item">
-        <label class="form--label" for="email">Email: </label>
-        <input class="form--input" type="email" name="email" id="email" v-model="user.email" @blur="handleBlur($event)" placeholder="Enter your email" required />
-      </div>
-      <div class="form--item">
-        <label class="form--label" for="password">Password: </label>
-        <input class="form--input" type="password" name="key" id="key" v-model="user.password" @blur="handleBlur($event)" placeholder="Enter your password" required />
-      </div>
-      <div class="form--item" style="flex-direction: row; align-items: center;">
-        <label class="form--label" for="role">Organization Account? </label>&nbsp;<span class="register--tip"><span class="register--blink tooltip">&quest;<span class="tooltiptext">Check if organization account.</span></span></span>:&nbsp;&nbsp; 
-        <input class="form--checkbox" type="checkbox" name="role" id="role" v-model="user.role" true-value="Tenant" false-value="User" />
-      </div>
-      <div class="form--item">
-        <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Sign Up</button>
-      </div>
-    </form>
+    <div class="">
+      <form class="form--container" @submit.prevent="handleRegister">
+        <div class="form--header">
+          <h2 class="form--title">Register</h2>
+        </div>
+        <div v-if="!!validations.length" class="validations">
+          <ul style="text-align: left;"><li style="list-style-type: disc;" v-for="(validation, index) in validations" :key="index">{{validation}}</li></ul>
+        </div>
+        <div class="form--item">
+          <label class="form--label" for="name">Full Name: </label>
+          <input class="form--input" type="text" name="name" id="name" v-model="user.displayName" @blur="handleBlur($event)" placeholder="Enter your full name" required />
+        </div>
+        <div class="form--item">
+          <label class="form--label" for="phone">Phone Number: </label>
+          <input class="form--input" type="tel" name="phone" id="phone" v-model="user.phoneNumber" @blur="handleBlur($event)" placeholder="Enter your phone number" required />
+        </div>
+        <div class="form--item">
+          <label class="form--label" for="email">Email: </label>
+          <input class="form--input" type="email" name="email" id="email" v-model="user.email" @blur="handleBlur($event)" placeholder="Enter your email" required />
+        </div>
+        <div class="form--item">
+          <label class="form--label" for="password">Password: </label>
+          <input class="form--input" type="password" name="key" id="key" v-model="user.password" @blur="handleBlur($event)" placeholder="Enter your password" required />
+        </div>
+        <div class="form--item" style="flex-direction: row; align-items: center;">
+          <label class="form--label" for="role">Organization Account? </label>&nbsp;<span class="register--tip"><span class="register--blink tooltip">&quest;<span class="tooltiptext">Check if organization account.</span></span></span>:&nbsp;&nbsp; 
+          <input class="form--checkbox" type="checkbox" name="role" id="role" v-model="user.role" true-value="Tenant" false-value="User" />
+        </div>
+        <div class="form--item">
+          <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Sign Up</button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 

@@ -158,7 +158,7 @@ export const actions: ActionTree<State, State> & Actions = {
     try {
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
-      const data = await document.addDocumentImage(context.rootGetters.idToken, payload);
+      const data = await document.addDocumentImage(context.getters.profile.token, payload);
       context.commit(MutationType.SetIsLoading, false)
       if(!data) return;
       return data;

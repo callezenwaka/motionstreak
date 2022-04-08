@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard">
     <Header></Header>
-    <div class="app">
+    <div class="">
       <div class="wrapper">
         <div class="left-side">
           <div class="side-wrapper">

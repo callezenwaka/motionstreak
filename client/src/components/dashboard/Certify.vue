@@ -103,6 +103,7 @@ export default defineComponent({
     const handleImage = async (event: Event) => {
       const target = event.target as HTMLInputElement;
       const file = (target.files as FileList)[0];
+      console.log("file");
       let formData = new FormData();
       formData.append("file", file);
       try {
