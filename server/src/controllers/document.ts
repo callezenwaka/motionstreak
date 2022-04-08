@@ -133,7 +133,8 @@ export const getDocument = async (req: any, res: Response, next: NextFunction) =
  */
  export const postImage = async (req: any, res: Response, next: NextFunction) => {
   try {
-    // Add file
+    // TODO: Add file
+    console.log(req.fil);
     if (!req.file) {
       return res.json("Please choose file to upload!");
     }

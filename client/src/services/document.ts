@@ -24,7 +24,7 @@ export const API_URL = 'http://localhost:4000/';
 // export const API_URL = `https://fullstack-nft.herokuapp.com/`;
 
 export default {
-	async addDocumentImage(token: string, params: File): Promise<string> {
+	async addDocumentImage(token: string, params: FormData): Promise<string> {
 		console.log(token);
 		return await request(`${API_URL}document/image`, 'post', token, params);
 	},

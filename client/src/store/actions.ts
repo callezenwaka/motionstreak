@@ -157,6 +157,7 @@ export const actions: ActionTree<State, State> & Actions = {
   async [ActionTypes.AddDocumentImage](context, payload) {
     try {
       context.commit(MutationType.SetIsLoading, true)
+      console.log(payload);
       // await sleep(1000);
       const data = await document.addDocumentImage(context.getters.profile.token, payload);
       context.commit(MutationType.SetIsLoading, false)
