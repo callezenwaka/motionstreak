@@ -23,7 +23,7 @@
       <div class="form--item">
         <label for="status" class="form--label">Document Status: </label>
         <select class="form--input" name="status" id="status" v-model="certify.status">
-          <option value="" selected disabled>Select Status</option>
+          <option disabled :value={}>Select scope</option>
           <option :value="status.CERTIFIED">CERTIFIED</option>
           <option :value="status.REJECTED">REJECTED</option>
         </select>
@@ -41,9 +41,7 @@
 
 <script lang="ts">
 // @ is an alias to /src
-// import Header from "@/components/partials/Header.vue";
 import { computed, defineComponent, reactive } from "vue";
-// import { useStore } from "vuex";
 import { useStore } from '@/store'
 import { ActionTypes } from '@/store/actions'
 import { useRouter } from 'vue-router';
@@ -55,15 +53,13 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
-    // const route = useRoute();
     const router = useRouter();
     enum status { CERTIFIED = 1, VERIFIED, REJECTED }
     let validations = reactive<string[]>([]);
     const document = computed((): Document => store.getters.document);
-    const isLoading = computed((): boolean => store.state.isLoading)
-    const updateDocument = (document: Document) => store.dispatch(ActionTypes.UpdateDocument, document);
     const addDocumentImage = (formData: FormData) => store.dispatch(ActionTypes.AddDocumentImage, formData);
-    let certify = reactive({
+    const updateDocument = (document: Document) => store.dispatch(ActionTypes.UpdateDocument, document);
+    const certify = reactive({
       requester: document.value.requester,
       verifier: document.value.verifier,
       certifier: document.value.certifier,
@@ -103,11 +99,11 @@ export default defineComponent({
     const handleImage = async (event: Event) => {
       const target = event.target as HTMLInputElement;
       const file = (target.files as FileList)[0];
-      console.log(file);
       let formData = new FormData();
       formData.append("file", file);
       try {
         const data = await addDocumentImage(formData);
+        console.log(data);
         certify.imageURL = typeof data === "string"? data : '';
       } catch (error) {
         console.log(error);
@@ -124,7 +120,6 @@ export default defineComponent({
     };
 
     return {
-      isLoading,
       validations, 
       document,
       certify,

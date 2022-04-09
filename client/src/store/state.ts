@@ -1,5 +1,5 @@
 export const imageURL = `https://i.pinimg.com/736x/8a/8d/e9/8a8de9aa2e54526fecb40182e510e856.jpg`;
-export const photoURL = `https://cdn2.iconfinder.com/data/icons/user-people-4/48/5-512.png`;
+export const photoURL = `https://ipfs.infura.io/ipfs/QmUHa9QV34uPdJ1JZ5XqcQgn5jfmW3SxUnt3yoFfHu8Sow`;
 
 export type Profile = {
   displayName: string;

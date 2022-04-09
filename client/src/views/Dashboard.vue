@@ -110,11 +110,11 @@ export default defineComponent({
       isHelp: boolean,
     };
     const pages:Pages = reactive({
-      isDocuments: true,
+      isDocuments: false,
       isAccount: false,
       isService: false,
       isRequest: false,
-      isCertify: false,
+      isCertify: true,
       isVerify: false,
       isUser: false,
       isHelp: false,

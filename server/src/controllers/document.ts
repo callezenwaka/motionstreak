@@ -4,7 +4,10 @@ import { create } from 'ipfs-http-client';
 import Document from '../types/Document';
 import { documentAddress } from '../config';
 import Documents from '../../artifacts/contracts/Documents.sol/Documents.json';
-const client = create({ host: 'localhost', port: 5001, protocol: 'http' });
+const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
+// import { create } from 'ipfs-http-client';
+// const client = create(new URL(`https://ipfs.infura.io:${5001}/api/v0`))
+// const client = create(`https://ipfs.infura.io:${5001}/api/v0`);
 
 
 /**
@@ -15,7 +18,7 @@ const client = create({ host: 'localhost', port: 5001, protocol: 'http' });
  * @return {object} json account
  * Retrieve items
  */
- export const getDocuments = async (req: any, res: Response, next: NextFunction) => {
+export const getDocuments = async (req: any, res: Response, next: NextFunction) => {
 	try {
 		// Todo: create a provider and query for fees
     const { address } = req.query;
@@ -59,7 +62,7 @@ const client = create({ host: 'localhost', port: 5001, protocol: 'http' });
  * @return {object} json account
  * Add item
  */
- export const addDocument = async (req: any, res: Response, next: NextFunction) => {
+export const addDocument = async (req: any, res: Response, next: NextFunction) => {
 	try {
 		// TODO: create a provider and  add a fee
     const { certifier, verifier, name, description, fee } = req.body;
@@ -134,14 +137,12 @@ export const getDocument = async (req: any, res: Response, next: NextFunction) =
  export const postImage = async (req: any, res: Response, next: NextFunction) => {
   try {
     // TODO: Add file
-    console.log(req.fil);
     if (!req.file) {
       return res.json("Please choose file to upload!");
     }
     // Send url back to client
-    let result = await client.add(Buffer.from(req.file.buffer));
+    const result = await client.add(Buffer.from(req.file.buffer));
     const imageURL = `https://ipfs.infura.io/ipfs/${result.path}`;
-    console.log(imageURL);
     return res.status(200).json(imageURL);
   } catch (error) {
 		return res.status(500).json('Internal Server Error!');

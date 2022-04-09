@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { create } from 'ipfs-http-client';
 import { accountAddress } from '../config';
 import Accounts from '../../artifacts/contracts/Accounts.sol/Accounts.json';
-const client = create({ host: 'localhost', port: 5001, protocol: 'http' });
+const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 
 /**
  * [START POST ACCOUNT]
@@ -18,17 +18,6 @@ const client = create({ host: 'localhost', port: 5001, protocol: 'http' });
 		// TODO: create an account
     const { displayName, email, phoneNumber, photoURL, role, isActivated } = req.body;
     if (!displayName || !email || !phoneNumber || !photoURL || !role || !isActivated) return;
-    // const data = JSON.stringify({
-    //   displayName,
-    //   email,
-    //   phoneNumber,
-    //   photoURL,
-    //   role,
-    //   isActive,
-    //   isActivated,
-    // });
-    // const result = await client.add(data);
-    // const url = `https://ipfs.infura.io/ipfs/${result.path}`;
     console.log(displayName, email, phoneNumber, photoURL, role, isActivated);
     return;
 
@@ -99,15 +88,17 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
  */
  export const postImage = async (req: any, res: Response, next: NextFunction) => {
   try {
-    // Add file
+    // TODO: add file
+    console.log(req.file);
     if (!req.file) {
       return res.json("Please choose file to upload!");
     }
-
+    // return;
     // Send url back to client
-    let result = await client.add(Buffer.from(req.file.buffer));
-    const image = `https://ipfs.infura.io/ipfs/${result.path}`;
-    return res.status(200).json(image);
+    const result = await client.add(Buffer.from(req.file.buffer));
+    const photoURL = `https://ipfs.infura.io/ipfs/${result.path}`;
+    console.log(photoURL);
+    return res.status(200).json(photoURL);
   } catch (error) {
 		return res.status(500).json('Internal Server Error!');
   }
