@@ -9,20 +9,27 @@
         <ul style="text-align: left;"><li style="list-style-type: disc;" v-for="(validation, index) in validations" :key="index">{{validation}}</li></ul>
       </div>
       <div class="form--item">
+        <label class="form--label" for="name">Source Name: </label>
+        <input class="form--input" type="text" name="name" id="name" v-model="account.displayName" readonly required />
+      </div>
+      <div class="form--item">
         <label class="form--label" for="address">Source Address: </label>
-        <input class="form--input" type="text" name="address" id="address" v-model="verify.certifier" @blur="handleBlur($event)" readonly required />
+        <input class="form--input" type="text" name="address" id="address" v-model="verify.certifier" readonly required />
       </div>
       <div class="form--item">
         <label class="form--label" for="name">Document Name: </label>
-        <input class="form--input" type="text" name="name" id="name" v-model="verify.name" @blur="handleBlur($event)" readonly required />
+        <input class="form--input" type="text" name="name" id="name" v-model="verify.name" readonly required />
       </div>
       <div class="form--item">
         <label for="status" class="form--label">Document Status: </label>
         <select class="form--input" name="status" id="status" v-model="verify.status">
-          <option value="" selected disabled>Select Status</option>
+          <option :value=0 disabled>Select Status</option>
           <option :value="status.VERIFIED">VERIFIED</option>
           <option :value="status.REJECTED">REJECTED</option>
         </select>
+      </div>
+      <div class="form--item" v-if="verify.imageURL">
+        <img :src="verify.imageURL" :alt="verify.name">
       </div>
       <div class="form--item">
         <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Send</button>
@@ -40,6 +47,7 @@ import { useStore } from '@/store'
 import { ActionTypes } from '@/store/actions'
 import { useRouter } from 'vue-router';
 import Document from '@/types/Document';
+import { Account } from "@/store/state";
 export default defineComponent({
   name: "VerifyView",
   components: {
@@ -52,6 +60,7 @@ export default defineComponent({
     enum status { CERTIFIED = 1, VERIFIED, REJECTED }
     let validations = reactive<string[]>([]);
     const document = computed((): Document => store.getters.document);
+    const account = computed((): Account => store.getters.account);
     const isLoading = computed((): boolean => store.state.isLoading)
     const updateDocument = (document: Document) => store.dispatch(ActionTypes.UpdateDocument, document);
     let verify = reactive({
@@ -62,17 +71,17 @@ export default defineComponent({
       imageURL: document.value.imageURL,
       fee: document.value.fee,
       index: document.value.index,
-      status: 0,
+      status: document.value.status,
     });
     const isValid = computed(() => {
       return (
-        verify.requester !== "" && 
-        verify.verifier !== "" && 
-        verify.certifier !== "" && 
-        verify.name !== "" && 
-        verify.imageURL !== "" && 
-        verify.fee !== 0 &&
-        verify.status !== 0
+        typeof verify.requester === "string" && 
+        typeof verify.verifier === "string" && 
+        typeof verify.certifier === "string" && 
+        typeof verify.name === "string" && 
+        typeof verify.imageURL === "string" && 
+        typeof verify.fee === "number" &&
+        typeof verify.status === "number"
       );
     });
     const handleBlur = (event: Event) => {
@@ -108,6 +117,7 @@ export default defineComponent({
       isValid,
       status,
       verify,
+      account,
       handleBlur,
       handleValidation,
       handleVerify, 
@@ -199,7 +209,17 @@ export default defineComponent({
 .form--button.isValid:hover {
   opacity: 0.5;
 }
-
+img {
+  max-width: 50%;
+  min-width: 50%;
+  height: auto;
+  margin: 0 auto;
+  transition: transform ease-in-out 0.3s;
+}
+img:hover {
+  min-width: 100%;
+  transform: scale(1.2); 
+}
 /* mini */
 @media only screen and (min-width: 481px) {
   .form--container {

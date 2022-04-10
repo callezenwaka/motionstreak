@@ -9,50 +9,42 @@
         <input class="form--input" type="text" name="address" id="address" v-model="address" @input="handleInput($event)" @blur="handleBlur($event)" placeholder="Search address" required />
       </div>
     </div>
-    <div class="account--or">
-      <div>
-        <p class="spinner" :class="{active: true}">&#10042;</p>
+    <div class="account--or"><span></span></div>
+    <form class="form--container" @submit.prevent="handleAccount">
+      <div v-if="!!validations.length" class="validations">
+        <ul style="text-align: left;"><li style="list-style-type: disc;" v-for="(validation, index) in validations" :key="index">{{validation}}</li></ul>
       </div>
-    </div>
-    <div v-if="account.address" class="account--address">
-      <div class="form--header">
-        <h2 class="form--title">Account Profile</h2>
-      </div>
-      <img :src="account.photoURL" :alt="account.displayName">
-      <div v-if="canCopy" class="clipboard--wrapper">
-        <p>{{handleAddress(account.address)}}</p>
-        <button aria-label="Copy" class="clipboard--button" @click="handleCopy(account.address);">
-          <svg v-if="!isCopying" height="16" viewBox="0 0 16 16" version="1.1" width="16" class="octicon octicon--copy">
-            <path fill-rule="evenodd" d="M5.75 1a.75.75 0 00-.75.75v3c0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75v-3a.75.75 0 00-.75-.75h-4.5zm.75 3V2.5h3V4h-3zm-2.874-.467a.75.75 0 00-.752-1.298A1.75 1.75 0 002 3.75v9.5c0 .966.784 1.75 1.75 1.75h8.5A1.75 1.75 0 0014 13.25v-9.5a1.75 1.75 0 00-.874-1.515.75.75 0 10-.752 1.298.25.25 0 01.126.217v9.5a.25.25 0 01-.25.25h-8.5a.25.25 0 01-.25-.25v-9.5a.25.25 0 01.126-.217z"></path>
-          </svg>
-          <svg  v-else height="16" viewBox="0 0 16 16" version="1.1" width="16" class="octicon octicon--check">
-            <path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"></path>
-          </svg>
-          <span class="sr-only">Copy</span>
-        </button>
-      </div>
-    </div>
-    <form class="form--container">
       <div class="form--item">
         <label class="form--label" for="name">Full Name: </label>
-        <input class="form--input" type="text" name="name" id="name" v-model="account.displayName" readonly />
-      </div>
-      <div class="form--item">
-        <label class="form--label" for="email">Email: </label>
-        <input class="form--input" type="email" name="email" id="email" v-model="account.email" readonly />
+        <input class="form--input" type="text" name="name" id="name" v-model="account.displayName" :placeholder="readOnly? 'Enter full name':''" :readOnly="readOnly" required />
       </div>
       <div class="form--item">
         <label class="form--label" for="phone">Phone Number: </label>
-        <input class="form--input" type="text" name="phone" id="phone" v-model="account.phoneNumber" readonly />
+        <input class="form--input" type="text" name="phone" id="phone" v-model="account.phoneNumber" :placeholder="readOnly? 'Enter phone number password':''" :readOnly="readOnly" required />
       </div>
       <div class="form--item">
-        <label class="form--label" for="role">Account Type: </label>
-        <input class="form--input" type="text" name="role" id="role" v-model="account.role" readOnly />
+        <label class="form--label" for="email">Email: </label>
+        <input class="form--input" type="email" name="email" id="email" v-model="account.email" :placeholder="readOnly? 'Enter email':''" :readOnly="readOnly" required />
       </div>
-      <!-- <div class="form--item">
+      <div v-if="isTenant && !isUpdating" class="form--item">
+        <label class="form--label" for="password">Password: </label>
+        <input class="form--input" type="password" name="key" id="key" v-model="item.password" @blur="handleBlur($event)" :placeholder="readOnly? 'Enter password':''" :readOnly="readOnly" required />
+      </div>
+      <div v-if="isTenant && isUpdating" class="form--item">
+        <label class="form--label" for="role">Account Type: </label>
+        <input class="form--input" type="text" name="role" id="role" v-model="account.role" readonly />
+      </div>
+      <div v-if="isTenant && isUpdating" class="form--item">
         <label class="form--label" for="status">Account Status: </label>
-        <input class="form--input" type="text" name="status" id="status" v-model="account.isActivated" readOnly />
-      </div> -->
+        <select class="form--input" v-model="account.isActive" name="status" id="status">
+          <option :value=0 disabled>Select Status</option>
+          <option :value="false">False</option>
+          <option :value="true">True</option>
+        </select>
+      </div>
+      <div v-if="isTenant" class="form--item">
+        <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">{{(isUpdating)? 'Update' : 'Submit'}}</button>
+      </div>
     </form>
   </div>
 </template>
@@ -61,21 +53,44 @@
 // @ is an alias to /src
 import { useStore } from '@/store';
 import { ActionTypes } from '@/store/actions';
+import { MutationType } from '@/store/mutations';
 import { Account } from '@/store/state';
-import { computed, defineComponent, reactive, toRefs } from 'vue';
+import { computed, defineComponent, reactive, ref, toRefs } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
-  name: 'AccountView',
+  name: 'AdminView',
   components: {
   },
   setup() {
     const store = useStore();
+    const router = useRouter();
     const copy = reactive({
       canCopy: false,
       isCopying: false,
     })
     copy.canCopy = !!navigator.clipboard;
+    let validations = reactive<string[]>([]);
+    const isTenant = computed((): boolean => store.getters.isTenant);
     const account = computed((): Account => store.getters.account);
+    // const addAccountImage = (formData: FormData) => store.dispatch(ActionTypes.AddAccountImage, formData);
+    // const updateAccount = (account: Account) => store.dispatch(ActionTypes.UpdateAccount, account);
+    let address = ref('');
+    const isUpdating = ref(false);
+    // const isUpdating = ref(account.value.isActivated);
+    const item = reactive({    
+      photoURL: 'https://ipfs.infuria.io/ipfs/QmakHdxH44vEMZXkNGkEwZr9usFCe9CraHgWDsgQbYPWYV',
+      password: '',
+      role: 'Admin',
+      isActive: true,
+      isActivated: true,
+    })
+    const readOnly = computed(() => {
+      return account.value.isActivated;
+    });
+    const isValid = computed(() => {
+      return isTenant.value;
+    });
     const handleAddress = (address: string) => {
       return `${address.slice(0, 4)}...${address.slice(address.length - 3)}`;
     }
@@ -95,17 +110,94 @@ export default defineComponent({
     const handleInput = async (event: Event) => {
       const target = event.target as HTMLInputElement;
       console.log(target.value);
+      isUpdating.value = true;
       store.dispatch(ActionTypes.GetAccount, target.value);
+    };
+    const handleValidation = (): boolean => {
+      validations = [];
+      if (!item.password) {
+        validations.push("Password is required!");
+      }
+      setTimeout(() => (validations = []), 5000);
+      // If No Errors Return True
+      if (validations.length) return false;
+      return true;
+    };
+    const handleImage = async (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      const file = (target.files as FileList)[0];
+      let formData = new FormData();
+      formData.append("file", file);
+      try {
+        const data = await store.dispatch(ActionTypes.AddAccountImage, formData);
+        item.photoURL = typeof data === "string"? data : '';
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    const handleAccount = async () => {
+      console.log();
+      if (isUpdating.value) {
+        const { address, displayName, email, phoneNumber, photoURL, role, isActive, isActivated } = account.value;
+        isUpdating.value = false;
+        await store.dispatch(ActionTypes.UpdateAccount, {
+          address,
+          displayName,
+          email,
+          phoneNumber,
+          photoURL,
+          role,
+          isActive,
+          isActivated,
+        });
+      } else {
+        if (!handleValidation()) return;
+        const { displayName, email, phoneNumber } = account.value;
+        const { password, photoURL, role, isActive, isActivated } = item;
+        await store.dispatch(ActionTypes.AddAccount, {
+          displayName,
+          email,
+          phoneNumber,
+          photoURL,
+          role,
+          isActive,
+          isActivated,
+          password,
+        })
+      }
+      address.value = '';
+      item.password = '';
+      store.commit(MutationType.SetAccount, {
+        displayName: '',
+        email: '',
+        phoneNumber: '',
+        photoURL: '',
+        role: '',
+        isActive: false,
+        isActivated: false,
+      });
+      router.push('/dashboard');
     };
 
     return {
       ...toRefs(copy),
+      item,
+      address,
       account,
+      isUpdating,
+      isTenant,
+      readOnly,
+      isValid,
+      document,
+      validations,
       handleInput,
       handleAddress,
       handleCopy,
       handleBlur,
-    }
+      handleValidation,
+      handleImage,
+      handleAccount,
+     }
   }
 });
 </script>
@@ -149,40 +241,16 @@ export default defineComponent({
   transform: translateY(-50%);
   width: 100%;
 }
-.account--or div {
-  display: inline-block;
-  background: rgb(255, 255, 255);
-  background-color: rgba(243, 244, 246, 1);
-  /* padding: 0px 10px; */
+.account--or span {
+  /* background: rgb(255, 255, 255); */
+  /* background-color: rgba(243, 244, 246, 1); */
+  padding: 0px 10px;
   font-size: 24px;
   font-weight: normal;
   line-height: 16px;
   color: rgb(93, 108, 116);
   text-align: center;
   position: inherit;
-}
-.spinner.active {
-  display: inline-block;
-  /* width: 100px; */
-  /* height: 100px; */
-  /* background-color: #0CB1C4; */
-  animation-name: spin;
-  animation-duration: 5000ms;
-  animation-iteration-count: infinite;
-  animation-timing-function: linear; 
-  /* transform: rotate(3deg); */
-   /* transform: rotate(0.3rad);/ */
-   /* transform: rotate(3grad); */ 
-   /* transform: rotate(.03turn);  */
-}
-
-@keyframes spin {
-  from {
-    transform:rotate(0deg);
-  }
-  to {
-    transform:rotate(360deg);
-  }
 }
 img {
   border-radius: 50%;
@@ -256,6 +324,7 @@ img {
 }
 .form--button.isValid {
   cursor: pointer;
+  color: #ffffff;
   background-color: #0d6efd;
 }
 .form--button.isValid:hover {

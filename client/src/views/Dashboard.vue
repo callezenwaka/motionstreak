@@ -3,26 +3,91 @@
     <Header></Header>
     <div class="">
       <div class="wrapper">
-        <div class="left-side">
+        <div class="side-arrow" :class="{ active: isOpen }">
+          <button type="button" @click="handleArrow">
+            <span v-if="isOpen">&#10094;</span>
+            <span v-else>&#10095;</span>
+          </button>
+        </div>
+        <div class="left-side" :class="{ active: isOpen }">
           <div class="side-wrapper">
             <div class="side-title">Categories</div>
             <div class="side-menu">
               <button type="button" :class="{ active: pages.isDocuments }" @click="handlePages('isDocuments')">
+                <svg viewBox="0 0 512 512" fill="currentColor">
+                  <path
+                    d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
+                  />
+                  <path
+                    d="M15 331h196v60h-75c-8.291 0-15 6.709-15 15s6.709 15 15 15h135v-30h-30v-60h30V166c0-24.814 20.186-45 45-45h135V46c0-8.284-6.716-15-15-15H15C6.716 31 0 37.716 0 46v270c0 8.284 6.716 15 15 15z"
+                  />
+                </svg>
                 Documents
               </button>
               <button type="button" :class="{ active: pages.isService }" @click="handlePages('isService')">
+                <svg viewBox="0 0 512 512" fill="currentColor">
+                  <path
+                    d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
+                  />
+                  <path
+                    d="M15 331h196v60h-75c-8.291 0-15 6.709-15 15s6.709 15 15 15h135v-30h-30v-60h30V166c0-24.814 20.186-45 45-45h135V46c0-8.284-6.716-15-15-15H15C6.716 31 0 37.716 0 46v270c0 8.284 6.716 15 15 15z"
+                  />
+                </svg>
                 Services
               </button>
               <button type="button" :class="{ active: pages.isAccount }" @click="handlePages('isAccount')">
+                <svg viewBox="0 0 512 512" fill="currentColor">
+                  <path
+                    d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
+                  />
+                  <path
+                    d="M15 331h196v60h-75c-8.291 0-15 6.709-15 15s6.709 15 15 15h135v-30h-30v-60h30V166c0-24.814 20.186-45 45-45h135V46c0-8.284-6.716-15-15-15H15C6.716 31 0 37.716 0 46v270c0 8.284 6.716 15 15 15z"
+                  />
+                </svg>
                 Account
               </button>
+              <button type="button" :class="{ active: pages.isAdmin }" @click="handlePages('isAdmin')">
+                <svg viewBox="0 0 512 512" fill="currentColor">
+                  <path
+                    d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
+                  />
+                  <path
+                    d="M15 331h196v60h-75c-8.291 0-15 6.709-15 15s6.709 15 15 15h135v-30h-30v-60h30V166c0-24.814 20.186-45 45-45h135V46c0-8.284-6.716-15-15-15H15C6.716 31 0 37.716 0 46v270c0 8.284 6.716 15 15 15z"
+                  />
+                </svg>
+                Admin
+              </button>
               <button type="button" :class="{ active: pages.isRequest }" @click="handlePages('isRequest')">
+                <svg viewBox="0 0 512 512" fill="currentColor">
+                  <path
+                    d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
+                  />
+                  <path
+                    d="M15 331h196v60h-75c-8.291 0-15 6.709-15 15s6.709 15 15 15h135v-30h-30v-60h30V166c0-24.814 20.186-45 45-45h135V46c0-8.284-6.716-15-15-15H15C6.716 31 0 37.716 0 46v270c0 8.284 6.716 15 15 15z"
+                  />
+                </svg>
                 Request
               </button>
               <button type="button" :class="{ active: pages.isCertify }" @click="handlePages('isCertify')">
+                <svg viewBox="0 0 512 512" fill="currentColor">
+                  <path
+                    d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
+                  />
+                  <path
+                    d="M15 331h196v60h-75c-8.291 0-15 6.709-15 15s6.709 15 15 15h135v-30h-30v-60h30V166c0-24.814 20.186-45 45-45h135V46c0-8.284-6.716-15-15-15H15C6.716 31 0 37.716 0 46v270c0 8.284 6.716 15 15 15z"
+                  />
+                </svg>
                 Certify
               </button>
               <button type="button" :class="{ active: pages.isVerify }" @click="handlePages('isVerify')">
+                <svg viewBox="0 0 512 512" fill="currentColor">
+                  <path
+                    d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
+                  />
+                  <path
+                    d="M15 331h196v60h-75c-8.291 0-15 6.709-15 15s6.709 15 15 15h135v-30h-30v-60h30V166c0-24.814 20.186-45 45-45h135V46c0-8.284-6.716-15-15-15H15C6.716 31 0 37.716 0 46v270c0 8.284 6.716 15 15 15z"
+                  />
+                </svg>
                 Verify
               </button>
             </div>
@@ -31,12 +96,36 @@
             <div class="side-title">Resource Links</div>
             <div class="side-menu">
               <button type="button" :class="{ active: pages.isHelp }" @click="handlePages('isHelp')">
+                <svg viewBox="0 0 512 512" fill="currentColor">
+                  <path
+                    d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
+                  />
+                  <path
+                    d="M15 331h196v60h-75c-8.291 0-15 6.709-15 15s6.709 15 15 15h135v-30h-30v-60h30V166c0-24.814 20.186-45 45-45h135V46c0-8.284-6.716-15-15-15H15C6.716 31 0 37.716 0 46v270c0 8.284 6.716 15 15 15z"
+                  />
+                </svg>
                 Help
               </button>
               <button type="button" :class="{ active: pages.isUser }" @click="handlePages('isUser')">
+                <svg viewBox="0 0 512 512" fill="currentColor">
+                  <path
+                    d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
+                  />
+                  <path
+                    d="M15 331h196v60h-75c-8.291 0-15 6.709-15 15s6.709 15 15 15h135v-30h-30v-60h30V166c0-24.814 20.186-45 45-45h135V46c0-8.284-6.716-15-15-15H15C6.716 31 0 37.716 0 46v270c0 8.284 6.716 15 15 15z"
+                  />
+                </svg>
                 Profile
               </button>
-              <button type="button" >
+              <button type="button">
+                <svg viewBox="0 0 512 512" fill="currentColor">
+                  <path
+                    d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
+                  />
+                  <path
+                    d="M15 331h196v60h-75c-8.291 0-15 6.709-15 15s6.709 15 15 15h135v-30h-30v-60h30V166c0-24.814 20.186-45 45-45h135V46c0-8.284-6.716-15-15-15H15C6.716 31 0 37.716 0 46v270c0 8.284 6.716 15 15 15z"
+                  />
+                </svg>
                 Logout
               </button>
             </div>
@@ -52,8 +141,9 @@
             <Request v-if="pages.isRequest"></Request>
             <Certify v-if="pages.isCertify"></Certify>
             <Verify v-if="pages.isVerify"></Verify>
-            <Documents v-if="pages.isDocuments"></Documents>
+            <Documents v-if="pages.isDocuments" @handlePages="handlePages"></Documents>
             <Account v-if="pages.isAccount"></Account>
+            <Admin v-if="pages.isAdmin"></Admin>
             <User v-if="pages.isUser"></User>
             <Help v-if="pages.isHelp"></Help>
           </div>
@@ -69,13 +159,14 @@
 import Header from "@/components/partials/Header.vue";
 import Service from "@/components/dashboard/Service.vue";
 import Account from "@/components/dashboard/Account.vue";
+import Admin from "@/components/dashboard/Admin.vue";
 import Documents from "@/components/dashboard/Documents.vue";
 import Request from "@/components/dashboard/Request.vue";
 import Certify from "@/components/dashboard/Certify.vue";
 import Verify from "@/components/dashboard/Verify.vue";
 import User from "@/components/dashboard/User.vue";
 import Help from "@/components/dashboard/Help.vue";
-import { computed, defineComponent, reactive } from 'vue';
+import { computed, defineComponent, reactive, ref } from 'vue';
 import { useStore } from "@/store";
 import { Profile, Document } from "@/store/state";
 
@@ -84,6 +175,7 @@ export default defineComponent({
   components: {
     Header,
     Account,
+    Admin,
     Service,
     Documents,
     Request,
@@ -99,9 +191,11 @@ export default defineComponent({
     const isTenant = computed((): boolean => store.getters.isTenant);
     const isAdmin = computed((): boolean => store.getters.isAdmin);
     const isUser = computed((): boolean => store.getters.isUser);
+    let isOpen = ref(false);
     type Pages = {
       isDocuments: boolean,
       isAccount: boolean,
+      isAdmin: boolean,
       isService: boolean,
       isRequest: boolean,
       isCertify: boolean,
@@ -110,34 +204,40 @@ export default defineComponent({
       isHelp: boolean,
     };
     const pages:Pages = reactive({
-      isDocuments: false,
+      isDocuments: true,
       isAccount: false,
+      isAdmin: false,
       isService: false,
       isRequest: false,
-      isCertify: true,
+      isCertify: false,
       isVerify: false,
       isUser: false,
       isHelp: false,
     });
 
     const handlePages = async (current: string) => {
-      console.log(current);
       if (pages[current as keyof Pages]) return;
       else {
         for (let page in pages) {
           pages[page as keyof Pages] = page === current? true : false;
         }
       }
+      if(isOpen.value) return isOpen.value = false;
     };
+    const handleArrow = () => {
+      isOpen.value = !isOpen.value;
+    }
 
-    return { 
+    return {
+      isOpen,
       profile,
       document,
       isTenant,
       isAdmin,
       isUser,
       pages,
-      handlePages
+      handlePages,
+      handleArrow,
      }
   }
 });
@@ -164,6 +264,7 @@ export default defineComponent({
   display: flex;
   flex-grow: 1;
   overflow: hidden;
+  position: relative;
 }
 .left-side {
   flex-basis: 240px;
@@ -172,10 +273,38 @@ export default defineComponent({
   overflow: auto;
   flex-shrink: 0;
 }
+.left-side.active {
+  display: block;
+}
 @media screen and (max-width: 945px) {
   .left-side {
     display: none;
   }
+}
+.side-arrow {
+  position: absolute;
+      top: 0;
+    left: 0px;
+    z-index: 5;
+}
+.side-arrow.active {
+    position: absolute;
+    top: 0;
+    left: 240px;
+    z-index: 5;
+}
+@media screen and (min-width: 945px) {
+  .side-arrow {
+    display: none;
+  }
+}
+.side-arrow button {
+  background-color: #2c3e5066;
+  border: none;
+  color: #fff;
+  font-size: xx-large;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 .side-wrapper + .side-wrapper {
   margin-top: 20px;

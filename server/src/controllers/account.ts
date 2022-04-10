@@ -20,13 +20,13 @@ const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
     if (!displayName || !email || !phoneNumber || !photoURL || !role || !isActivated) return;
     console.log(displayName, email, phoneNumber, photoURL, role, isActivated);
     return;
-
+    // TODO: could refactor signer should be deployed account
     const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
     const wallet = new ethers.Wallet(`${req.secret}`);
     const signer = wallet.connect(provider);
     const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, signer);
 
-    const res = await accountsContract.addAccount(req.address, displayName, email, phoneNumber, role, isActivated);
+    const res = await accountsContract.addAccount(req.address, displayName, email, phoneNumber, photoURL, role, isActivated);
     await res.wait();
     
 		return res.status(200).json('Success');

@@ -17,9 +17,17 @@
           <label class="form--label" for="password">Password: </label>
           <input class="form--input" type="password" name="key" id="key" v-model="user.password" @blur="handleBlur($event)" placeholder="Enter your password" required />
         </div>
+				<div class="form--item" v-show="user.email">
+          <!-- <router-link :to="'/reset/password?email=' + user.email">&nbsp;Forgot Password?</router-link> -->
+          <router-link class="form--link" :to="'/login'">&nbsp;Forgot Password?</router-link>
+				</div>
         <div class="form--item">
           <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Sign In</button>
         </div>
+				<div class="form--option">
+					<span class="form--text">Need an account?</span>
+					<router-link class="form--link" to="/register">&nbsp;Sign Up</router-link>
+				</div>
       </form>
     </div>
   </div>
@@ -29,9 +37,8 @@
 // @ is an alias to /src
 import Header from "@/components/partials/Header.vue";
 import { computed, defineComponent, reactive } from "vue";
-import { useStore } from "vuex";
+import { useStore } from "@/store";
 import { useRouter } from 'vue-router';
-import Login from '@/types/Login';
 import { ActionTypes } from "@/store/actions";
 export default defineComponent({
   name: "LoginView",
@@ -43,7 +50,6 @@ export default defineComponent({
     // const route = useRoute();
     const router = useRouter();
     let validations = reactive<string[]>([]);
-    const login = (login: Login) => store.dispatch(ActionTypes.Login, login);
     let user = reactive({
       email: '',
       password: '',
@@ -70,7 +76,7 @@ export default defineComponent({
     const handleLogin = async () => {
       if (!handleValidation()) return;
       try {
-        await login({...user});
+        await store.dispatch(ActionTypes.Login, {...user});
         router.push({ name: "Home" });
       } catch (error) {
         console.log(error);
@@ -167,12 +173,28 @@ export default defineComponent({
 .form--button.isValid:hover {
   opacity: 0.5;
 }
+.form--option {
+  margin: 15px;
+  color: rgb(33, 49, 60);
+  font-size: 15px;
+  display: inline;
+  text-align: start;
+  display: block;
+  text-align: center;
+}
+.form--link {
+  text-decoration: none;
+  color: rgb(0, 124, 173);
+}
+.form--text {
+  color: #ffffff;
+}
 /* mini */
 @media only screen and (min-width: 481px) {
   .form--container {
     width: 410px;
     margin: 0 auto;
-    margin: 10rem auto 0
+    margin: 8rem auto 0
   }
 }
 /* max */

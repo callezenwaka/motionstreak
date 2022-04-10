@@ -8,29 +8,43 @@
       <div v-if="!!validations.length" class="validations">
         <ul style="text-align: left;"><li style="list-style-type: disc;" v-for="(validation, index) in validations" :key="index">{{validation}}</li></ul>
       </div>
+      <!-- <div class="form--item">
+        <label class="form--label" for="name">Destination Name: </label>
+        <input class="form--input" type="text" name="name" id="name" v-model="account.displayName" readonly required />
+      </div> -->
       <div class="form--item">
         <label class="form--label" for="address">Destination Address: </label>
-        <input class="form--input" type="text" name="address" id="address" v-model="certify.verifier" @blur="handleBlur($event)" readonly required />
+        <input class="form--input" type="text" name="address" id="address" v-model="certify.verifier" readonly required />
       </div>
       <div class="form--item">
         <label class="form--label" for="name">Document Name: </label>
-        <input class="form--input" type="text" name="name" id="name" v-model="certify.name" @blur="handleBlur($event)" readonly required />
+        <input class="form--input" type="text" name="name" id="name" v-model="certify.name" readonly required />
       </div>
       <div class="form--item">
         <label class="form--label" for="fee">Processing Fee: </label>
-        <input class="form--input" type="text" name="fee" id="fee" v-model="certify.fee" @blur="handleBlur($event)" readonly required />
+        <input class="form--input" type="text" name="fee" id="fee" v-model="certify.fee" readonly required />
       </div>
       <div class="form--item">
         <label for="status" class="form--label">Document Status: </label>
         <select class="form--input" name="status" id="status" v-model="certify.status">
-          <option disabled :value={}>Select scope</option>
+          <option :value=0 disabled>Select Status</option>
           <option :value="status.CERTIFIED">CERTIFIED</option>
           <option :value="status.REJECTED">REJECTED</option>
         </select>
       </div>
       <div class="form--item">
         <label class="form--label" for="file">Document Image: </label>
-        <input class="form--input" type="file" name="file" id="file" @change="handleImage" @blur="handleBlur($event)" required />
+        <input class="form--inputs" type="file" name="file" id="file" @change="handleImage" @blur="handleBlur($event)" required />
+        <!-- <div class="form--file">
+          <input class="" type="file" name="file" id="file" @change="handleImage" @blur="handleBlur($event)" required />
+          <svg class="form--svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" @click="addFile()">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
+          </svg>
+          <span>Click to upload</span>
+        </div> -->
+      </div>
+      <div class="form--item" v-if="certify.imageURL">
+        <img :src="certify.imageURL" :alt="certify.name">
       </div>
       <div class="form--item">
         <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Send</button>
@@ -46,6 +60,7 @@ import { useStore } from '@/store'
 import { ActionTypes } from '@/store/actions'
 import { useRouter } from 'vue-router';
 import Document from '@/types/Document';
+// import { Account } from "@/store/state";
 export default defineComponent({
   name: "CertifyView",
   components: {
@@ -57,6 +72,7 @@ export default defineComponent({
     enum status { CERTIFIED = 1, VERIFIED, REJECTED }
     let validations = reactive<string[]>([]);
     const document = computed((): Document => store.getters.document);
+    // const account = computed((): Account => store.getters.account);
     const addDocumentImage = (formData: FormData) => store.dispatch(ActionTypes.AddDocumentImage, formData);
     const updateDocument = (document: Document) => store.dispatch(ActionTypes.UpdateDocument, document);
     const certify = reactive({
@@ -67,7 +83,7 @@ export default defineComponent({
       imageURL: '',
       fee: document.value.fee,
       index: document.value.index,
-      status: 0,
+      status: document.value.status,
     });
     const isValid = computed(() => {
       return (
@@ -217,7 +233,31 @@ export default defineComponent({
 .form--button.isValid:hover {
   opacity: 0.5;
 }
-
+img {
+  max-width: 50%;
+  min-width: 50%;
+  height: auto;
+  margin: 0 auto;
+  transition: transform ease-in-out 0.3s;
+}
+img:hover {
+  min-width: 100%;
+  transform: scale(1.2); 
+}
+.form--file {
+  display: flex;
+  align-content: center;
+  justify-content: flex-start;
+  align-items: center;
+  cursor: pointer;
+}
+.form--svg {
+  width: 5rem;
+  stroke: currentColor;
+  height: 5rem;
+  display: block;
+  /* vertical-align: middle; */
+}
 /* mini */
 @media only screen and (min-width: 481px) {
   .form--container {

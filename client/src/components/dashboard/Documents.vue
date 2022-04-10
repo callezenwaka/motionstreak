@@ -6,14 +6,14 @@
       <div class="apps-card">
         <div class="app-card" v-for="document in documents" :key="document.index">
           <span>
-            <img src="@/assets/certificate.svg" alt="" srcset="">
+            <img src="@/assets/certificate.svg" alt="certificate" srcset="">
             {{document.name}}
           </span>
           <div class="app-card__subtext">
             The transcript validation process typically proceeds in three steps and typically takes three inputs. The first is the transcript to be validated, the second is any intermediate transcript certified by the source organization, and the third is the verification of intermediate transcript by the destination organization.
           </div>
           <div class="app-card-buttons">
-            <button class="content-button status-button">Update</button>
+            <button class="content-button status-button" @click="handleUpdate(document)">Update</button>
             <div class="menu"></div>
           </div>
         </div>
@@ -24,31 +24,38 @@
 
 <script lang="ts">
 // @ is an alias to /src
-// import Header from "@/components/partials/Header.vue";
 import { computed, defineComponent, onMounted } from "vue";
-// import { useStore } from "vuex";
 import { useStore } from '@/store'
 import { ActionTypes } from '@/store/actions'
 import Profile from '@/types/Profile';
 import Document from '@/types/Document';
+import { MutationType } from "@/store/mutations";
 export default defineComponent({
   name: "DocumentView",
   components: {
     // Header
   },
-  setup() {
+  setup(props, context) {
     const store = useStore();
-    // const route = useRoute();
-    // const router = useRouter();
     onMounted(() => store.dispatch(ActionTypes.GetDocuments))
     const documents = computed((): Document[] => store.getters.documents);
     const profile = computed((): Profile => store.getters.profile);
     const isLoading = computed((): boolean => store.state.isLoading);
+    
+    const handleUpdate = async (document: Document) => {
+      const res = (profile.value.affiliate == document.verifier)
+      ? {address: document.verifier, page: "isVerify"}
+      : {address: document.certifier, page: "isCertify"};
+      store.commit(MutationType.SetDocument, document);
+      store.dispatch(ActionTypes.GetAccount, res.address)
+      context.emit("handlePages", res.page);
+    }
 
     return {
       isLoading,
       profile, 
       documents,
+      handleUpdate
     };
   },
 });
@@ -149,10 +156,10 @@ export default defineComponent({
   .app-card {
     width: calc(50% - 20px);
   }
-  .app-card:last-child {
+  /* .app-card:last-child {
     margin-top: 20px;
     margin-left: 0px;
-  }
+  } */
 }
 @media screen and (max-width: 565px) {
   .app-card {

@@ -1,14 +1,14 @@
 import { ActionContext, ActionTree } from 'vuex'
 import { Mutations, MutationType } from './mutations'
-import { State, Account, Document, Service } from './state'
+import { State, Account, Document, Service, Register, Login, Profile } from './state'
 import firebase from 'firebase';
 import account from '@/services/account';
 import service from '@/services/service';
 import document from '@/services/document';
-import { services, documents } from '../data/data';
-import Profile from '@/types/Profile';
-import Register from '@/types/Register';
-import Login from '@/types/Login';
+import { accounts, services, documents } from '../data/data';
+// import Profile from '@/types/Profile';
+// import Register from '@/types/Register';
+// import Login from '@/types/Login';
 
 export enum ActionTypes {
   // account
@@ -128,8 +128,9 @@ export const actions: ActionTree<State, State> & Actions = {
   async [ActionTypes.GetAccount](context, payload) {
     try {
       context.commit(MutationType.SetIsLoading, true)
-      // await sleep(1000);
-      const data = await account.getAccount(context.getters.idToken, payload);
+      const data = accounts.find(account => account.address == payload);
+      console.log(data);
+      // const data = await account.getAccount(context.getters.profile.token, payload);
       context.commit(MutationType.SetIsLoading, false)
       if (typeof data != 'object') return;
       context.commit(MutationType.SetAccount, data);
@@ -142,7 +143,7 @@ export const actions: ActionTree<State, State> & Actions = {
     try {
       // TODO: update account
       console.log(payload);
-      // return;
+      return;
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
       const data = await account.updateAccount(context.getters.profile.token, payload);
@@ -269,6 +270,8 @@ export const actions: ActionTree<State, State> & Actions = {
   },
   async [ActionTypes.UpdateService](context, payload) {
     try {
+      console.log(payload);
+      return;
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
       const data = await service.updateService(context.rootGetters.idToken, payload);
@@ -295,11 +298,12 @@ export const actions: ActionTree<State, State> & Actions = {
       // TODO: register account
       const { displayName, phoneNumber, photoURL, email, password, role, isActivated } = payload;
       console.log(displayName, phoneNumber, photoURL, email, password, role, isActivated);
-      return;
+      // return;
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
       // const data = await service.addService(context.rootGetters.idToken, payload);
       const { user } = await firebase.auth().createUserWithEmailAndPassword(email, password);
+      console.log(user);
       if (!user) return;
       context.dispatch(ActionTypes.AddAccount, {
         displayName,
@@ -312,6 +316,7 @@ export const actions: ActionTree<State, State> & Actions = {
       context.commit(MutationType.SetIsLoading, false)
       return user;
     } catch (error) {
+      console.log(error);
       return error
     }
   },

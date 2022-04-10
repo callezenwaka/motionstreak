@@ -26,12 +26,16 @@
           <input class="form--input" type="password" name="key" id="key" v-model="user.password" @blur="handleBlur($event)" placeholder="Enter your password" required />
         </div>
         <div class="form--item" style="flex-direction: row; align-items: center;">
-          <label class="form--label" for="role">Organization Account? </label>&nbsp;<span class="register--tip"><span class="register--blink tooltip">&quest;<span class="tooltiptext">Check if organization account.</span></span></span>:&nbsp;&nbsp; 
+          <label class="form--label" for="role">Organization Account? </label>&nbsp;<span class="register--tip"><span class="register--blink tooltip">&quest;<span class="tooltiptext">Checkbox if organization account.</span></span></span>:&nbsp;&nbsp; 
           <input class="form--checkbox" type="checkbox" name="role" id="role" v-model="user.role" true-value="Tenant" false-value="User" />
         </div>
         <div class="form--item">
           <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Sign Up</button>
         </div>
+        <div class="form--option">
+					<span class="form--text">Already have a user account?</span>
+					<router-link class="form--link" to="/login">&nbsp;Sign in</router-link>
+				</div>
       </form>
     </div>
   </div>
@@ -41,9 +45,8 @@
 // @ is an alias to /src
 import Header from "@/components/partials/Header.vue";
 import { computed, defineComponent, reactive } from "vue";
-import { useStore } from "vuex";
+import { useStore } from "@/store";
 import { useRouter } from 'vue-router';
-import Register from '@/types/Register';
 import { ActionTypes } from "@/store/actions";
 export default defineComponent({
   name: "RegisterView",
@@ -55,7 +58,6 @@ export default defineComponent({
     // const route = useRoute();
     const router = useRouter();
     let validations = reactive<string[]>([]);
-    const register = (register: Register) => store.dispatch(ActionTypes.Register, register);
     let user = reactive({
       displayName: '',
       phoneNumber: '',
@@ -93,7 +95,7 @@ export default defineComponent({
     const handleRegister = async () => {
       if (!handleValidation()) return;
       try {
-        await register({...user});
+        await store.dispatch(ActionTypes.Register, {...user});
         router.push({ name: "Home" });
       } catch (error) {
         console.log(error);
@@ -119,7 +121,7 @@ export default defineComponent({
 .form--container {
   width: 100%;
   margin: 50px auto;
-  margin: 0rem auto 0;
+  margin: 0rem auto;
   padding: 0 1rem;
 }
 .form--title {
@@ -252,12 +254,28 @@ export default defineComponent({
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
+.form--option {
+  margin: 15px;
+  color: rgb(33, 49, 60);
+  font-size: 15px;
+  display: inline;
+  text-align: start;
+  display: block;
+  text-align: center;
+}
+.form--link {
+  text-decoration: none;
+  color: rgb(0, 124, 173);
+}
+.form--text {
+  color: #ffffff;
+}
 /* mini */
 @media only screen and (min-width: 481px) {
   .form--container {
     width: 410px;
     margin: 0 auto;
-    margin: 10rem auto 0
+    /* margin: 10rem auto 0 */
   }
 }
 /* max */

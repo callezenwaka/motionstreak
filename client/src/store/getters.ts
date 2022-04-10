@@ -13,7 +13,6 @@ export type Getters = {
   getDocumentByIndex(state: State): (index: number) => Document | undefined;
   getDocumentCount(state: State): number;
   profile(state: State): Profile;
-  // idToken(state: State): string;
   isLoading(state: State): boolean;
   isTenant(state: State): boolean;
   isAdmin(state: State): boolean;
@@ -32,7 +31,20 @@ export const getters: GetterTree<State, State> & Getters = {
     return state.services.find(service => service.index === index)
   },
   document(state) { return state.document },
-  documents(state) { return state.documents },
+  // documents(state) { return state.documents },
+  documents: (state) => { 
+    return state.documents.filter(document => {
+      if (state.profile.affiliate == document.certifier) {
+        return document;
+      }
+      if (state.profile.affiliate == document.verifier) {
+        return document;
+      }
+      if (state.profile.affiliate == document.requester) {
+        return document;
+      }
+    })
+  },
   getDocumentByIndex: (state) => (index: number) => {
     return state.documents.find(document => document.index === index)
   },
@@ -41,7 +53,12 @@ export const getters: GetterTree<State, State> & Getters = {
   },
   profile(state) { return state.profile },
   isLoading(state) { return state.isLoading },
-  isTenant(state) { return state.profile.role == "Tenant".toLowerCase()? true : false },
-  isAdmin(state) { return state.profile.role == "Admin".toLowerCase()? true : false },
-  isUser(state) { return state.profile.role == "User".toLowerCase()? true : false },
+  // isTenant: (state) => {
+  //   const role = "Tenant".toLowerCase();
+  //   console.log(state.profile.role, )
+  //   return (state.profile.role == role)? true : false 
+  // },
+  isTenant(state) { return state.profile.role.toLowerCase() == "Tenant".toLowerCase()? true : false },
+  isAdmin(state) { return state.profile.role.toLowerCase() == "Admin".toLowerCase()? true : false },
+  isUser(state) { return state.profile.role.toLowerCase() == "User".toLowerCase()? true : false },
 }

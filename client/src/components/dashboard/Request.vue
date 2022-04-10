@@ -10,23 +10,23 @@
       </div>
       <div class="form--item">
         <label class="form--label" for="requester">User Address: </label>
-        <input class="form--input" type="text" name="requester" id="requester" v-model="request.requester" @blur="handleBlur($event)" readonly required />
+        <input class="form--input" type="text" name="requester" id="requester" v-model="request.requester" readonly required />
       </div>
       <div class="form--item">
         <label class="form--label" for="verifier">Destination Address: </label>
-        <input class="form--input" type="text" name="verifier" id="verifier" v-model="request.verifier" @blur="handleBlur($event)" placeholder="Enter destination address" required />
+        <input class="form--input" type="text" name="verifier" id="verifier" v-model="request.verifier" @blur="handleBlur($event)" @input="handleDestination($event)" placeholder="Enter destination address" required />
+      </div>
+      <div class="form--item">
+        <label class="form--label" for="destination">Destination Name: </label>
+        <input class="form--input" type="text" name="destination" id="destination" v-model="account.displayName" @blur="handleBlur($event)" @input="handleDestination($event)" placeholder="Enter destination address" required />
       </div>
       <div class="form--item">
         <label class="form--label" for="certifier">Source Address: </label>
-        <input class="form--input" type="text" name="certifier" id="certifier" v-model="request.certifier" @blur="handleBlur($event)" @input="handleServices($event)" placeholder="Enter source address" required />
+        <input class="form--input" type="text" name="certifier" id="certifier" v-model="request.certifier" @blur="handleBlur($event)" @input="handleSource($event)" placeholder="Enter source address" required />
       </div>
-      <!-- <div class="form--item">
-        <label class="form--label" for="name">Document Name: </label>
-        <input class="form--input" type="text" name="name" id="name" v-model="request.name" @blur="handleBlur($event)" placeholder="Enter document name" required />
-      </div> -->
       <div class="form--item">
-        <label for="fee" class="form--label">Document Name: </label><br>
-        <select name="fee" id="fee" ref="fee" class="form--input" @change="handleFee($event)">
+        <label for="document" class="form--label">Document Name: </label><br>
+        <select name="document" id="document" class="form--input" @change="handleFee($event)">
           <option value="" selected disabled>Select Document</option>
           <option :value="{name: service.name, cost: service.cost}" v-for="(service) in services" :key="service.index">{{ service.name }}</option>
         </select>
@@ -35,14 +35,6 @@
         <label class="form--label" for="fee">Processing Fee: </label>
         <input class="form--input" type="text" name="fee" id="fee" v-model="request.fee" @blur="handleBlur($event)" placeholder="Enter processing fee" readonly required />
       </div>
-      <!-- <div class="form--item">
-        <label class="form--label" for="description">Document Description: </label>
-        <input class="form--input" type="text" name="description" id="description" v-model="request.description" @blur="handleBlur($event)" placeholder="Enter description" required />
-      </div>
-      <div class="form--item">
-        <label class="form--label" for="file">Document Image: </label>
-        <input class="form--input" type="file" name="file" id="file" @change="handleImage" @blur="handleBlur($event)" required />
-      </div> -->
       <div class="form--item">
         <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Send</button>
       </div>
@@ -58,9 +50,7 @@ import { computed, defineComponent, reactive } from "vue";
 import { useStore } from '@/store'
 import { ActionTypes } from '@/store/actions'
 import { useRouter } from 'vue-router';
-import Service from '@/types/Service';
-import Profile from '@/types/Profile';
-import Document from '@/types/Document';
+import { Account, Profile, Service } from "@/store/state";
 export default defineComponent({
   name: "RequestView",
   components: {
@@ -72,11 +62,8 @@ export default defineComponent({
     const router = useRouter();
     let validations = reactive<string[]>([]);
     const profile = computed((): Profile => store.getters.profile);
-    const isLoading = computed((): boolean => store.state.isLoading)
+    const account = computed((): Account => store.state.account)
     const services = computed((): Service[] => store.getters.services);
-    // onMounted(() => store.dispatch(ActionTypes.GetTaskItems))
-    const getServices = (address: string) => store.dispatch(ActionTypes.GetServices, address);
-    const addDocument = (document: Document) => store.dispatch(ActionTypes.AddDocument, document);
     let request = reactive({
       requester: profile.value.address,
       verifier: '',
@@ -108,10 +95,13 @@ export default defineComponent({
         ? "rgba(229,231,235, 1)"
         : "rgba(255, 0, 0, 1)";
     };
-    const handleServices = async (event: Event) => {
+    const handleDestination = async (event: Event) => {
       const target = event.target as HTMLInputElement;
-      // console.log(target.value);
-      getServices(target.value);
+      store.dispatch(ActionTypes.GetAccount, target.value);
+    };
+    const handleSource = async (event: Event) => {
+      const target = event.target as HTMLInputElement;
+      store.dispatch(ActionTypes.GetServices, target.value);
     };
     const handleValidation = (): boolean => {
       validations = [];
@@ -137,7 +127,7 @@ export default defineComponent({
     const handleDocument = async () => {
       if (!handleValidation()) return;
       try {
-        await addDocument({...request});
+        await store.dispatch(ActionTypes.AddDocument, {...request});
         router.push({ name: "Home" });
       } catch (error) {
         console.log(error);
@@ -145,15 +135,16 @@ export default defineComponent({
     };
 
     return {
-      isLoading,
+      account,
       profile,
       services,
       validations, 
       request, 
       isValid,
       handleFee,
-      handleBlur, 
-      handleServices,
+      handleBlur,
+      handleDestination,
+      handleSource,
       handleValidation, 
       handleImage, 
       handleDocument 

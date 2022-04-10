@@ -27,3 +27,7 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+Installation
+------------
+* Copy .env.example to .env and adjust the values where necessary.

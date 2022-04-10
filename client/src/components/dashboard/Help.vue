@@ -1,5 +1,5 @@
 <template>
-  <div class="support">
+  <div class="help">
     <h1>This is an about page</h1>
   </div>
 </template>
@@ -18,8 +18,8 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* support */
-.support {
+/* help */
+.help {
   /* padding: 1rem; */
   height: 100%;
   min-height: 100vh;

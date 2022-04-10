@@ -1,21 +1,21 @@
 <template>
   <div class="header">
-    <!-- <div class="menu-circle"></div> -->
-    <nav class="header-menu">
+    <nav class="header-menu" :class="{ active: isOpen }">
       <router-link class="menu-link is-active" to="/">Home</router-link>
-      <router-link v-if="profile" class="menu-link" to="/dashboard">Dashboard</router-link>
-      <!-- <router-link class="menu-link" to="/document">Document</router-link> -->
-      <router-link v-if="!profile" class="menu-link" to="/register">Register</router-link>
-      <router-link v-if="!profile" class="menu-link" to="/login">Login</router-link>
-      <router-link v-if="profile" class="menu-link" to="/login">Logout</router-link>
-      <router-link class="menu-link" to="/about">About</router-link>
-      <!-- <a class="menu-link is-active" href="#">Apps</a>
-      <a class="menu-link notify" href="#">Your work</a>
-      <a class="menu-link" href="#">Discover</a>
-      <a class="menu-link notify" href="#">Market</a> -->
+      <router-link v-if="isActivated" class="menu-link" to="/dashboard">Dashboard</router-link>
+      <!-- <router-link v-if="!isActivated" class="menu-link" to="/register">Register</router-link> -->
+      <router-link v-if="!isActivated" class="menu-link" to="/login">Login</router-link>
+      <router-link v-if="isActivated" class="menu-link" to="/login">Logout</router-link>
+      <!-- <router-link class="menu-link" to="/about">About</router-link> -->
     </nav>
+    <div class="menu" :class="{ active: isOpen }">
+      <button type="button" @click="handleMenu">
+        <span v-if="isOpen">&#10005;</span>
+        <span v-else>&#9776;</span>
+      </button>
+    </div>
     <div class="search-bar"><input type="text" placeholder="Search" /></div>
-    <div class="header-profile">
+    <div v-if="isActivated" class="header-profile">
       <div class="notification">
         <span class="notification-number">3</span>
         <svg
@@ -30,12 +30,7 @@
           <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"></path>
         </svg>
       </div>
-      <!-- <svg viewBox="0 0 512 512" fill="currentColor">
-        <path d="M448.773 235.551A135.893 135.893 0 00451 211c0-74.443-60.557-135-135-135-47.52 0-91.567 25.313-115.766 65.537-32.666-10.59-66.182-6.049-93.794 12.979-27.612 19.013-44.092 49.116-45.425 82.031C24.716 253.788 0 290.497 0 331c0 7.031 1.703 13.887 3.006 20.537l.015.015C12.719 400.492 56.034 436 106 436h300c57.891 0 106-47.109 106-105 0-40.942-25.053-77.798-63.227-95.449z"></path>
-      </svg> -->
-      <!-- <img class="profile-img" src="@/assets/avatar.png" alt="" /> -->
       <img class="profile-img" :src="profile.photoURL || avatar" alt="">
-        <!-- src="https://images.unsplash.com/photo-1600353068440-6361ef3a86e8?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&amp;ixlib=rb-1.2.1&amp;auto=format&amp;fit=crop&amp;w=1000&amp;q=80" -->
     </div>
   </div>
 </template>
@@ -44,40 +39,27 @@
 // @ is an alias to /src
 import { computed, defineComponent, ref } from "vue";
 import { useStore } from '@/store'
-import Profile from '@/types/Profile';
+import { Profile } from "@/store/state";
 export default defineComponent({
   name: "HeaderView",
-  components: {
-  },
   setup() {
     const store = useStore();
     const profile = computed((): Profile => store.getters.profile);
-    // const getDocumentCount = computed((): number => store.getters.getDocumentCount);
     const avatar = computed(() => {return require(`@/assets/avatar.png`)});
     const photoURL = ref('');
+    let isOpen = ref(false);
+    const handleMenu = () => {
+      isOpen.value = !isOpen.value;
+    }
+    const isActivated = computed(() => profile.value.isActivated)
 
-    return { profile, avatar, photoURL }
+    return { profile, avatar, photoURL, isOpen, isActivated, handleMenu }
   }
 });
 </script>
 
 <style scoped>
-/* .app {
-  background-color: var(--theme-bg-color);
-  max-width: 1250px;
-  max-height: 860px;
-  height: 90vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  width: 100%;
-  border-radius: 14px;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  font-size: 15px;
-  font-weight: 500;
-} */
-
+/* header */
 .header {
   display: flex;
   align-items: center;
@@ -85,30 +67,58 @@ export default defineComponent({
   height: 58px;
   width: 100%;
   border-bottom: 1px solid var(--border-color);
-  padding: 0 30px;
+  /* padding: 0 30px; */
   white-space: nowrap;
 }
-@media screen and (max-width: 480px) {
+/* @media screen and (max-width: 480px) {
   .header {
     padding: 0 16px;
   }
-}
+} */
 .header-menu {
   display: flex;
   align-items: center;
 }
+.header-menu {
+  display: flex;
+  display: none;
+  align-items: center;
+  flex-direction: column;
+  z-index: 10;
+  min-width: 100%;
+  margin-top: 7.5rem;
+  background-color: #111827;
+}
+.header-menu.active {
+  display: flex;
+}
 .header-menu a {
+  width: 100%;
   padding: 20px 30px;
   text-decoration: none;
   color: var(--inactive-color);
   border-bottom: 2px solid transparent;
   transition: 0.3s;
 }
-@media screen and (max-width: 610px) {
+@media screen and (min-width: 945px) {
+  .header-menu {
+    display: flex;
+  }
+  .header-menu {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    z-index: 0;
+    min-width: unset;
+    margin-top: unset;
+    background-color: unset;
+}
+}
+/* @media screen and (max-width: 610px) {
   .header-menu a:not(.main-header-link) {
     display: none;
   }
-}
+} */
 /* .header-menu a.is-active,
 .header-menu a:hover {
   color: var(--theme-color);
@@ -117,8 +127,63 @@ export default defineComponent({
 .header-menu a.router-link-exact-active {
   /* color: #42b983; */
   color: var(--theme-color);
+  /* background-color: #0c0f194d; */
+  background-color: var(--hover-menu-bg);
   border-bottom: 2px solid var(--theme-color);
 }
+.menu {
+  display: flex;
+  flex-direction: column;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.menu.active {
+    /* display: flex;
+    flex-direction: column;
+    white-space: nowrap;
+    cursor: pointer; */
+    z-index: 20;
+    /* margin-right: -5rem; */
+    position: absolute;
+}
+.menu button {
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  font-size: xx-large;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+@media screen and (min-width: 945px) {
+  .menu {
+    display: none;
+  }
+}
+.side-menu a {
+  text-decoration: none;
+  color: var(--theme-color);
+  display: flex;
+  align-items: center;
+  font-weight: 400;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  transition: 0.3s;
+}
+.side-menu a:hover {
+  background-color: var(--hover-menu-bg);
+}
+.side-menu svg {
+  width: 16px;
+  margin-right: 8px;
+}
+/* .menu {
+  display: flex;
+    flex-direction: row;
+    justify-content: center;
+    padding-right: 36px;
+    padding-left: 16px;
+} */
 .notify {
   position: relative;
 }
@@ -137,21 +202,6 @@ export default defineComponent({
     display: none;
   }
 }
-
-/* .menu-circle {
-  width: 15px;
-  height: 15px;
-  background-color: #f96057;
-  border-radius: 50%;
-  box-shadow: 24px 0 0 0 #f8ce52, 48px 0 0 0 #5fcf65;
-  margin-right: 195px;
-  flex-shrink: 0;
-}
-@media screen and (max-width: 945px) {
-  .menu-circle {
-    display: none;
-  }
-} */
 .search-bar {
   height: 40px;
   display: flex;
@@ -195,7 +245,6 @@ export default defineComponent({
   font-size: 15px;
   font-weight: 500;
 }
-
 .header-profile {
   display: flex;
   align-items: center;
@@ -253,7 +302,4 @@ export default defineComponent({
   box-shadow: 0 0 0 1px var(--border-color);
   padding-left: 0;
 }
-/* .wide .menu-circle {
-  margin-right: 0;
-} */
 </style>

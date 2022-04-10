@@ -8,7 +8,7 @@
       <div v-if="canCopy" class="clipboard--wrapper">
         <p>{{handleAddress(user.address)}}</p>
         <button aria-label="Copy" class="clipboard--button" @click="handleCopy(user.address);">
-          <svg v-if="isCopying" height="16" viewBox="0 0 16 16" version="1.1" width="16" class="octicon octicon--copy">
+          <svg v-if="!isCopying" height="16" viewBox="0 0 16 16" version="1.1" width="16" class="octicon octicon--copy">
             <path fill-rule="evenodd" d="M5.75 1a.75.75 0 00-.75.75v3c0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75v-3a.75.75 0 00-.75-.75h-4.5zm.75 3V2.5h3V4h-3zm-2.874-.467a.75.75 0 00-.752-1.298A1.75 1.75 0 002 3.75v9.5c0 .966.784 1.75 1.75 1.75h8.5A1.75 1.75 0 0014 13.25v-9.5a1.75 1.75 0 00-.874-1.515.75.75 0 10-.752 1.298.25.25 0 01.126.217v9.5a.25.25 0 01-.25.25h-8.5a.25.25 0 01-.25-.25v-9.5a.25.25 0 01.126-.217z"></path>
           </svg>
           <svg  v-else height="16" viewBox="0 0 16 16" version="1.1" width="16" class="octicon octicon--check">
@@ -36,7 +36,7 @@
       </div>
       <div class="form--item">
         <label class="form--label" for="file">User Avatar: </label>
-        <input class="form--input" type="file" name="file" id="file" @change="handleImage" @blur="handleBlur($event)" required />
+        <input class="form--inputs" type="file" name="file" id="file" @change="handleImage" @blur="handleBlur($event)" required />
       </div>
       <div class="form--item">
         <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Send</button>
@@ -50,7 +50,7 @@
 import { useStore } from '@/store';
 import { ActionTypes } from '@/store/actions';
 import { Account, Profile } from '@/store/state';
-import { computed, defineComponent, reactive } from 'vue';
+import { computed, defineComponent, reactive, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
@@ -60,9 +60,11 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const router = useRouter();
-    let canCopy = false;
-    let isCopying = true;
-    canCopy = !!navigator.clipboard;
+    const copy = reactive({
+      canCopy: false,
+      isCopying: false,
+    })
+    copy.canCopy = !!navigator.clipboard;
     let validations = reactive<string[]>([]);
     const profile = computed((): Profile => store.getters.profile);
     const addAccountImage = (formData: FormData) => store.dispatch(ActionTypes.AddAccountImage, formData);
@@ -90,15 +92,11 @@ export default defineComponent({
       return `${address.slice(0, 4)}...${address.slice(address.length - 3)}`;
     }
     const handleCopy = async (word: string) => {
-      console.log(isCopying);
-      isCopying = false;
-      console.log(isCopying);
+      copy.isCopying = true;
       await navigator.clipboard.writeText(word);
       setTimeout(() => {
-        isCopying = true;
-        console.log(isCopying);
+        copy.isCopying = false;
       }, 5000);
-      // alert('Copied!');
     };
     const handleBlur = (event: Event) => {
       const target = event.target as HTMLInputElement;
@@ -142,13 +140,12 @@ export default defineComponent({
     };
 
     return {
+      ...toRefs(copy),
       user,
       isValid,
       profile,
       document,
       validations,
-      canCopy,
-      isCopying,
       handleAddress,
       handleCopy,
       handleBlur,
