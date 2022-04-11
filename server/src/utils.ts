@@ -43,6 +43,40 @@ export const isAuthenticated = (req: any, res: any, next: any) => {
 }
 // [END CHECK AUTH]
 
+export const updateUser = async (req: any, res: any, next: any) => {
+  try {
+    // Get users from request body, and add each to database
+    const { displayName, photoURL, phoneNumber, uid, email, password, role, isActive, isActivated } = req.body;
+    req.uid = uid;
+    req.role = role;
+    req.isActive = isActive;
+    req.isActivated = isActivated;
+    if(uid !== undefined && password === undefined) {
+      await admin.auth().updateUser(uid, {
+        displayName: displayName,
+        phoneNumber: phoneNumber,
+        photoURL: photoURL,
+        emailVerified: true,
+      });
+    } else {
+      const user = await admin.auth().createUser({
+        email,
+        phoneNumber,
+        password,
+        displayName,
+        photoURL,
+        emailVerified: true,
+        disabled: false,
+      });
+      req.uid = user.uid;
+    }
+    next();
+  } catch (error) {
+    console.log(error);
+    return res.status(501).json('Internal error!');
+  }
+};
+
 export const createWallet = async (req: any, res: any, next: any) => {
   try {
     const wallet = ethers.Wallet.createRandom();
@@ -50,40 +84,15 @@ export const createWallet = async (req: any, res: any, next: any) => {
     req.secret = wallet.privateKey;
     next();
   } catch (error) {
-    return res.status(501).json('Internal error!');
-  }
-};
-
-export const postSecret = async (req: any, res: any, next: any) => {
-  try {
-    // Get users from request body, and add each to database
-    await admin.firestore().collection('secrets').doc(req.body.uid).set({ secret: req.secret });
-    next();
-  } catch (error) {
-    return res.status(501).json('Internal error!');
-  }
-};
-
-export const updateUser = async (req: any, res: any, next: any) => {
-  try {
-    // Get users from request body, and add each to database
-    const { displayName, photoURL, phoneNumber, uid } = req.body;
-    await admin.auth().updateUser(uid, {
-      displayName: displayName,
-      phoneNumber: phoneNumber,
-      photoURL: photoURL,
-      emailVerified: true,
-    });
-    next();
-  } catch (error) {
+    console.log(error);
     return res.status(501).json('Internal error!');
   }
 };
 
 export const setClaim = async (req: any, res: any, next: any) => {
   try {
-    const { address } = req;
-    const { role, isActive, isActivated, uid } = req.body;
+    const { address, role, isActive, isActivated, uid } = req;
+    // const { role, isActive, isActivated, uid } = req.body;
     const affiliate = role.toLowerCase() === 'admin'? req.body.affiliate : address;
     console.log(role, isActive, isActivated, affiliate, address, uid);
     await admin.auth().setCustomUserClaims(uid, {
@@ -95,9 +104,21 @@ export const setClaim = async (req: any, res: any, next: any) => {
     });
     next();
   } catch (error) {
+    console.log(error);
     return res.status(501).json('Internal error!');
   }
 }
+
+export const postSecret = async (req: any, res: any, next: any) => {
+  try {
+    // Get users from request body, and add each to database
+    await admin.firestore().collection('secrets').doc(req.uid).set({ secret: req.secret });
+    next();
+  } catch (error) {
+    console.log(error);
+    return res.status(501).json('Internal error!');
+  }
+};
 
 export const multer = Multer({
   storage: Multer.memoryStorage(),

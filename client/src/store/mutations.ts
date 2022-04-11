@@ -1,5 +1,5 @@
 import { MutationTree } from 'vuex'
-import { State, Account, Document, Service, Profile } from './state'
+import { State, Account, Document, Service, Profile, Message } from './state'
 
 export enum MutationType {
   // account
@@ -63,7 +63,7 @@ export type Mutations = {
   // ): void;
 
   // auth
-  [MutationType.Logout](state: State, value: Profile): void;
+  [MutationType.Logout](state: State, message: Message): void;
 
   // others
   [MutationType.SetProfile](state: State, value: Profile): void;
@@ -96,8 +96,20 @@ export const mutations: MutationTree<State> & Mutations = {
   },
 
   // auth 
-  [MutationType.Logout](state, value) {
-    state.profile = value;
+  [MutationType.Logout](state, message) {
+    console.log(message);
+    state.profile = {
+    displayName: '',
+    phoneNumber: '',
+    photoURL: '',
+    email: '',
+    role: '',
+    isActive: false,
+    isActivated: false,
+    address: '',
+    affiliate: '',
+    token: '',
+    };
   },
 
   // others

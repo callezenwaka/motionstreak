@@ -26,6 +26,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// admin.auth().updateUser('5wMOSvr11qaW8b2XkikWyUEBW8W2', {
+//   photoURL: 'https://ipfs.infura.io/ipfs/QmUHa9QV34uPdJ1JZ5XqcQgn5jfmW3SxUnt3yoFfHu8Sow',
+// })
+
 // Ping healthz route
 app.get('/healthz',async (req: Request, res: Response) => {
   try {

@@ -49,23 +49,25 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
 	try {
 		// Todo: create a provider and query for transaction
     const { address } = req.params;
-    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
-    const wallet = new ethers.Wallet(`${req.secret}`);
-    const signer = wallet.connect(provider);
-    const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, signer);
+    const account = accounts.find(account => account.address == address);
 
-    const result = await accountsContract.getAccount(address);
-    let account = {
-      displayName: result.displayName,
-      email: result.email,
-      phoneNumber: result.phoneNumber,
-      photoURL: result.photoURL,
-      role: result.role,
-      isActive: result.isActive,
-      isActivated: result.isActivated,
-      address: address,
-      affiliate: result.affiliate,
-    }
+    // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+    // const wallet = new ethers.Wallet(`${req.secret}`);
+    // const signer = wallet.connect(provider);
+    // const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, signer);
+
+    // const result = await accountsContract.getAccount(address);
+    // let account = {
+    //   displayName: result.displayName,
+    //   email: result.email,
+    //   phoneNumber: result.phoneNumber,
+    //   photoURL: result.photoURL,
+    //   role: result.role,
+    //   isActive: result.isActive,
+    //   isActivated: result.isActivated,
+    //   address: address,
+    //   affiliate: result.affiliate,
+    // }
 
 		if (!account) {
 			return res.status(200).json({});
@@ -117,18 +119,25 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
  export const updateAccount = async (req: any, res: Response, next: NextFunction) => {
 	try {
 		// Todo: update an account
+    const index = accounts.findIndex(account => account.address == address);
+    let account = accounts.find(account => account.address == address);
     console.log('req: ',req.params);
     const { address, displayName, email, phoneNumber, photoURL, isActive } = req.body;
     if (!address || !displayName || !email || !phoneNumber || !photoURL || !isActive) return;
-    console.log('req: ',req.body);
-    return;
+    if(!account) return;
+    account.displayName = displayName;
+    account.phoneNumber = phoneNumber;
+    account.photoURL = photoURL;
+    account.email = email;
+    if(!index) return;
+    accounts.splice(index, 1, account);
 
-    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
-    const wallet = new ethers.Wallet(`${req.secret}`);
-    const signer = wallet.connect(provider);
-    const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, signer);
+    // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+    // const wallet = new ethers.Wallet(`${req.secret}`);
+    // const signer = wallet.connect(provider);
+    // const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, signer);
 
-    const res = await accountsContract.updateAccount(address, displayName, email, phoneNumber, photoURL, isActive);
+    // const res = await accountsContract.updateAccount(address, displayName, email, phoneNumber, photoURL, isActive);
     
 		return res.status(200).json('Success');
 	} catch (error) {

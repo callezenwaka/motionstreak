@@ -54,7 +54,7 @@
 import { useStore } from '@/store';
 import { ActionTypes } from '@/store/actions';
 import { MutationType } from '@/store/mutations';
-import { Account } from '@/store/state';
+import { Account, Profile } from '@/store/state';
 import { computed, defineComponent, reactive, ref, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -72,18 +72,20 @@ export default defineComponent({
     copy.canCopy = !!navigator.clipboard;
     let validations = reactive<string[]>([]);
     const isTenant = computed((): boolean => store.getters.isTenant);
+    const profile = computed((): Profile => store.getters.profile);
     const account = computed((): Account => store.getters.account);
     // const addAccountImage = (formData: FormData) => store.dispatch(ActionTypes.AddAccountImage, formData);
     // const updateAccount = (account: Account) => store.dispatch(ActionTypes.UpdateAccount, account);
     let address = ref('');
     const isUpdating = ref(false);
     // const isUpdating = ref(account.value.isActivated);
-    const item = reactive({    
-      photoURL: 'https://ipfs.infuria.io/ipfs/QmakHdxH44vEMZXkNGkEwZr9usFCe9CraHgWDsgQbYPWYV',
+    const item = reactive({
+      photoURL: 'https://ipfs.infura.io/ipfs/QmUHa9QV34uPdJ1JZ5XqcQgn5jfmW3SxUnt3yoFfHu8Sow',
       password: '',
       role: 'Admin',
       isActive: true,
       isActivated: true,
+      affiliate: profile.value.affiliate,
     })
     const readOnly = computed(() => {
       return account.value.isActivated;
@@ -136,7 +138,6 @@ export default defineComponent({
       }
     }
     const handleAccount = async () => {
-      console.log();
       if (isUpdating.value) {
         const { address, displayName, email, phoneNumber, photoURL, role, isActive, isActivated } = account.value;
         isUpdating.value = false;
@@ -153,7 +154,7 @@ export default defineComponent({
       } else {
         if (!handleValidation()) return;
         const { displayName, email, phoneNumber } = account.value;
-        const { password, photoURL, role, isActive, isActivated } = item;
+        const { password, photoURL, role, isActive, isActivated, affiliate } = item;
         await store.dispatch(ActionTypes.AddAccount, {
           displayName,
           email,
@@ -163,6 +164,7 @@ export default defineComponent({
           isActive,
           isActivated,
           password,
+          affiliate,
         })
       }
       address.value = '';
@@ -173,6 +175,7 @@ export default defineComponent({
         phoneNumber: '',
         photoURL: '',
         role: '',
+        affiliate: '',
         isActive: false,
         isActivated: false,
       });

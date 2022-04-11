@@ -62,7 +62,7 @@
 import { useStore } from '@/store';
 import { ActionTypes } from '@/store/actions';
 import { Account } from '@/store/state';
-import { computed, defineComponent, reactive, toRefs } from 'vue';
+import { computed, defineComponent, reactive, ref, toRefs } from 'vue';
 
 export default defineComponent({
   name: 'AccountView',
@@ -70,6 +70,7 @@ export default defineComponent({
   },
   setup() {
     const store = useStore();
+    const address = ref('');
     const copy = reactive({
       canCopy: false,
       isCopying: false,
@@ -79,9 +80,9 @@ export default defineComponent({
     const handleAddress = (address: string) => {
       return `${address.slice(0, 4)}...${address.slice(address.length - 3)}`;
     }
-    const handleCopy = async (word: string) => {
+    const handleCopy = async (word?: string) => {
       copy.isCopying = true;
-      await navigator.clipboard.writeText(word);
+      if(word) await navigator.clipboard.writeText(word);
       setTimeout(() => {
         copy.isCopying = false;
       }, 5000);
@@ -101,6 +102,7 @@ export default defineComponent({
     return {
       ...toRefs(copy),
       account,
+      address,
       handleInput,
       handleAddress,
       handleCopy,

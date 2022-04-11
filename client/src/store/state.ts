@@ -61,6 +61,11 @@ export type Login = {
   password: string;
 };
 
+export type Message = {
+  text: string;
+  status: boolean;
+}
+
 export type State = {
   documents: Document[];
   document: Document;

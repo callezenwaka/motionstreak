@@ -1,14 +1,12 @@
 import { ActionContext, ActionTree } from 'vuex'
 import { Mutations, MutationType } from './mutations'
-import { State, Account, Document, Service, Register, Login, Profile } from './state'
+import { State, Account, Document, Service, Register, Login, Profile, Message } from './state'
 import firebase from 'firebase';
 import account from '@/services/account';
 import service from '@/services/service';
 import document from '@/services/document';
 import { accounts, services, documents } from '../data/data';
-// import Profile from '@/types/Profile';
-// import Register from '@/types/Register';
-// import Login from '@/types/Login';
+import router from '@/router';
 
 export enum ActionTypes {
   // account
@@ -75,7 +73,7 @@ export type Actions = {
   // auth
   [ActionTypes.Register](context: ActionAugments, payload: Register): void;
   [ActionTypes.Login](context: ActionAugments, payload: Login): void;
-  [ActionTypes.Logout](context: ActionAugments, payload: Profile): void;
+  [ActionTypes.Logout](context: ActionAugments, payload: Message): void;
 
   // others
   [ActionTypes.SetIsLoading](context: ActionAugments, payload: boolean): void;
@@ -128,9 +126,9 @@ export const actions: ActionTree<State, State> & Actions = {
   async [ActionTypes.GetAccount](context, payload) {
     try {
       context.commit(MutationType.SetIsLoading, true)
-      const data = accounts.find(account => account.address == payload);
-      console.log(data);
-      // const data = await account.getAccount(context.getters.profile.token, payload);
+      // const data = accounts.find(account => account.address == payload);
+      // console.log(data);
+      const data = await account.getAccount(context.getters.profile.token, payload);
       context.commit(MutationType.SetIsLoading, false)
       if (typeof data != 'object') return;
       context.commit(MutationType.SetAccount, data);
@@ -143,7 +141,7 @@ export const actions: ActionTree<State, State> & Actions = {
     try {
       // TODO: update account
       console.log(payload);
-      return;
+      // return;
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
       const data = await account.updateAccount(context.getters.profile.token, payload);
@@ -172,7 +170,7 @@ export const actions: ActionTree<State, State> & Actions = {
     try {
       // TODO: add document
       console.log(payload);
-      return;
+      // return;
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
       const data = await document.addDocument(context.getters.profile.token, payload);
@@ -301,8 +299,6 @@ export const actions: ActionTree<State, State> & Actions = {
       console.log(displayName, phoneNumber, photoURL, email, password, role, isActivated);
       // return;
       context.commit(MutationType.SetIsLoading, true)
-      // await sleep(1000);
-      // const data = await service.addService(context.getters.profile.token, payload);
       const { user } = await firebase.auth().createUserWithEmailAndPassword(email, password);
       console.log(user);
       if (!user) return;
@@ -318,6 +314,7 @@ export const actions: ActionTree<State, State> & Actions = {
         isActivated,
       })
       context.commit(MutationType.SetIsLoading, false)
+      context.dispatch(ActionTypes.Logout, {text: `Verification link sent to ${email}`, status: true});
       return user;
     } catch (error) {
       console.log(error);
@@ -332,10 +329,24 @@ export const actions: ActionTree<State, State> & Actions = {
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
       const { user } = await firebase.auth().signInWithEmailAndPassword(email, password);
-      console.log(user);
       if(!user) return;
+      if(!user.emailVerified) return context.dispatch(ActionTypes.Logout, {text: `${email} not verified!`, status: true});
       const idTokenResult = await user.getIdTokenResult();
       console.log(idTokenResult.claims);
+      const { address, affiliate, isActivated, isActive, phone_number, role, picture, name } = idTokenResult.claims;
+      const { token } = idTokenResult;
+      context.dispatch(ActionTypes.SetProfile, {
+        displayName: name,
+        phoneNumber: phone_number,
+        photoURL: picture,
+        email,
+        role,
+        isActive,
+        isActivated,
+        address,
+        affiliate,
+        token,
+      });
       context.commit(MutationType.SetIsLoading, false)
       return user;
     } catch (error) {
@@ -343,7 +354,13 @@ export const actions: ActionTree<State, State> & Actions = {
     }
   },
   async [ActionTypes.Logout](context, payload) {
-    context.commit(MutationType.Logout, payload);
+    try {
+      await firebase.auth().signOut();
+			await router.push('/login');
+      context.commit(MutationType.Logout, payload);
+    } catch (error) {
+      return error;
+    }
   },
 
   // others

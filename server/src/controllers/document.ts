@@ -66,15 +66,17 @@ export const getDocuments = async (req: any, res: Response, next: NextFunction) 
 export const addDocument = async (req: any, res: Response, next: NextFunction) => {
 	try {
 		// TODO: create a provider and  add a fee
-    const { certifier, verifier, name, description, fee } = req.body;
-    if (!certifier || !verifier || !name || !description || !fee) return;
+    const { certifier, verifier, requester, name, imageURL, fee } = req.body;
+    if (!certifier || !verifier || !name || !requester || !fee) return;
+    console.log(req.body);
+    return;
 
     const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
     const wallet = new ethers.Wallet(`${req.secret}`);
     const signer = wallet.connect(provider);
     const documentContract = new ethers.Contract(documentAddress, Documents.abi, signer);
 
-    const res = await documentContract.addDocument(certifier, verifier, name, description, fee);
+    const res = await documentContract.addDocument(certifier, verifier, name, imageURL, fee);
     await res.wait();
     console.log(res.blockNumber);
     

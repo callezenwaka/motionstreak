@@ -7,7 +7,7 @@ const router = express();
 
 // router.get('/', account.getAccounts);
 
-router.post('/', createWallet, setClaim, updateUser, postSecret, account.addAccount);
+router.post('/', updateUser, createWallet, setClaim, postSecret, account.addAccount);
 
 router.post('/image', multer.single('file'), account.postImage);
 

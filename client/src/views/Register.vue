@@ -61,7 +61,7 @@ export default defineComponent({
     let user = reactive({
       displayName: '',
       phoneNumber: '',
-      photoURL: 'https://ipfs.infuria.io/ipfs/QmakHdxH44vEMZXkNGkEwZr9usFCe9CraHgWDsgQbYPWYV',
+      photoURL: 'https://ipfs.infura.io/ipfs/QmUHa9QV34uPdJ1JZ5XqcQgn5jfmW3SxUnt3yoFfHu8Sow',
       email: '',
       password: '',
       role: 'User',
