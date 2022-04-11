@@ -4,6 +4,7 @@ import './registerServiceWorker'
 import router from './router';
 import {store} from './store';
 import firebase from 'firebase';
+import { ActionTypes } from './store/actions';
 
 // define firebase config
 const firebaseConfig = {
@@ -17,9 +18,26 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-// firebase.auth().onAuthStateChanged( async user => {
-//   if (user && user.emailVerified) {
-//     const idTokenResult = await user.getIdTokenResult();
+firebase.auth().onAuthStateChanged( async user => {
+  if (user && user.emailVerified) {
+    const idTokenResult = await user.getIdTokenResult();
+    console.log("main", idTokenResult);
+    console.log("main", user);
+    // const { displayNam: name } = idTokenResult.claims;
+    const { address, affiliate, email, isActivated, isActive, phone_number, role, picture, name, } = idTokenResult.claims;
+    const { token } = idTokenResult;
+    store.dispatch(ActionTypes.SetProfile, {
+      displayName: name,
+      phoneNumber: phone_number,
+      photoURL: picture,
+      email,
+      role,
+      isActive,
+      isActivated,
+      address,
+      affiliate,
+      token,
+    });
 //     if (idTokenResult && idTokenResult.claims.isActivated) {
 //       const isUser = idTokenResult.claims.isUser? true : false;
 //       if (isUser) {
@@ -37,7 +55,7 @@ firebase.initializeApp(firebaseConfig);
 //       store.dispatch('logout', `Your account is deactivated!`);
 //       return;
 //     }
-//   }
-// });
+  }
+});
 
 createApp(App).use(store).use(router).mount('#app')

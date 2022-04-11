@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import { create } from 'ipfs-http-client';
 import { accountAddress } from '../config';
 import Accounts from '../../artifacts/contracts/Accounts.sol/Accounts.json';
+import { accounts } from "../../data/data";
 const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 
 /**
@@ -18,7 +19,7 @@ const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 		// TODO: create an account
     const { displayName, email, phoneNumber, photoURL, role, isActivated } = req.body;
     if (!displayName || !email || !phoneNumber || !photoURL || !role || !isActivated) return;
-    console.log(displayName, email, phoneNumber, photoURL, role, isActivated);
+    console.log(req.body);
     return;
     // TODO: could refactor signer should be deployed account
     const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);

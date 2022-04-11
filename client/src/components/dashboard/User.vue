@@ -36,7 +36,7 @@
       </div>
       <div class="form--item">
         <label class="form--label" for="file">User Avatar: </label>
-        <input class="form--inputs" type="file" name="file" id="file" @change="handleImage" @blur="handleBlur($event)" required />
+        <input class="form--file" type="file" name="file" id="file" @change="handleImage" @blur="handleBlur($event)" required />
       </div>
       <div class="form--item">
         <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Send</button>
@@ -247,6 +247,9 @@ img {
 }
 .form--button.isValid:hover {
   opacity: 0.5;
+}
+.form--file {
+  margin-top: 20px;
 }
 .clipboard--wrapper {
   animation: fade-out 0.2s both;

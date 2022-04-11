@@ -77,7 +77,7 @@ export default defineComponent({
       if (!handleValidation()) return;
       try {
         await store.dispatch(ActionTypes.Login, {...user});
-        router.push({ name: "Home" });
+        router.push({ name: "Dashboard" });
       } catch (error) {
         console.log(error);
       }

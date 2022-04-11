@@ -61,15 +61,28 @@ contract Accounts {
   }
 
   /** @dev add user account details.
-    * @param _address account address.
+    * @param _address account address..
+    * @param affiliate account affiliate.
     * @param displayName account name.
     * @param email account email.
     * @param phoneNumber account phone.
-    * @param role account tenant.
+    * @param photoURL account ptoto.
+    * @param role account role.
     * @param isActivated account activation.
+    * @param isActive account status.
     * @return success account success.
     */
-  function addAccount(address _address, string memory displayName, string memory email, string memory phoneNumber, string memory photoURL, string memory role, bool isActivated) 
+  function addAccount(
+    address _address,
+    address affiliate, 
+    string memory displayName, 
+    string memory email, 
+    string memory phoneNumber, 
+    string memory photoURL, 
+    string memory role,
+    bool isActive, 
+    bool isActivated
+  ) 
   public 
   payable
   returns(bool)
@@ -82,8 +95,8 @@ contract Accounts {
     accounts[_address].photoURL = photoURL;
     accounts[_address].role = role;
     accounts[_address].isActivated = isActivated;
-    accounts[_address].isActive = true;
-    accounts[_address].affiliate = msg.sender;
+    accounts[_address].isActive = isActive;
+    accounts[_address].affiliate = affiliate;
 
     return true;
   }
@@ -112,7 +125,14 @@ contract Accounts {
     * @param isActive account active.
     * @return success account success.
     */
-  function updateAccount(address _address, string memory displayName, string memory email, string memory phoneNumber, string memory photoURL, bool isActive) 
+  function updateAccount(
+    address _address, 
+    string memory displayName, 
+    string memory email, 
+    string memory phoneNumber, 
+    string memory photoURL, 
+    bool isActive
+  ) 
   public 
   payable
   isAccount(msg.sender)

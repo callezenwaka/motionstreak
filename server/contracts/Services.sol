@@ -127,6 +127,19 @@ contract Services {
     return true;
   }
 
+  /** @dev get count of service.
+    * @param _address user address.
+    * @return total count uint.
+    */ 
+  function getTotal(address _address) 
+  public 
+  view
+  returns(uint total) 
+  {
+    // TODO: Get document counts
+    return services[_address].fees.length;
+  }
+
   /** @dev kill smart contract if something bad happens.
     */
   function kill() 

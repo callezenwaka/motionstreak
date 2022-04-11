@@ -1,5 +1,5 @@
 // import packages and dependencies
-import { isAuthenticated, createWallet } from '../auth';
+import { isAuthenticated, createWallet, setClaim, updateUser, postSecret } from '../utils';
 import account from "../controllers/account";
 import { multer } from "../utils";
 import express from "express";
@@ -7,7 +7,7 @@ const router = express();
 
 // router.get('/', account.getAccounts);
 
-router.post('/', createWallet, account.addAccount);
+router.post('/', createWallet, setClaim, updateUser, postSecret, account.addAccount);
 
 router.post('/image', multer.single('file'), account.postImage);
 

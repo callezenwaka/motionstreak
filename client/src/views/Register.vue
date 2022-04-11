@@ -65,6 +65,7 @@ export default defineComponent({
       email: '',
       password: '',
       role: 'User',
+      isActive: true,
       isActivated: true,
     });
     const isValid = computed(() => {

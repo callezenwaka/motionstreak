@@ -23,7 +23,7 @@
     <!-- service list -->
     <div class="content-section">
       <div class="content-section-title">Services</div>
-      <ul>
+      <ul v-if="services.length">
         <li class="services" v-for="service in services" :key="service.index">
           <div class="service--item">
             <img src="@/assets/certificate.svg" :alt="service.name" srcset="">
@@ -42,6 +42,7 @@
           </div>
         </li>
       </ul>
+      <div><span>No service exist</span></div>
     </div>
   </div>
 </template>

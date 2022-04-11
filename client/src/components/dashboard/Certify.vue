@@ -34,14 +34,7 @@
       </div>
       <div class="form--item">
         <label class="form--label" for="file">Document Image: </label>
-        <input class="form--inputs" type="file" name="file" id="file" @change="handleImage" @blur="handleBlur($event)" required />
-        <!-- <div class="form--file">
-          <input class="" type="file" name="file" id="file" @change="handleImage" @blur="handleBlur($event)" required />
-          <svg class="form--svg" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" @click="addFile()">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"></path>
-          </svg>
-          <span>Click to upload</span>
-        </div> -->
+        <input class="form--file" type="file" name="file" id="file" @change="handleImage" @blur="handleBlur($event)" required />
       </div>
       <div class="form--item" v-if="certify.imageURL">
         <img :src="certify.imageURL" :alt="certify.name">
@@ -233,6 +226,9 @@ export default defineComponent({
 .form--button.isValid:hover {
   opacity: 0.5;
 }
+.form--file {
+  margin-top: 20px;
+}
 img {
   max-width: 50%;
   min-width: 50%;
@@ -243,20 +239,6 @@ img {
 img:hover {
   min-width: 100%;
   transform: scale(1.2); 
-}
-.form--file {
-  display: flex;
-  align-content: center;
-  justify-content: flex-start;
-  align-items: center;
-  cursor: pointer;
-}
-.form--svg {
-  width: 5rem;
-  stroke: currentColor;
-  height: 5rem;
-  display: block;
-  /* vertical-align: middle; */
 }
 /* mini */
 @media only screen and (min-width: 481px) {

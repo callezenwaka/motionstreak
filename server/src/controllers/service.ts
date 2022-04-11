@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import Service from '../types/Service';
 import { serviceAddress } from '../config';
 import Services from '../../artifacts/contracts/Services.sol/Services.json';
+import { services } from "../../data/data";
 
 /**
  * [START GET SERVICES]
@@ -56,7 +57,8 @@ import Services from '../../artifacts/contracts/Services.sol/Services.json';
 		// TODO: create a provider and  add a service
     const { name, cost } = req.body;
     if (!name || !cost) return;
-
+    console.log(name, cost);
+    return;
     const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
     const wallet = new ethers.Wallet(`${req.secret}`);
     const signer = wallet.connect(provider);

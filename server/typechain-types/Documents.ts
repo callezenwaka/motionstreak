@@ -23,15 +23,13 @@ export declare namespace Documents {
     verifier: string;
     certifier: string;
     name: string;
-    description: string;
-    image: string;
+    imageURL: string;
     fee: BigNumberish;
     index: BigNumberish;
     status: BigNumberish;
   };
 
   export type DocumentStructOutput = [
-    string,
     string,
     string,
     string,
@@ -45,8 +43,7 @@ export declare namespace Documents {
     verifier: string;
     certifier: string;
     name: string;
-    description: string;
-    image: string;
+    imageURL: string;
     fee: BigNumber;
     index: BigNumber;
     status: number;
@@ -57,13 +54,13 @@ export interface DocumentsInterface extends utils.Interface {
   contractName: "Documents";
   functions: {
     "accountsAddress()": FunctionFragment;
-    "addDocument(address,address,string,string,uint256)": FunctionFragment;
+    "addDocument(address,address,string,uint256)": FunctionFragment;
     "balances(address)": FunctionFragment;
     "getDocument(uint256)": FunctionFragment;
     "getDocuments(address)": FunctionFragment;
     "getTotal(address)": FunctionFragment;
     "kill()": FunctionFragment;
-    "updateDocument(string,uint256,uint256,uint8)": FunctionFragment;
+    "updateDocument(string,uint256,uint8)": FunctionFragment;
   };
 
   encodeFunctionData(
@@ -72,7 +69,7 @@ export interface DocumentsInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "addDocument",
-    values: [string, string, string, string, BigNumberish]
+    values: [string, string, string, BigNumberish]
   ): string;
   encodeFunctionData(functionFragment: "balances", values: [string]): string;
   encodeFunctionData(
@@ -87,7 +84,7 @@ export interface DocumentsInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "kill", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "updateDocument",
-    values: [string, BigNumberish, BigNumberish, BigNumberish]
+    values: [string, BigNumberish, BigNumberish]
   ): string;
 
   decodeFunctionResult(
@@ -186,7 +183,6 @@ export interface Documents extends BaseContract {
       _certifier: string,
       _verifier: string,
       _name: string,
-      _description: string,
       _fee: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -213,9 +209,8 @@ export interface Documents extends BaseContract {
     ): Promise<ContractTransaction>;
 
     updateDocument(
-      _image: string,
+      _imageURL: string,
       _index: BigNumberish,
-      _fee: BigNumberish,
       status: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -227,7 +222,6 @@ export interface Documents extends BaseContract {
     _certifier: string,
     _verifier: string,
     _name: string,
-    _description: string,
     _fee: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -251,9 +245,8 @@ export interface Documents extends BaseContract {
   ): Promise<ContractTransaction>;
 
   updateDocument(
-    _image: string,
+    _imageURL: string,
     _index: BigNumberish,
-    _fee: BigNumberish,
     status: BigNumberish,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -265,7 +258,6 @@ export interface Documents extends BaseContract {
       _certifier: string,
       _verifier: string,
       _name: string,
-      _description: string,
       _fee: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -287,9 +279,8 @@ export interface Documents extends BaseContract {
     kill(overrides?: CallOverrides): Promise<void>;
 
     updateDocument(
-      _image: string,
+      _imageURL: string,
       _index: BigNumberish,
-      _fee: BigNumberish,
       status: BigNumberish,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -319,7 +310,6 @@ export interface Documents extends BaseContract {
       _certifier: string,
       _verifier: string,
       _name: string,
-      _description: string,
       _fee: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -343,9 +333,8 @@ export interface Documents extends BaseContract {
     ): Promise<BigNumber>;
 
     updateDocument(
-      _image: string,
+      _imageURL: string,
       _index: BigNumberish,
-      _fee: BigNumberish,
       status: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -358,7 +347,6 @@ export interface Documents extends BaseContract {
       _certifier: string,
       _verifier: string,
       _name: string,
-      _description: string,
       _fee: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
@@ -388,9 +376,8 @@ export interface Documents extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     updateDocument(
-      _image: string,
+      _imageURL: string,
       _index: BigNumberish,
-      _fee: BigNumberish,
       status: BigNumberish,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

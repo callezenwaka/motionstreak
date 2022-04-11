@@ -4,6 +4,7 @@ import { create } from 'ipfs-http-client';
 import Document from '../types/Document';
 import { documentAddress } from '../config';
 import Documents from '../../artifacts/contracts/Documents.sol/Documents.json';
+import { documents } from "../../data/data";
 const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 // import { create } from 'ipfs-http-client';
 // const client = create(new URL(`https://ipfs.infura.io:${5001}/api/v0`))

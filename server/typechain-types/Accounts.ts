@@ -22,10 +22,10 @@ export declare namespace Accounts {
     phoneNumber: string;
     email: string;
     photoURL: string;
-    affiliate: string;
-    isTenant: boolean;
+    role: string;
     isActive: boolean;
     isActivated: boolean;
+    affiliate: string;
   };
 
   export type AccountStructOutput = [
@@ -36,16 +36,16 @@ export declare namespace Accounts {
     string,
     boolean,
     boolean,
-    boolean
+    string
   ] & {
     displayName: string;
     phoneNumber: string;
     email: string;
     photoURL: string;
-    affiliate: string;
-    isTenant: boolean;
+    role: string;
     isActive: boolean;
     isActivated: boolean;
+    affiliate: string;
   };
 }
 
@@ -53,7 +53,7 @@ export interface AccountsInterface extends utils.Interface {
   contractName: "Accounts";
   functions: {
     "accounts(address)": FunctionFragment;
-    "addAccount(address,string,string,string,string,bool,bool)": FunctionFragment;
+    "addAccount(address,address,string,string,string,string,string,bool,bool)": FunctionFragment;
     "getAccount(address)": FunctionFragment;
     "kill()": FunctionFragment;
     "updateAccount(address,string,string,string,string,bool)": FunctionFragment;
@@ -62,7 +62,17 @@ export interface AccountsInterface extends utils.Interface {
   encodeFunctionData(functionFragment: "accounts", values: [string]): string;
   encodeFunctionData(
     functionFragment: "addAccount",
-    values: [string, string, string, string, string, boolean, boolean]
+    values: [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      boolean,
+      boolean
+    ]
   ): string;
   encodeFunctionData(functionFragment: "getAccount", values: [string]): string;
   encodeFunctionData(functionFragment: "kill", values?: undefined): string;
@@ -135,25 +145,27 @@ export interface Accounts extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<
-      [string, string, string, string, string, boolean, boolean, boolean] & {
+      [string, string, string, string, string, boolean, boolean, string] & {
         displayName: string;
         phoneNumber: string;
         email: string;
         photoURL: string;
-        affiliate: string;
-        isTenant: boolean;
+        role: string;
         isActive: boolean;
         isActivated: boolean;
+        affiliate: string;
       }
     >;
 
     addAccount(
       _address: string,
+      affiliate: string,
       displayName: string,
       email: string,
       phoneNumber: string,
       photoURL: string,
-      _isTenant: boolean,
+      role: string,
+      isActive: boolean,
       isActivated: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
@@ -182,25 +194,27 @@ export interface Accounts extends BaseContract {
     arg0: string,
     overrides?: CallOverrides
   ): Promise<
-    [string, string, string, string, string, boolean, boolean, boolean] & {
+    [string, string, string, string, string, boolean, boolean, string] & {
       displayName: string;
       phoneNumber: string;
       email: string;
       photoURL: string;
-      affiliate: string;
-      isTenant: boolean;
+      role: string;
       isActive: boolean;
       isActivated: boolean;
+      affiliate: string;
     }
   >;
 
   addAccount(
     _address: string,
+    affiliate: string,
     displayName: string,
     email: string,
     phoneNumber: string,
     photoURL: string,
-    _isTenant: boolean,
+    role: string,
+    isActive: boolean,
     isActivated: boolean,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
@@ -229,25 +243,27 @@ export interface Accounts extends BaseContract {
       arg0: string,
       overrides?: CallOverrides
     ): Promise<
-      [string, string, string, string, string, boolean, boolean, boolean] & {
+      [string, string, string, string, string, boolean, boolean, string] & {
         displayName: string;
         phoneNumber: string;
         email: string;
         photoURL: string;
-        affiliate: string;
-        isTenant: boolean;
+        role: string;
         isActive: boolean;
         isActivated: boolean;
+        affiliate: string;
       }
     >;
 
     addAccount(
       _address: string,
+      affiliate: string,
       displayName: string,
       email: string,
       phoneNumber: string,
       photoURL: string,
-      _isTenant: boolean,
+      role: string,
+      isActive: boolean,
       isActivated: boolean,
       overrides?: CallOverrides
     ): Promise<boolean>;
@@ -286,11 +302,13 @@ export interface Accounts extends BaseContract {
 
     addAccount(
       _address: string,
+      affiliate: string,
       displayName: string,
       email: string,
       phoneNumber: string,
       photoURL: string,
-      _isTenant: boolean,
+      role: string,
+      isActive: boolean,
       isActivated: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
@@ -320,11 +338,13 @@ export interface Accounts extends BaseContract {
 
     addAccount(
       _address: string,
+      affiliate: string,
       displayName: string,
       email: string,
       phoneNumber: string,
       photoURL: string,
-      _isTenant: boolean,
+      role: string,
+      isActive: boolean,
       isActivated: boolean,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;

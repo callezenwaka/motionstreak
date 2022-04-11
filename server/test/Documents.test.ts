@@ -6,13 +6,20 @@ describe("Documents", async function () {
   let accounts: any;
   let documents: any;
   // Args
-  const displayName: string = 'User Account';
+  const displayName: string = 'John Doe';
   const phoneNumber: string = '+2348033330000';
-  const email: string = 'user@mail.com';
+  const email: string = 'john.doe@mail.com';
   const photoURL: string = 'photoURL';
   const role: string = 'role';
   const name: string = 'Transcript';
-  const description: string = 'Transcript';
+  const isActive: boolean = true;
+  const isActivated: boolean = true;
+  const fee: number = 1;
+  const index: number = 0;
+  const status: number = 1;
+  const imageURL: string = 'https://i.pinimg.com/736x/8a/8d/e9/8a8de9aa2e54526fecb40182e510e856.jpg';
+  const adminUser: string = 'Jane Doe';
+  const adminRole: string = 'Admin';
 
   before(async () => {
     const Utils = await ethers.getContractFactory("Utils");
@@ -20,7 +27,6 @@ describe("Documents", async function () {
     await utils.deployed();
     console.log("Utils deployed to:", utils.address);
 
-    // const Accounts = await ethers.getContractFactory("Accounts");
     const Accounts = await ethers.getContractFactory("Accounts", {
       libraries: {
         Utils: utils.address,
@@ -38,54 +44,87 @@ describe("Documents", async function () {
 
   it("Should add new document", async function () {
     const [owner, addr1, addr2, addr3] = await ethers.getSigners();
-    const user = await accounts.connect(addr3).addAccount(addr3.address, displayName, email, phoneNumber, photoURL, role, true);
-    await user.wait();
+    const result = await accounts.connect(addr1).addAccount(addr1.address, addr1.address, displayName, email, phoneNumber, photoURL, role, isActive, isActivated);
+    await result.wait();
 
-    // for (let index = 0; index <= 2; index++) {
-      // const element = array[index];
-      const document = await documents.connect(addr3).addDocument(addr1.address, addr2.address, name, description, 1, { value: 1 });
-      const res = await document.wait();
-      console.log(res.blockNumber);
-      
-    // }
+    const document = await documents.connect(addr1).addDocument(addr2.address, addr3.address, name, fee, { value: 1 });
+    const res = await document.wait();
 
-    // expect(res.from).to.equal(addr3.address);
-    // expect(res.to).to.equal(documents.address);
-    // expect(res.contractAddress).to.equal(null);
-    // expect(res.transactionIndex).to.equal(0);
+    expect(res.from).to.equal(addr1.address);
+    expect(res.to).to.equal(documents.address);
+    expect(res.contractAddress).to.equal(null);
+    expect(res.transactionIndex).to.equal(0);
   });
 
-  // it("Should return a user documents", async function () {
-  //   const [owner, addr1, addr2, addr3] = await ethers.getSigners();
-  //   const res = await documents.connect(addr3).getDocuments(addr3.address);
+  it("Should return a user documents", async function () {
+    const [owner, addr1, addr2, addr3] = await ethers.getSigners();
+    const res = await documents.connect(addr1).getDocuments(addr1.address);
+    
+    expect(res).to.be.an('array').that.is.not.empty;
+    expect(res[0].requester).to.equal(addr1.address);
+    expect(res[0].certifier).to.equal(addr2.address);
+    expect(res[0].verifier).to.equal(addr3.address);
+    expect(res[0].name).to.equal(name);
+    expect(res[0].imageURL).to.equal('');
+    expect(res[0].fee).to.equal(fee);
+    expect(res[0].index).to.equal(0);
+    expect(res[0].status).to.equal(0);
+  });
 
-  //   expect(res).to.be.an('array').that.is.not.empty;
-  // });
+  it("Should return a user document", async function () {
+    const [owner, addr1, addr2, addr3] = await ethers.getSigners();
+    const res = await documents.connect(addr1).getDocument(0);
 
-  // it("Should return a user document", async function () {
-  //   const [owner, addr1, addr2, addr3] = await ethers.getSigners();
-  //   const res = await documents.connect(addr3).getDocument(0);
+    expect(res).to.be.an('array').that.is.not.empty;
+    expect(res.requester).to.equal(addr1.address);
+    expect(res.certifier).to.equal(addr2.address);
+    expect(res.verifier).to.equal(addr3.address);
+    expect(res.name).to.equal(name);
+    expect(res.imageURL).to.equal('');
+    expect(res.fee).to.equal(fee);
+    expect(res.index).to.equal(0);
+    expect(res.status).to.equal(0);
+  });
 
-  //   expect(res).to.be.an('array').that.is.not.empty;
-  //   expect(res.requester).to.equal(addr3.address);
-  //   expect(res.certifier).to.equal(addr1.address);
-  //   expect(res.verifier).to.equal(addr2.address);
-  //   expect(res.name).to.equal(name);
-  //   expect(res.description).to.equal(description);
-  //   expect(res.image).to.equal('');
-  //   expect(res.fee).to.equal(1);
-  //   expect(res.index).to.equal(0);
-  //   expect(res.status).to.equal(0);
-  // });
+  it("Should update a user document", async function () {
+    const [owner, addr1, addr2, addr3, addr4] = await ethers.getSigners();
 
-  // it("Should return a user document count", async function () {
-  //   const [owner, addr1, addr2, addr3] = await ethers.getSigners();
-  //   const res = await documents.connect(addr3).getCounts(addr3.address);
+    const account = await accounts.connect(addr2).addAccount(addr4.address, addr2.address, adminUser, email, phoneNumber, photoURL, adminRole, isActive, isActivated);
+    const acc = await account.wait();
 
-  //   expect(res.pending).to.equal(0);
-  //   expect(res.certified).to.equal(0);
-  //   expect(res.verified).to.equal(0);
-  //   expect(res.rejected).to.equal(0);
-  //   expect(res.total).to.equal(1);
-  // });
+    const result = await documents.connect(addr4).updateDocument(imageURL, index, status);
+    const response = await result.wait();
+
+    expect(response.from).to.equal(addr4.address);
+    expect(response.to).to.equal(documents.address);
+    expect(response.contractAddress).to.equal(null);
+    expect(response.transactionIndex).to.equal(0);
+
+    const res = await documents.connect(addr4).getDocument(0);
+
+    expect(res).to.be.an('array').that.is.not.empty;
+    expect(res.imageURL).to.equal(imageURL);
+  });
+
+  it("Should return a user documents", async function () {
+    const [owner, addr1, addr2, addr3] = await ethers.getSigners();
+    const res = await documents.connect(addr1).getDocuments(addr1.address);
+
+    expect(res).to.be.an('array').that.is.not.empty;
+    expect(res[0].requester).to.equal(addr1.address);
+    expect(res[0].certifier).to.equal(addr2.address);
+    expect(res[0].verifier).to.equal(addr3.address);
+    expect(res[0].name).to.equal(name);
+    expect(res[0].imageURL).to.equal(imageURL);
+    expect(res[0].fee).to.equal(fee);
+    expect(res[0].index).to.equal(0);
+    expect(res[0].status).to.equal(1);
+  });
+
+  it("Should return a user document count", async function () {
+    const [owner, addr1, addr2, addr3] = await ethers.getSigners();
+    const res = await documents.connect(addr1).getTotal(addr1.address);
+
+    expect(res).to.equal(1);
+  });
 });

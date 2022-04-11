@@ -1,5 +1,5 @@
 // import packages and dependencies
-// import { isAuthenticated } from '../auth';
+// import { isAuthenticated } from '../utils';
 import document from "../controllers/document";
 import { multer } from "../utils";
 import express from "express";

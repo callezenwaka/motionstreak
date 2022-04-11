@@ -10,31 +10,28 @@ const main = async () => {
   // manually to make sure everything is compiled
   // await hre.run('compile');
 
-  // We get the contract to deploy
-  // const Greeter = await ethers.getContractFactory("Greeter");
-  // const greeter = await Greeter.deploy("Hello, Hardhat!");
-  // await greeter.deployed();
-  // console.log("Greeter deployed to:", greeter.address);
+  const Utils = await ethers.getContractFactory("Utils");
+  const utils = await Utils.deploy();
+  await utils.deployed();
+  console.log("Utils deployed to:", utils.address);
 
-  // const StringUtils = await ethers.getContractFactory("StringUtils");
-  // const stringUtils = await StringUtils.deploy();
-  // await stringUtils.deployed();
-  // console.log("StringUtils deployed to:", stringUtils.address);
-
-  // const EmailRegex = await ethers.getContractFactory("EmailRegex");
-  // const emailRegex = await EmailRegex.deploy();
-  // await emailRegex.deployed();
-  // console.log("EmailRegex deployed to:", emailRegex.address);
-
-  const Accounts = await ethers.getContractFactory("Accounts");
+  const Accounts = await ethers.getContractFactory("Accounts", {
+    libraries: {
+      Utils: utils.address,
+    },
+  });
   const accounts = await Accounts.deploy();
   await accounts.deployed();
   console.log("Accounts deployed to:", accounts.address);
 
-  const Profiles = await ethers.getContractFactory("Profiles");
-  const profiles = await Profiles.deploy(accounts.address);
-  await profiles.deployed();
-  console.log("Documents deployed to:", profiles.address);
+  const Services = await ethers.getContractFactory("Services", {
+    libraries: {
+      Utils: utils.address,
+    },
+  });
+  const services = await Services.deploy(accounts.address);
+  await services.deployed();
+  console.log("Services deployed to:", services.address);
 
   const Documents = await ethers.getContractFactory("Documents");
   const documents = await Documents.deploy(accounts.address);

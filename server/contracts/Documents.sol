@@ -19,7 +19,6 @@ contract Documents {
     address verifier;
     address certifier;
     string name;
-    string description;
     string imageURL;
     uint fee;
     uint index;
@@ -81,6 +80,7 @@ contract Documents {
       balances[addr] += _fee;
     }
   }
+
   /** @dev check for contract owner.
   */
   modifier onlyOwner {
@@ -96,11 +96,10 @@ contract Documents {
   /** @dev add document.
     * @param _certifier document address.
     * @param _verifier document address.
-    * @param _description document description.
     * @param _name document name.
     * @param _fee document fee.
     */
-  function addDocument(address _certifier, address _verifier, string memory _name, string memory _description, uint _fee) 
+  function addDocument(address _certifier, address _verifier, string memory _name, uint _fee) 
   public 
   payable
   paidEnough(_fee)
@@ -114,7 +113,6 @@ contract Documents {
         verifier: _verifier,
         certifier: _certifier,
         requester: msg.sender,
-        description: _description,
         name: _name,
         imageURL: "",
         index: documents.length,
@@ -195,10 +193,9 @@ contract Documents {
   /** @dev update document.
     * @param _imageURL document address.
     * @param _index document index.
-    * @param _fee document fee.
     * @param status document status.
     */
-  function updateDocument(string memory _imageURL, uint _index, uint _fee, Status status) 
+  function updateDocument(string memory _imageURL, uint _index, Status status) 
   public 
   payable
   isAdmin(msg.sender)
@@ -225,10 +222,11 @@ contract Documents {
         return true;
       }
       if(status == Status.REJECTED) {
+        uint fee = documents[_index].fee;
         emit DocumentRejected(msg.sender);
         // return the ether for rejection
-        balances[documents[_index].certifier] -= _fee;
-        payable(documents[_index].requester).transfer(_fee);
+        balances[documents[_index].certifier] -= fee;
+        payable(documents[_index].requester).transfer(fee);
         return true;
       }
     }

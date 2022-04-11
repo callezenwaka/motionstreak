@@ -25,6 +25,7 @@ export type Account = {
   address?: string;
   affiliate?: string;
   password?: string;
+  uid?: string;
 };
 
 export type Document = {
@@ -51,6 +52,7 @@ export type Register = {
   email: string;
   password: string;
   role: string;
+  isActive: boolean;
   isActivated: boolean;
 };
 
@@ -86,16 +88,17 @@ export const state: State = {
   account: {} as Account,
   services: [],
   service: {} as Service,
-  profile: {} as Profile,
+  profile: {
+    // displayName: 'Admin One',
+    // phoneNumber: '+2348030003000',
+    // photoURL: photoURL,
+    // email: 'admin.one@mail.com',
+    // role: 'admin',
+    // isActive: true,
+    // isActivated: true,
+    // address: '0x976EA74026E726554dB657fA54763abd0C3a0aa9',
+    // affiliate: '0x90F79bf6EB2c4f870365E785982E1f101E93b906',
+    // token: 'ej0xbDA5747bFD65F08deb54cb465eB87D40e51B197E0xbDA5747bFD65F08deb54cb465eB87D40e51B197E',
+  } as Profile,
   isLoading: false,
 };
-// displayName: 'Admin One',
-// phoneNumber: '+2348030003000',
-// photoURL: photoURL,
-// email: 'admin.one@mail.com',
-// role: 'admin',
-// isActive: true,
-// isActivated: true,
-// address: '0x976EA74026E726554dB657fA54763abd0C3a0aa9',
-// affiliate: '0x90F79bf6EB2c4f870365E785982E1f101E93b906',
-// token: 'ej0xbDA5747bFD65F08deb54cb465eB87D40e51B197E0xbDA5747bFD65F08deb54cb465eB87D40e51B197E',

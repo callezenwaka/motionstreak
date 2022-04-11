@@ -102,10 +102,10 @@ export const actions: ActionTree<State, State> & Actions = {
     try {
       // TODO: add account
       console.log(payload);
-      return;
+      // return;
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
-      const data = await account.addAccount(context.rootGetters.idToken, payload);
+      const data = await account.addAccount(payload);
       context.commit(MutationType.SetIsLoading, false)
       return data;
     } catch (error) {
@@ -116,7 +116,7 @@ export const actions: ActionTree<State, State> & Actions = {
     try {
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
-      const data = await account.getAccounts(context.rootGetters.idToken);
+      const data = await account.getAccounts(context.getters.profile.token);
       context.commit(MutationType.SetIsLoading, false)
       if (!Array.isArray(data)) return;
       context.commit(MutationType.SetAccounts, data);
@@ -175,7 +175,7 @@ export const actions: ActionTree<State, State> & Actions = {
       return;
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
-      const data = await document.addDocument(context.rootGetters.idToken, payload);
+      const data = await document.addDocument(context.getters.profile.token, payload);
       context.commit(MutationType.SetIsLoading, false)
       return data;
     } catch (error) {
@@ -186,7 +186,7 @@ export const actions: ActionTree<State, State> & Actions = {
     try {
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
-      // const data = await document.getDocuments(context.rootGetters.idToken);      
+      // const data = await document.getDocuments(context.getters.profile.token);      
       const data = documents;
       context.commit(MutationType.SetIsLoading, false)
       if (!Array.isArray(data)) return;
@@ -200,7 +200,7 @@ export const actions: ActionTree<State, State> & Actions = {
     try {
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
-      const data = await document.getDocument(context.rootGetters.idToken, payload);
+      const data = await document.getDocument(context.getters.profile.token, payload);
       context.commit(MutationType.SetIsLoading, false)
       if (typeof data != 'object') return;
       context.commit(MutationType.SetDocument, data);
@@ -213,7 +213,7 @@ export const actions: ActionTree<State, State> & Actions = {
     try {
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
-      const data = await document.updateDocument(context.rootGetters.idToken, payload);
+      const data = await document.updateDocument(context.getters.profile.token, payload);
       context.commit(MutationType.SetIsLoading, false)
       return data;
     } catch (error) {
@@ -225,10 +225,11 @@ export const actions: ActionTree<State, State> & Actions = {
     try {
       // add service
       console.log(payload);
-      return;
+      // return;
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
-      const data = await service.addService(context.rootGetters.idToken, payload);
+      const data = await service.addService(context.getters.profile.token, payload);
+      if(typeof data !== 'string') return;
       context.commit(MutationType.SetIsLoading, false)
       return data;
     } catch (error) {
@@ -245,7 +246,7 @@ export const actions: ActionTree<State, State> & Actions = {
         }
       });
       console.log(data);
-      // const data = await service.getServices(context.rootGetters.idToken);
+      // const data = await service.getServices(context.getters.profile.token);
       context.commit(MutationType.SetIsLoading, false)
       // if (!Array.isArray(data)) return;
       if(!data) return;
@@ -259,7 +260,7 @@ export const actions: ActionTree<State, State> & Actions = {
     try {
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
-      const data = await service.getService(context.rootGetters.idToken, payload);
+      const data = await service.getService(context.getters.profile.token, payload);
       context.commit(MutationType.SetIsLoading, false)
       if (typeof data != 'object') return;
       context.commit(MutationType.SetService, data);
@@ -274,7 +275,7 @@ export const actions: ActionTree<State, State> & Actions = {
       return;
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
-      const data = await service.updateService(context.rootGetters.idToken, payload);
+      const data = await service.updateService(context.getters.profile.token, payload);
       context.commit(MutationType.SetIsLoading, false)
       return data;
     } catch (error) {
@@ -285,7 +286,7 @@ export const actions: ActionTree<State, State> & Actions = {
     try {
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
-      const data = await service.deleteService(context.rootGetters.idToken, payload);
+      const data = await service.deleteService(context.getters.profile.token, payload);
       context.commit(MutationType.SetIsLoading, false)
       return data;
     } catch (error) {
@@ -296,21 +297,24 @@ export const actions: ActionTree<State, State> & Actions = {
   async [ActionTypes.Register](context, payload) {
     try {
       // TODO: register account
-      const { displayName, phoneNumber, photoURL, email, password, role, isActivated } = payload;
+      const { displayName, phoneNumber, photoURL, email, password, role, isActive, isActivated } = payload;
       console.log(displayName, phoneNumber, photoURL, email, password, role, isActivated);
       // return;
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
-      // const data = await service.addService(context.rootGetters.idToken, payload);
+      // const data = await service.addService(context.getters.profile.token, payload);
       const { user } = await firebase.auth().createUserWithEmailAndPassword(email, password);
       console.log(user);
       if (!user) return;
+      const { uid } = user;
       context.dispatch(ActionTypes.AddAccount, {
+        uid,
         displayName,
         phoneNumber,
         photoURL,
         email,
         role,
+        isActive,
         isActivated,
       })
       context.commit(MutationType.SetIsLoading, false)
@@ -324,11 +328,14 @@ export const actions: ActionTree<State, State> & Actions = {
     try {
       const { email, password } = payload;
       console.log(email, password);
-      return;
+      // return;
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
       const { user } = await firebase.auth().signInWithEmailAndPassword(email, password);
+      console.log(user);
       if(!user) return;
+      const idTokenResult = await user.getIdTokenResult();
+      console.log(idTokenResult.claims);
       context.commit(MutationType.SetIsLoading, false)
       return user;
     } catch (error) {
