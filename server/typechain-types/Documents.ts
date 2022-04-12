@@ -58,7 +58,7 @@ export interface DocumentsInterface extends utils.Interface {
     "balances(address)": FunctionFragment;
     "getDocument(uint256)": FunctionFragment;
     "getDocuments(address)": FunctionFragment;
-    "getTotal(address)": FunctionFragment;
+    "getMetrics(address)": FunctionFragment;
     "kill()": FunctionFragment;
     "updateDocument(string,uint256,uint8)": FunctionFragment;
   };
@@ -80,7 +80,7 @@ export interface DocumentsInterface extends utils.Interface {
     functionFragment: "getDocuments",
     values: [string]
   ): string;
-  encodeFunctionData(functionFragment: "getTotal", values: [string]): string;
+  encodeFunctionData(functionFragment: "getMetrics", values: [string]): string;
   encodeFunctionData(functionFragment: "kill", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "updateDocument",
@@ -104,7 +104,7 @@ export interface DocumentsInterface extends utils.Interface {
     functionFragment: "getDocuments",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getTotal", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getMetrics", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "kill", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "updateDocument",
@@ -199,10 +199,12 @@ export interface Documents extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[Documents.DocumentStructOutput[]]>;
 
-    getTotal(
+    getMetrics(
       _address: string,
       overrides?: CallOverrides
-    ): Promise<[BigNumber] & { total: BigNumber }>;
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber]
+    >;
 
     kill(
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -238,7 +240,12 @@ export interface Documents extends BaseContract {
     overrides?: CallOverrides
   ): Promise<Documents.DocumentStructOutput[]>;
 
-  getTotal(_address: string, overrides?: CallOverrides): Promise<BigNumber>;
+  getMetrics(
+    _address: string,
+    overrides?: CallOverrides
+  ): Promise<
+    [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber]
+  >;
 
   kill(
     overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -274,7 +281,12 @@ export interface Documents extends BaseContract {
       overrides?: CallOverrides
     ): Promise<Documents.DocumentStructOutput[]>;
 
-    getTotal(_address: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getMetrics(
+      _address: string,
+      overrides?: CallOverrides
+    ): Promise<
+      [BigNumber, BigNumber, BigNumber, BigNumber, BigNumber, BigNumber]
+    >;
 
     kill(overrides?: CallOverrides): Promise<void>;
 
@@ -326,7 +338,7 @@ export interface Documents extends BaseContract {
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
-    getTotal(_address: string, overrides?: CallOverrides): Promise<BigNumber>;
+    getMetrics(_address: string, overrides?: CallOverrides): Promise<BigNumber>;
 
     kill(
       overrides?: PayableOverrides & { from?: string | Promise<string> }
@@ -366,7 +378,7 @@ export interface Documents extends BaseContract {
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
-    getTotal(
+    getMetrics(
       _address: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;

@@ -117,7 +117,7 @@
                 </svg>
                 Wallet
               </button>
-              <button type="button" :class="{ active: pages.isUser }" @click="handlePages('isUser')">
+              <button type="button" :class="{ active: pages.isUser }" :title="profile.displayName" @click="handlePages('isUser')">
                 <svg viewBox="0 0 512 512" fill="currentColor">
                   <path
                     d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
@@ -126,7 +126,8 @@
                     d="M15 331h196v60h-75c-8.291 0-15 6.709-15 15s6.709 15 15 15h135v-30h-30v-60h30V166c0-24.814 20.186-45 45-45h135V46c0-8.284-6.716-15-15-15H15C6.716 31 0 37.716 0 46v270c0 8.284 6.716 15 15 15z"
                   />
                 </svg>
-                Profile
+                {{handleTrim(profile.displayName, 9)}}
+                <img class="profile-img" :src="profile.photoURL || avatar" alt="User">
               </button>
               <button type="button" @click="handleLogout">
                 <svg viewBox="0 0 512 512" fill="currentColor">
@@ -180,8 +181,8 @@ import Help from "@/components/dashboard/Help.vue";
 import { computed, defineComponent, reactive, ref } from 'vue';
 import { useStore } from "@/store";
 import { Profile, Document } from "@/store/state";
-import { ActionTypes } from "@/store/actions";
-
+// import { ActionTypes } from "@/store/actions";
+import { handleLogout } from "@/utils";
 export default defineComponent({
   name: 'DashboardView',
   components: {
@@ -239,8 +240,8 @@ export default defineComponent({
     const handleArrow = () => {
       isOpen.value = !isOpen.value;
     }
-    const handleLogout = async () => {
-      store.dispatch(ActionTypes.Logout, {text: 'Logout successful', status: true})
+    const handleTrim = (word: string, size: number) => {
+      return `${word.slice(0, size)}...`;
     }
 
     return {
@@ -253,8 +254,9 @@ export default defineComponent({
       pages,
       handlePages,
       handleArrow,
+      handleTrim,
       handleLogout,
-     }
+    }
   }
 });
 </script>
@@ -380,6 +382,15 @@ export default defineComponent({
   height: 100%;
   overflow: auto;
   background-color: var(--theme-bg-color);
+}
+.profile-img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  -o-object-fit: cover;
+  object-fit: cover;
+  border: 2px solid var(--theme-color);
+  margin-left: 22px;
 }
 @media screen and (max-width: 510px) {
   .content-wrapper {

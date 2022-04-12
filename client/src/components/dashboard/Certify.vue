@@ -8,10 +8,10 @@
       <div v-if="!!validations.length" class="validations">
         <ul style="text-align: left;"><li style="list-style-type: disc;" v-for="(validation, index) in validations" :key="index">{{validation}}</li></ul>
       </div>
-      <!-- <div class="form--item">
+      <div class="form--item">
         <label class="form--label" for="name">Destination Name: </label>
         <input class="form--input" type="text" name="name" id="name" v-model="account.displayName" readonly required />
-      </div> -->
+      </div>
       <div class="form--item">
         <label class="form--label" for="address">Destination Address: </label>
         <input class="form--input" type="text" name="address" id="address" v-model="certify.verifier" readonly required />
@@ -29,7 +29,7 @@
         <select class="form--input" name="status" id="status" v-model="certify.status">
           <option :value=0 disabled>Select Status</option>
           <option :value="status.CERTIFIED">CERTIFIED</option>
-          <option :value="status.REJECTED">REJECTED</option>
+          <option :value="status.DECLINED">DECLINED</option>
         </select>
       </div>
       <div class="form--item">
@@ -52,8 +52,9 @@ import { computed, defineComponent, reactive } from "vue";
 import { useStore } from '@/store'
 import { ActionTypes } from '@/store/actions'
 import { useRouter } from 'vue-router';
-import Document from '@/types/Document';
-// import { Account } from "@/store/state";
+// import Document from '@/types/Document';
+import { Account, Document } from "@/store/state";
+import { handleBlur } from "@/utils";
 export default defineComponent({
   name: "CertifyView",
   components: {
@@ -62,10 +63,10 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const router = useRouter();
-    enum status { CERTIFIED = 1, VERIFIED, REJECTED }
+    enum status { CERTIFIED = 1, DECLINED, VERIFIED, REJECTED }
     let validations = reactive<string[]>([]);
     const document = computed((): Document => store.getters.document);
-    // const account = computed((): Account => store.getters.account);
+    const account = computed((): Account => store.getters.account);
     const addDocumentImage = (formData: FormData) => store.dispatch(ActionTypes.AddDocumentImage, formData);
     const updateDocument = (document: Document) => store.dispatch(ActionTypes.UpdateDocument, document);
     const certify = reactive({
@@ -89,12 +90,12 @@ export default defineComponent({
         certify.status !== 0
       );
     });
-    const handleBlur = (event: Event) => {
-      const target = event.target as HTMLInputElement;
-      target.style.borderColor = target.value
-        ? "rgba(229,231,235, 1)"
-        : "rgba(255, 0, 0, 1)";
-    };
+    // const handleBlur = (event: Event) => {
+    //   const target = event.target as HTMLInputElement;
+    //   target.style.borderColor = target.value
+    //     ? "rgba(229,231,235, 1)"
+    //     : "rgba(255, 0, 0, 1)";
+    // };
     const handleValidation = (): boolean => {
       validations = [];
       if (!certify.requester) {
@@ -129,7 +130,8 @@ export default defineComponent({
     };
 
     return {
-      validations, 
+      validations,
+      account,
       document,
       certify,
       isValid,

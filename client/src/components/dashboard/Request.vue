@@ -51,6 +51,7 @@ import { useStore } from '@/store'
 import { ActionTypes } from '@/store/actions'
 import { useRouter } from 'vue-router';
 import { Account, Profile, Service } from "@/store/state";
+import { handleBlur } from "@/utils";
 export default defineComponent({
   name: "RequestView",
   components: {
@@ -89,12 +90,12 @@ export default defineComponent({
       request.name = item.name;
       request.fee = item.cost;
     }
-    const handleBlur = (event: Event) => {
-      const target = event.target as HTMLInputElement;
-      target.style.borderColor = target.value
-        ? "rgba(229,231,235, 1)"
-        : "rgba(255, 0, 0, 1)";
-    };
+    // const handleBlur = (event: Event) => {
+    //   const target = event.target as HTMLInputElement;
+    //   target.style.borderColor = target.value
+    //     ? "rgba(229,231,235, 1)"
+    //     : "rgba(255, 0, 0, 1)";
+    // };
     const handleDestination = async (event: Event) => {
       const target = event.target as HTMLInputElement;
       store.dispatch(ActionTypes.GetAccount, target.value);

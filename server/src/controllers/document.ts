@@ -4,12 +4,13 @@ import { create } from 'ipfs-http-client';
 import Document from '../types/Document';
 import { documentAddress } from '../config';
 import Documents from '../../artifacts/contracts/Documents.sol/Documents.json';
-import { documents } from "../../data/data";
+// import { documents } from "../../data/data";
 const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 // import { create } from 'ipfs-http-client';
 // const client = create(new URL(`https://ipfs.infura.io:${5001}/api/v0`))
 // const client = create(`https://ipfs.infura.io:${5001}/api/v0`);
-
+import { documents } from "../../data/data";
+// console.log(documents);
 
 /**
  * [START GET DOCUMENTS]
@@ -22,33 +23,60 @@ const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
 export const getDocuments = async (req: any, res: Response, next: NextFunction) => {
 	try {
 		// Todo: create a provider and query for fees
-    const { address } = req.query;
-    if (!address) return;
-    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
-    const wallet = new ethers.Wallet(`${req.secret}`);
-    const signer = wallet.connect(provider);
-    const accountsContract = new ethers.Contract(documentAddress, Documents.abi, signer);
-
-    let documents:Document[] = [];
-    const results = await accountsContract.getDocuments(address);
-    if (!results.length) {
-			return res.status(200).json([]);
-		}
-    documents = await results.map(async (result:any) => {
-      return {
-        requester: result.requester,
-        verifier: result.verifier,
-        certifier: result.certifier,
-        name: result.name,
-        description: result.description,
-        imageURL: result.imageURL,
-        fee: result.fee,
-        index: result.index,
-        status: result.status,
+    const affiliate = req.query['0'];
+    console.log(affiliate);
+    if (!affiliate) return;
+    // let 
+    // for(let i=0;i<documents.length;i++) {
+    //   if (affiliate == documents[i].certifier) {
+    //     return documents[i];
+    //   }
+    //   if (affiliate == documents[i].verifier) {
+    //     return documents[i];
+    //   }
+    //   if (affiliate == documents[i].requester) {
+    //     return documents[i];
+    //   }
+    //   break;
+    // }
+    let data = documents.filter(document => {
+      if (affiliate == document.certifier) {
+        return document;
       }
-    });
+      if (affiliate == document.verifier) {
+        return document;
+      }
+      if (affiliate == document.requester) {
+        return document;
+      }
+      return;
+    })
+
+    // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+    // const wallet = new ethers.Wallet(`${req.secret}`);
+    // const signer = wallet.connect(provider);
+    // const accountsContract = new ethers.Contract(documentAddress, Documents.abi, signer);
+
+    // let documents:Document[] = [];
+    // const results = await accountsContract.getDocuments(address);
+    // if (!results.length) {
+		// 	return res.status(200).json([]);
+		// }
+    // documents = await results.map(async (result:any) => {
+    //   return {
+    //     requester: result.requester,
+    //     verifier: result.verifier,
+    //     certifier: result.certifier,
+    //     name: result.name,
+    //     description: result.description,
+    //     imageURL: result.imageURL,
+    //     fee: result.fee,
+    //     index: result.index,
+    //     status: result.status,
+    //   }
+    // });
     
-		return res.status(200).json(documents);
+		return res.status(200).json(data);
 	} catch (error) {
 		return res.status(500).json('Internal Server Error!');
 	}
@@ -69,16 +97,26 @@ export const addDocument = async (req: any, res: Response, next: NextFunction) =
     const { certifier, verifier, requester, name, imageURL, fee } = req.body;
     if (!certifier || !verifier || !name || !requester || !fee) return;
     console.log(req.body);
-    return;
+    documents.push({
+      verifier,
+      certifier,
+      requester,
+      name,
+      imageURL,
+      index: documents.length,
+      fee,
+      status: 0,
+    });
+    console.log(documents.length);
 
-    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
-    const wallet = new ethers.Wallet(`${req.secret}`);
-    const signer = wallet.connect(provider);
-    const documentContract = new ethers.Contract(documentAddress, Documents.abi, signer);
+    // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+    // const wallet = new ethers.Wallet(`${req.secret}`);
+    // const signer = wallet.connect(provider);
+    // const documentContract = new ethers.Contract(documentAddress, Documents.abi, signer);
 
-    const res = await documentContract.addDocument(certifier, verifier, name, imageURL, fee);
-    await res.wait();
-    console.log(res.blockNumber);
+    // const res = await documentContract.addDocument(certifier, verifier, name, imageURL, fee);
+    // await res.wait();
+    // console.log(res.blockNumber);
     
 		return res.status(200).json('Success');
 	} catch (error) {
@@ -164,16 +202,26 @@ export const getDocument = async (req: any, res: Response, next: NextFunction) =
 export const updateDocument = async (req: any, res: Response, next: NextFunction) => {
 	try {
 		// TODO: create a provider and update a fee
-    const { imageURL, fee, status, index } = req.body;
-    if (!imageURL || !fee || !status || !index) return;
+    // const { imageURL, fee, status, index } = req.body;
+    // if (!imageURL || !fee || !status || !index) return;
+    
+    // const index = documents.findIndex(document => document.address == address);
+    let document = documents.find(document => document.index == req.params.index);
+    console.log('req: ', req.params);
+    const { status, index } = req.body;
+    if (!status ) return;
+    if(!document) return;
+    document.status = status;
+    documents[index] = document;
 
-    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
-    const wallet = new ethers.Wallet(`${req.secret}`);
-    const signer = wallet.connect(provider);
-    const documentContract = new ethers.Contract(documentAddress, Documents.abi, signer);
 
-    const res = await documentContract.updateDocument(imageURL, index, fee, status);
-    await res.wait();
+    // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+    // const wallet = new ethers.Wallet(`${req.secret}`);
+    // const signer = wallet.connect(provider);
+    // const documentContract = new ethers.Contract(documentAddress, Documents.abi, signer);
+
+    // const res = await documentContract.updateDocument(imageURL, index, fee, status);
+    // await res.wait();
     
 		return res.status(200).json('Success');
 	} catch (error) {

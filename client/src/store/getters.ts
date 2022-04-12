@@ -31,20 +31,20 @@ export const getters: GetterTree<State, State> & Getters = {
     return state.services.find(service => service.index === index)
   },
   document(state) { return state.document },
-  // documents(state) { return state.documents },
-  documents: (state) => { 
-    return state.documents.filter(document => {
-      if (state.profile.affiliate == document.certifier) {
-        return document;
-      }
-      if (state.profile.affiliate == document.verifier) {
-        return document;
-      }
-      if (state.profile.affiliate == document.requester) {
-        return document;
-      }
-    })
-  },
+  documents(state) { return state.documents },
+  // documents: (state) => { 
+  //   return state.documents.filter(document => {
+  //     if (state.profile.affiliate == document.certifier) {
+  //       return document;
+  //     }
+  //     if (state.profile.affiliate == document.verifier) {
+  //       return document;
+  //     }
+  //     if (state.profile.affiliate == document.requester) {
+  //       return document;
+  //     }
+  //   })
+  // },
   getDocumentByIndex: (state) => (index: number) => {
     return state.documents.find(document => document.index === index)
   },

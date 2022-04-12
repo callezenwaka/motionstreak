@@ -57,7 +57,7 @@ import { MutationType } from '@/store/mutations';
 import { Account, Profile } from '@/store/state';
 import { computed, defineComponent, reactive, ref, toRefs } from 'vue';
 import { useRouter } from 'vue-router';
-
+import { handleAddress, handleCopy, handleBlur } from "@/utils";
 export default defineComponent({
   name: 'AdminView',
   components: {
@@ -93,22 +93,22 @@ export default defineComponent({
     const isValid = computed(() => {
       return isTenant.value;
     });
-    const handleAddress = (address: string) => {
-      return `${address.slice(0, 4)}...${address.slice(address.length - 3)}`;
-    }
-    const handleCopy = async (word: string) => {
-      copy.isCopying = true;
-      await navigator.clipboard.writeText(word);
-      setTimeout(() => {
-        copy.isCopying = false;
-      }, 5000);
-    };
-    const handleBlur = (event: Event) => {
-      const target = event.target as HTMLInputElement;
-      target.style.borderColor = target.value
-        ? "rgba(229,231,235, 1)"
-        : "rgba(255, 0, 0, 1)";
-    };
+    // const handleAddress = (address: string) => {
+    //   return `${address.slice(0, 4)}...${address.slice(address.length - 3)}`;
+    // }
+    // const handleCopy = async (word: string) => {
+    //   copy.isCopying = true;
+    //   await navigator.clipboard.writeText(word);
+    //   setTimeout(() => {
+    //     copy.isCopying = false;
+    //   }, 5000);
+    // };
+    // const handleBlur = (event: Event) => {
+    //   const target = event.target as HTMLInputElement;
+    //   target.style.borderColor = target.value
+    //     ? "rgba(229,231,235, 1)"
+    //     : "rgba(255, 0, 0, 1)";
+    // };
     const handleInput = async (event: Event) => {
       const target = event.target as HTMLInputElement;
       console.log(target.value);
@@ -184,6 +184,7 @@ export default defineComponent({
 
     return {
       ...toRefs(copy),
+      copy,
       item,
       address,
       account,

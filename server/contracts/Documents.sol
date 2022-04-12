@@ -12,7 +12,7 @@ contract Documents {
   address public accountsAddress;
   mapping (address => Count) private counts;
   mapping (address => uint) public balances;
-  enum Status { PENDING, CERTIFIED, VERIFIED, REJECTED }
+  enum Status { PENDING, CERTIFIED, DECLINED, VERIFIED, REJECTED }
  
   struct Document {
     address requester;
@@ -26,6 +26,11 @@ contract Documents {
   }
    
   struct Count {
+    uint pending;
+    uint certified;
+    uint declined;
+    uint verified;
+    uint rejected;
     uint total;
   }
 
@@ -121,6 +126,9 @@ contract Documents {
       })
     );
     // TODO: Update document counts
+    counts[msg.sender].pending += 1;
+    counts[_certifier].pending += 1;
+    counts[_verifier].pending += 1;
     counts[msg.sender].total += 1;
     counts[_certifier].total += 1;
     counts[_verifier].total += 1;
@@ -206,10 +214,22 @@ contract Documents {
       documents[_index].status = status;
       if(status == Status.VERIFIED){
         emit DocumentVerified(msg.sender);
+        counts[documents[_index].requester].verified += 1;
+        counts[documents[_index].certifier].verified += 1;
+        counts[documents[_index].verifier].verified += 1;
+        counts[documents[_index].requester].certified -= 1;
+        counts[documents[_index].certifier].certified -= 1;
+        counts[documents[_index].verifier].certified -= 1;
         return true;
       }
       if(status == Status.REJECTED) {
         emit DocumentRejected(msg.sender);
+        counts[documents[_index].requester].rejected += 1;
+        counts[documents[_index].certifier].rejected += 1;
+        counts[documents[_index].verifier].rejected += 1;
+        counts[documents[_index].requester].certified -= 1;
+        counts[documents[_index].certifier].certified -= 1;
+        counts[documents[_index].verifier].certified -= 1;
         return true;
       }
     }
@@ -219,11 +239,23 @@ contract Documents {
       documents[_index].imageURL = _imageURL;
       if(status == Status.CERTIFIED){
         emit DocumentCertified(msg.sender);
+        counts[documents[_index].requester].certified += 1;
+        counts[documents[_index].certifier].certified += 1;
+        counts[documents[_index].verifier].certified += 1;
+        counts[documents[_index].requester].pending -= 1;
+        counts[documents[_index].certifier].pending -= 1;
+        counts[documents[_index].verifier].pending -= 1;
         return true;
       }
       if(status == Status.REJECTED) {
         uint fee = documents[_index].fee;
         emit DocumentRejected(msg.sender);
+        counts[documents[_index].requester].declined += 1;
+        counts[documents[_index].certifier].declined += 1;
+        counts[documents[_index].verifier].declined += 1;
+        counts[documents[_index].requester].pending -= 1;
+        counts[documents[_index].certifier].pending -= 1;
+        counts[documents[_index].verifier].pending -= 1;
         // return the ether for rejection
         balances[documents[_index].certifier] -= fee;
         payable(documents[_index].requester).transfer(fee);
@@ -237,13 +269,13 @@ contract Documents {
     * @param _address user address.
     * @return total count total.
     */ 
-  function getTotal (address _address) 
+  function getMetrics (address _address) 
   public 
   view
-  returns(uint total) 
+  returns(uint, uint, uint, uint, uint, uint) 
   {
     // TODO: Get document counts
-    return counts[_address].total;
+    return (counts[_address].pending, counts[_address].certified, counts[_address].declined, counts[_address].verified, counts[_address].rejected, counts[_address].total);
   }
 
   /** @dev kill smart contract if something bad happens.

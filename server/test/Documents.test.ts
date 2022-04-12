@@ -104,6 +104,7 @@ describe("Documents", async function () {
 
     expect(res).to.be.an('array').that.is.not.empty;
     expect(res.imageURL).to.equal(imageURL);
+    expect(res.status).to.equal(status);
   });
 
   it("Should return a user documents", async function () {
@@ -121,10 +122,15 @@ describe("Documents", async function () {
     expect(res[0].status).to.equal(1);
   });
 
-  it("Should return a user document count", async function () {
+  it("Should return a user document metrics", async function () {
     const [owner, addr1, addr2, addr3] = await ethers.getSigners();
-    const res = await documents.connect(addr1).getTotal(addr1.address);
+    const res = await documents.connect(addr1).getMetrics(addr1.address);
 
-    expect(res).to.equal(1);
+    expect(res[0]).to.equal(0);
+    expect(res[1]).to.equal(1);
+    expect(res[2]).to.equal(0);
+    expect(res[3]).to.equal(0);
+    expect(res[4]).to.equal(0);
+    expect(res[5]).to.equal(1);
   });
 });

@@ -12,9 +12,14 @@
           <div class="app-card__subtext">
             The transcript validation process typically proceeds in three steps and typically takes three inputs. The first is the transcript to be validated, the second is any intermediate transcript certified by the source organization, and the third is the verification of intermediate transcript by the destination organization.
           </div>
+          <!-- <div v-if="profile.role.toLowerCase() === 'user'">
+            <span>Certifier: {{handleAddress(document.certifier)}}</span>
+            <span>Verifier: {{handleAddress(document.verifier)}}</span>
+          </div> -->
           <div class="app-card-buttons">
-            <button class="content-button status-button" @click="handleUpdate(document)">Update</button>
-            <div class="menu"></div>
+            <button v-if="profile.role.toLowerCase() === 'admin'" class="content-button status-button" @click="handleUpdate(document)">Update</button>
+            <div v-else style=" text-transform: capitalize;">Status: {{status[document.status]}}</div>
+            <!-- <div class="menu"></div> -->
           </div>
         </div>
       </div>
@@ -24,12 +29,12 @@
 
 <script lang="ts">
 // @ is an alias to /src
-import { computed, defineComponent, onMounted } from "vue";
+import { computed, defineComponent } from "vue";
 import { useStore } from '@/store'
 import { ActionTypes } from '@/store/actions'
-import Profile from '@/types/Profile';
-import Document from '@/types/Document';
 import { MutationType } from "@/store/mutations";
+import { Profile, Document } from "@/store/state";
+import { handleAddress } from "@/utils";
 export default defineComponent({
   name: "DocumentView",
   components: {
@@ -37,7 +42,8 @@ export default defineComponent({
   },
   setup(props, context) {
     const store = useStore();
-    onMounted(() => store.dispatch(ActionTypes.GetDocuments))
+    enum status { PENDING, CERTIFIED = 1, DECLINED, VERIFIED, REJECTED }
+    // onMounted(() => store.dispatch(ActionTypes.GetDocuments, profile.value.affiliate));
     const documents = computed((): Document[] => store.getters.documents);
     const profile = computed((): Profile => store.getters.profile);
     const isLoading = computed((): boolean => store.state.isLoading);
@@ -52,10 +58,12 @@ export default defineComponent({
     }
 
     return {
+      status,
       isLoading,
       profile, 
       documents,
-      handleUpdate
+      handleUpdate,
+      handleAddress,
     };
   },
 });

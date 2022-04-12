@@ -23,26 +23,28 @@
     <!-- service list -->
     <div class="content-section">
       <div class="content-section-title">Services</div>
-      <ul v-if="services.length">
-        <li class="services" v-for="service in services" :key="service.index">
-          <div class="service--item">
-            <img src="@/assets/certificate.svg" :alt="service.name" srcset="">
-            <span>{{service.name}}</span>
-          </div>
-          <span class="status">ETH {{service.cost}}</span>
-          <div class="button-wrapper">
-            <!-- <button type="button" class="content-button status-button" @click="handleUpdate(service)"> -->
-            <button type="button" class="edit" @click="handleUpdate(service)">
-              <span>Edit</span>
-              <!-- &#9998; #ca8a04 &#128465; -->
-            </button>
-            <button type="button" class="delete" @click="handleDelete(service.index)">
-              <span>Delete</span>
-            </button>
-          </div>
-        </li>
-      </ul>
-      <div><span>No service exist</span></div>
+      <div v-if="services.length">
+        <ul>
+          <li class="services" v-for="service in services" :key="service.index">
+            <div class="service--item">
+              <img src="@/assets/certificate.svg" :alt="service.name" srcset="">
+              <span>{{service.name}}</span>
+            </div>
+            <span class="status">ETH {{service.cost}}</span>
+            <div class="button-wrapper">
+              <!-- <button type="button" class="content-button status-button" @click="handleUpdate(service)"> -->
+              <button type="button" class="edit" @click="handleUpdate(service)">
+                <span>Edit</span>
+                <!-- &#9998; #ca8a04 &#128465; -->
+              </button>
+              <button type="button" class="delete" @click="handleDelete(service.index)">
+                <span>Delete</span>
+              </button>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div v-else><span>No service exist</span></div>
     </div>
   </div>
 </template>
@@ -55,7 +57,7 @@ import { useStore } from '@/store/index'
 import { ActionTypes } from '@/store/actions'
 import { useRouter } from 'vue-router';
 import { Profile, Service } from "@/store/state";
-// import Service from '@/types/Service';
+import { handleBlur } from "@/utils";
 export default defineComponent({
   name: "ServiceView",
   components: {
@@ -88,12 +90,12 @@ export default defineComponent({
         item.cost !== 0
       );
     });
-    const handleBlur = (event: Event) => {
-      const target = event.target as HTMLInputElement;
-      target.style.borderColor = target.value
-        ? "rgba(229,231,235, 1)"
-        : "rgba(255, 0, 0, 1)";
-    };
+    // const handleBlur = (event: Event) => {
+    //   const target = event.target as HTMLInputElement;
+    //   target.style.borderColor = target.value
+    //     ? "rgba(229,231,235, 1)"
+    //     : "rgba(255, 0, 0, 1)";
+    // };
     const handleUpdate = (service: Service) => {
       item.value = true;
       item.index = service.index;

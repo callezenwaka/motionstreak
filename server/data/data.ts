@@ -73,7 +73,7 @@ export const documents = [
 		imageURL: imageURL,
 		fee: 0.75,
 		index: 1,
-		status: 1,
+		status: 2,
 	},
 	{
 		requester: '0x109333D0807dACadb85C399016c2B448384484a4',
@@ -83,7 +83,7 @@ export const documents = [
 		imageURL: imageURL,
 		fee: 0.50,
 		index: 2,
-		status: 3,
+		status: 1,
 	},
 	{
 		requester: '0x6ed5687C3363D7B51050E7B159877249dBB78329',
@@ -103,7 +103,7 @@ export const documents = [
 		imageURL: imageURL,
 		fee: 0.75,
 		index: 4,
-		status: 0,
+		status: 4,
 	},
 	{
 		requester: '0x6ed5687C3363D7B51050E7B159877249dBB78329',
@@ -113,7 +113,7 @@ export const documents = [
 		imageURL: imageURL,
 		fee: 0.50,
 		index: 5,
-		status: 0,
+		status: 3,
 	},
 ]
 

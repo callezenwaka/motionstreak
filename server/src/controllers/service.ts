@@ -16,28 +16,39 @@ import { services } from "../../data/data";
  export const getServices = async (req: any, res: Response, next: NextFunction) => {
 	try {
 		// Todo: create a provider and query for services
-    const { address } = req.query;
+    // const { address } = req.query;
+    
+    const address = req.query['0'];
+    console.log(address)
     if (!address) return;
-    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
-    const wallet = new ethers.Wallet(`${req.secret}`);
-    const signer = wallet.connect(provider);
-    const accountsContract = new ethers.Contract(serviceAddress, Services.abi, signer);
-
-    let services:Service[] = [];
-    const results = await accountsContract.getServices(address);
-    if (!results.length) {
-			return res.status(200).json([]);
-		}
-    services = await results.map(async (result:any) => {
-      console.log(result);
-      return {
-        name: result.name,
-        cost: result.cost,
-        index: result.index,
+    const data = services.find(service => {
+      if (service.address == address) {
+        return service;
       }
     });
+
+
+    // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+    // const wallet = new ethers.Wallet(`${req.secret}`);
+    // const signer = wallet.connect(provider);
+    // const accountsContract = new ethers.Contract(serviceAddress, Services.abi, signer);
+
+    // let services:Service[] = [];
+    // const results = await accountsContract.getServices(address);
+    // if (!results.length) {
+		// 	return res.status(200).json([]);
+		// }
+    // services = await results.map(async (result:any) => {
+    //   console.log(result);
+    //   return {
+    //     name: result.name,
+    //     cost: result.cost,
+    //     index: result.index,
+    //   }
+    // });
+    console.log(data)
     
-		return res.status(200).json(services);
+		return res.status(200).json(data?.fees);
 	} catch (error) {
 		return res.status(500).json('Internal Server Error!');
 	}

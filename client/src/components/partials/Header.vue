@@ -5,7 +5,8 @@
       <router-link v-if="isActivated" class="menu-link" to="/dashboard">Dashboard</router-link>
       <!-- <router-link v-if="!isActivated" class="menu-link" to="/register">Register</router-link> -->
       <router-link v-if="!isActivated" class="menu-link" to="/login">Login</router-link>
-      <router-link v-if="isActivated" class="menu-link" to="/login">Logout</router-link>
+      <router-link v-if="isActivated" class="menu-link" to="/login" @click="handleLogout">Logout</router-link>
+      <!-- <router-link class="menu-link" to="/test">Test</router-link> -->
       <!-- <router-link class="menu-link" to="/about">About</router-link> -->
     </nav>
     <div class="menu" :class="{ active: isOpen }">
@@ -40,6 +41,7 @@
 import { computed, defineComponent, ref } from "vue";
 import { useStore } from '@/store'
 import { Profile } from "@/store/state";
+import { handleLogout } from "@/utils";
 export default defineComponent({
   name: "HeaderView",
   setup() {
@@ -53,7 +55,7 @@ export default defineComponent({
     }
     const isActivated = computed(() => profile.value.isActivated)
 
-    return { profile, avatar, photoURL, isOpen, isActivated, handleMenu }
+    return { profile, avatar, photoURL, isOpen, isActivated, handleMenu, handleLogout }
   }
 });
 </script>
@@ -65,6 +67,7 @@ export default defineComponent({
   align-items: center;
   flex-shrink: 0;
   height: 58px;
+  height: auto;
   width: 100%;
   border-bottom: 1px solid var(--border-color);
   /* padding: 0 30px; */
@@ -86,7 +89,7 @@ export default defineComponent({
   flex-direction: column;
   z-index: 10;
   min-width: 100%;
-  margin-top: 7.5rem;
+  /* margin-top: 7.5rem; */
   background-color: #111827;
 }
 .header-menu.active {
@@ -138,13 +141,10 @@ export default defineComponent({
   cursor: pointer;
 }
 .menu.active {
-    /* display: flex;
-    flex-direction: column;
-    white-space: nowrap;
-    cursor: pointer; */
     z-index: 20;
     /* margin-right: -5rem; */
     position: absolute;
+    top: 0;
 }
 .menu button {
   background-color: transparent;
@@ -208,6 +208,7 @@ export default defineComponent({
   width: 100%;
   max-width: 400px;
   padding-left: 16px;
+  padding-right: 16px;
   border-radius: 4px;
 }
 .search-bar input {

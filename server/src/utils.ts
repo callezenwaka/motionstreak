@@ -12,7 +12,7 @@ import { ethers } from 'ethers';
  * @param {object} next Express next context.
  */
 const getAuthToken = (req: any, res: any, next: any) => {
-	console.log(req.headers.authorization);
+	// console.log(req.headers.authorization);
 	if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
 		req.authToken = req.headers.authorization.split(' ')[1];
 	} else {
@@ -29,9 +29,10 @@ const getAuthToken = (req: any, res: any, next: any) => {
  * @param {object} next Express next context.
  * Define auth middleware.
  */
-export const isAuthenticated = (req: any, res: any, next: any) => {
+export const isAuthenticated = async (req: any, res: any, next: any) => {
 	getAuthToken(req, res, async () => {
 		try {
+      // TODO: verify token
 			const { authToken } = req;
 			const userInfo = await admin.auth().verifyIdToken(authToken);
 			req.user = userInfo;
@@ -42,6 +43,34 @@ export const isAuthenticated = (req: any, res: any, next: any) => {
 	});
 }
 // [END CHECK AUTH]
+
+/**
+ * [START CHECK ADMIN]
+ * @param {*} req 
+ * @param {*} res 
+ * @param {*} next 
+ */
+export const isSigner = async (req: any, res: any, next: any) => {
+    try {
+      // TODO: get signer identity
+      if(!req.user.isActive || !req.user.isActivated) return;
+      const secret = await admin.firestore().collection('secrets').doc(req.user.uid).get();
+      if (!secret.exists) return res.status(401).json('Unauthorized access!');
+      // console.log("secret: ", secret?.data()?.secret);
+      req.secret = secret?.data()?.secret;
+      
+      const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+      const wallet = new ethers.Wallet(`${req.secret}`);
+      req.signer = wallet.connect(provider);
+      
+      return next();
+    } 
+    catch (error) {
+      console.log(error);
+      return res.status(501).json('Unauthorized request!');
+    }
+};
+// [END CHECK ADMIN]
 
 export const updateUser = async (req: any, res: any, next: any) => {
   try {

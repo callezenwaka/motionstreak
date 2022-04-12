@@ -20,13 +20,12 @@ const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
     const { displayName, email, phoneNumber, photoURL, role, isActivated } = req.body;
     if (!displayName || !email || !phoneNumber || !photoURL || !role || !isActivated) return;
     console.log(req.body);
-    return;
+    // return;
     // TODO: could refactor signer should be deployed account
     const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
-    const wallet = new ethers.Wallet(`${req.secret}`);
+    const wallet = new ethers.Wallet(`${process.env.PRIVATE_KEY}`);
     const signer = wallet.connect(provider);
     const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, signer);
-
     const res = await accountsContract.addAccount(req.address, displayName, email, phoneNumber, photoURL, role, isActivated);
     await res.wait();
     
@@ -49,29 +48,21 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
 	try {
 		// Todo: create a provider and query for transaction
     const { address } = req.params;
-    const account = accounts.find(account => account.address == address);
+    const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, req.signer);
 
-    // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
-    // const wallet = new ethers.Wallet(`${req.secret}`);
-    // const signer = wallet.connect(provider);
-    // const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, signer);
-
-    // const result = await accountsContract.getAccount(address);
-    // let account = {
-    //   displayName: result.displayName,
-    //   email: result.email,
-    //   phoneNumber: result.phoneNumber,
-    //   photoURL: result.photoURL,
-    //   role: result.role,
-    //   isActive: result.isActive,
-    //   isActivated: result.isActivated,
-    //   address: address,
-    //   affiliate: result.affiliate,
-    // }
-
-		if (!account) {
-			return res.status(200).json({});
-		}
+    const result = await accountsContract.getAccount(address);
+    let account = {
+      displayName: result.displayName,
+      email: result.email,
+      phoneNumber: result.phoneNumber,
+      photoURL: result.photoURL,
+      role: result.role,
+      isActive: result.isActive,
+      isActivated: result.isActivated,
+      address: address,
+      affiliate: result.affiliate,
+    }
+		if (!account) return res.status(200).json({});
     
 		return res.status(200).json(account);
 	} catch (error) {
@@ -92,11 +83,8 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
  export const postImage = async (req: any, res: Response, next: NextFunction) => {
   try {
     // TODO: add file
-    console.log(req.file);
-    if (!req.file) {
-      return res.json("Please choose file to upload!");
-    }
-    // return;
+    if (!req.file) return res.json("Please choose file to upload!");
+
     // Send url back to client
     const result = await client.add(Buffer.from(req.file.buffer));
     const photoURL = `https://ipfs.infura.io/ipfs/${result.path}`;
@@ -119,25 +107,25 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
  export const updateAccount = async (req: any, res: Response, next: NextFunction) => {
 	try {
 		// Todo: update an account
-    const index = accounts.findIndex(account => account.address == address);
-    let account = accounts.find(account => account.address == address);
-    console.log('req: ',req.params);
+    // const index = accounts.findIndex(account => account.address == address);
+    // let account = accounts.find(account => account.address == address);
+    // console.log('req: ',req.params);
     const { address, displayName, email, phoneNumber, photoURL, isActive } = req.body;
     if (!address || !displayName || !email || !phoneNumber || !photoURL || !isActive) return;
-    if(!account) return;
-    account.displayName = displayName;
-    account.phoneNumber = phoneNumber;
-    account.photoURL = photoURL;
-    account.email = email;
-    if(!index) return;
-    accounts.splice(index, 1, account);
+    // if(!account) return;
+    // account.displayName = displayName;
+    // account.phoneNumber = phoneNumber;
+    // account.photoURL = photoURL;
+    // account.email = email;
+    // if(!index) return;
+    // accounts.splice(index, 1, account);
 
     // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
     // const wallet = new ethers.Wallet(`${req.secret}`);
     // const signer = wallet.connect(provider);
-    // const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, signer);
-
-    // const res = await accountsContract.updateAccount(address, displayName, email, phoneNumber, photoURL, isActive);
+    const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, req.signer);
+    const res = await accountsContract.updateAccount(address, displayName, email, phoneNumber, photoURL, isActive);
+    await res.wait();
     
 		return res.status(200).json('Success');
 	} catch (error) {

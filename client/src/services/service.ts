@@ -5,8 +5,9 @@ export default {
 	async addService(token: string, params: Service): Promise<string> {
 		return await request(`${API_URL}Service`, 'post', token, params);
 	},
-	async getServices(token: string): Promise<Service[]> {
-		return await request(`${API_URL}Service`, 'get', token, '');
+	async getServices(token: string, query: string): Promise<Service[]> {
+		console.log(query)
+		return await request(`${API_URL}Service`, 'get', token, '', query);
 	},
 	async getService(token: string, index: number): Promise<Service> {
 		return await request(`${API_URL}Service/${index}`, 'get', token, '');
@@ -15,6 +16,6 @@ export default {
 		return await request(`${API_URL}Service/${params.index}`, 'post', token, params);
 	},
 	async deleteService(token: string, index: number): Promise<string> {
-		return await request(`${API_URL}Service/${index}`, 'post', token, '');
+		return await request(`${API_URL}Service/${index}`, 'put', token, '');
 	},
 };

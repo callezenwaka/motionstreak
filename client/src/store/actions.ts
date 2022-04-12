@@ -5,7 +5,7 @@ import firebase from 'firebase';
 import account from '@/services/account';
 import service from '@/services/service';
 import document from '@/services/document';
-import { accounts, services, documents } from '../data/data';
+// import { accounts, services, documents } from '../data/data';
 import router from '@/router';
 
 export enum ActionTypes {
@@ -180,12 +180,12 @@ export const actions: ActionTree<State, State> & Actions = {
       return error
     }
   },
-  async [ActionTypes.GetDocuments](context) {
+  async [ActionTypes.GetDocuments](context, payload) {
     try {
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
-      // const data = await document.getDocuments(context.getters.profile.token);      
-      const data = documents;
+      const data = await document.getDocuments(context.getters.profile.token, payload);      
+      // const data = documents;
       context.commit(MutationType.SetIsLoading, false)
       if (!Array.isArray(data)) return;
       context.commit(MutationType.SetDocuments, data);
@@ -238,17 +238,17 @@ export const actions: ActionTree<State, State> & Actions = {
     try {
       console.log(payload);
       context.commit(MutationType.SetIsLoading, true)
-      const data = services.find(service => {
-        if (service.address == payload) {
-          return service.fees;
-        }
-      });
-      console.log(data);
-      // const data = await service.getServices(context.getters.profile.token);
+      // const data = services.find(service => {
+      //   if (service.address == payload) {
+      //     return service.fees;
+      //   }
+      // });
+      // console.log(data);
+      const data = await service.getServices(context.getters.profile.token, payload);
       context.commit(MutationType.SetIsLoading, false)
-      // if (!Array.isArray(data)) return;
-      if(!data) return;
-      context.commit(MutationType.SetServices, data.fees);
+      if (!Array.isArray(data)) return;
+      // if(!data) return;
+      context.commit(MutationType.SetServices, data);
       return data;
     } catch (error) {
       return error

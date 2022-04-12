@@ -46,18 +46,19 @@ import { computed, defineComponent, reactive } from "vue";
 import { useStore } from '@/store'
 import { ActionTypes } from '@/store/actions'
 import { useRouter } from 'vue-router';
-import Document from '@/types/Document';
-import { Account } from "@/store/state";
+// import Document from '@/types/Document';
+import { Account, Document } from "@/store/state";
+import { handleBlur } from "@/utils";
 export default defineComponent({
   name: "VerifyView",
   components: {
     // Header
   },
-  setup() {
+  setup(props, context) {
     const store = useStore();
     // const route = useRoute();
     const router = useRouter();
-    enum status { CERTIFIED = 1, VERIFIED, REJECTED }
+    enum status { CERTIFIED = 1, DECLINED, VERIFIED, REJECTED }
     let validations = reactive<string[]>([]);
     const document = computed((): Document => store.getters.document);
     const account = computed((): Account => store.getters.account);
@@ -84,12 +85,12 @@ export default defineComponent({
         typeof verify.status === "number"
       );
     });
-    const handleBlur = (event: Event) => {
-      const target = event.target as HTMLInputElement;
-      target.style.borderColor = target.value
-        ? "rgba(229,231,235, 1)"
-        : "rgba(255, 0, 0, 1)";
-    };
+    // const handleBlur = (event: Event) => {
+    //   const target = event.target as HTMLInputElement;
+    //   target.style.borderColor = target.value
+    //     ? "rgba(229,231,235, 1)"
+    //     : "rgba(255, 0, 0, 1)";
+    // };
     const handleValidation = (): boolean => {
       validations = [];
       if (!verify.verifier) {
@@ -104,7 +105,8 @@ export default defineComponent({
       if (!handleValidation()) return;
       try {
         await updateDocument({...verify});
-        router.push({ name: "Home" });
+        router.push({ name: "Dashboard" });
+        context.emit("handlePages", "isDocuments");
       } catch (error) {
         console.log(error);
       }
