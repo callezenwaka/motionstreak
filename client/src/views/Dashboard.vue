@@ -126,7 +126,7 @@
                     d="M15 331h196v60h-75c-8.291 0-15 6.709-15 15s6.709 15 15 15h135v-30h-30v-60h30V166c0-24.814 20.186-45 45-45h135V46c0-8.284-6.716-15-15-15H15C6.716 31 0 37.716 0 46v270c0 8.284 6.716 15 15 15z"
                   />
                 </svg>
-                {{handleTrim(profile.displayName, 9)}}
+                {{profile.displayName? handleTrim(profile.displayName, 9): ''}}
                 <img class="profile-img" :src="profile.photoURL || avatar" alt="User">
               </button>
               <button type="button" @click="handleLogout">
@@ -143,7 +143,7 @@
             </div>
           </div>
         </div>
-        <div class="main-container">
+        <div class="main-container" :class="{ active: isOpen }">
           <div class="content-wrapper">
             <!-- <Service v-if="isTenant && pages.isService"></Service> -->
             <!-- <Request v-if="isUser"></Request> -->
@@ -293,6 +293,11 @@ export default defineComponent({
 }
 .left-side.active {
   display: block;
+  display: flex;
+  flex-direction: column;
+  /* margin-left: 120px; */
+  /* flex-basis: 340px; */
+  /* display: none; */
 }
 @media screen and (max-width: 945px) {
   .left-side {
@@ -323,6 +328,9 @@ export default defineComponent({
   font-size: xx-large;
   padding-left: 8px;
   padding-right: 8px;
+}
+.side-wrapper {
+  /* padding-left: 1rem; */
 }
 .side-wrapper + .side-wrapper {
   margin-top: 20px;
@@ -373,6 +381,9 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   flex-grow: 1;
+}
+.main-container.active {
+  display: none;
 }
 .content-wrapper {
   display: flex;

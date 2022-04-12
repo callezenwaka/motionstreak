@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "barewave-464b5"
+  },
+  "targets": {
+    "barewave-464b5": {
+      "hosting": {
+        "onevault": [
+          "onevault"
+        ]
+      }
+    }
+  }
+}
