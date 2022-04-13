@@ -1,7 +1,15 @@
 import { ActionContext, ActionTree } from 'vuex'
 import { Mutations, MutationType } from './mutations'
-import { State, Account, Document, Service, Register, Login, Profile, Message } from './state'
-import firebase from 'firebase';
+import { State, Account, Document, Service, Register, Login, Profile, Message, Query } from './state'
+// import firebase from 'firebase';
+// import firebase from '@firebase/app';
+// import '@firebase/auth'
+// import firebase from "firebase/app"
+import firebase from 'firebase/app';
+import 'firebase/auth';
+// type Firebase = typeof firebase
+// type FirebaseApp = firebase.app.App
+// type FirebaseUser = firebase.User
 import account from '@/services/account';
 import service from '@/services/service';
 import document from '@/services/document';
@@ -59,13 +67,13 @@ export type Actions = {
   // document
   [ActionTypes.AddDocumentImage](context: ActionAugments, payload: FormData): void;
   [ActionTypes.AddDocument](context: ActionAugments, payload: Document): void;
-  [ActionTypes.GetDocuments](context: ActionAugments, payload: string): void;
+  [ActionTypes.GetDocuments](context: ActionAugments, payload: Query): void;
   [ActionTypes.GetDocument](context: ActionAugments, payload: number): void;
   [ActionTypes.UpdateDocument](context: ActionAugments, payload: Document): void;
 
   // service
   [ActionTypes.AddService](context: ActionAugments, payload: Service): void;
-  [ActionTypes.GetServices](context: ActionAugments, payload: string): void;
+  [ActionTypes.GetServices](context: ActionAugments, payload: Query): void;
   [ActionTypes.GetService](context: ActionAugments, payload: number): void;
   [ActionTypes.UpdateService](context: ActionAugments, payload: Service): void;
   [ActionTypes.DeleteService](context: ActionAugments, payload: number): void;
@@ -298,7 +306,7 @@ export const actions: ActionTree<State, State> & Actions = {
       const { displayName, phoneNumber, photoURL, email, password, role, isActive, isActivated } = payload;
       console.log(displayName, phoneNumber, photoURL, email, password, role, isActivated);
       // return;
-      context.commit(MutationType.SetIsLoading, true)
+      context.commit(MutationType.SetIsLoading, true);
       const { user } = await firebase.auth().createUserWithEmailAndPassword(email, password);
       console.log(user);
       if (!user) return;

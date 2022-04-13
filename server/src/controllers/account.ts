@@ -22,9 +22,14 @@ const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
     console.log(req.body);
     // return;
     // TODO: could refactor signer should be deployed account
-    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
-    const wallet = new ethers.Wallet(`${process.env.PRIVATE_KEY}`);
+    // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+    // const wallet = new ethers.Wallet(`${process.env.PRIVATE_KEY}`);
+    // const signer = wallet.connect(provider);
+
+    const provider = new ethers.providers.JsonRpcProvider();
+    const wallet = new ethers.Wallet(`0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`);
     const signer = wallet.connect(provider);
+
     const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, signer);
     const res = await accountsContract.addAccount(req.address, displayName, email, phoneNumber, photoURL, role, isActivated);
     await res.wait();
@@ -48,6 +53,7 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
 	try {
 		// Todo: create a provider and query for transaction
     const { address } = req.params;
+    // console.log(req.params);
     const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, req.signer);
 
     const result = await accountsContract.getAccount(address);

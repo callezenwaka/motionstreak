@@ -1,4 +1,4 @@
-import { Document } from "@/store/state";
+import { Document, Query } from "@/store/state";
 import { API_URL, request } from "./index";
 
 export default {
@@ -10,7 +10,7 @@ export default {
 		console.log(params);
 		return await request(`${API_URL}document`, 'post', token, params);
 	},
-	async getDocuments(token: string, query: string): Promise<Document[]> {
+	async getDocuments(token: string, query: Query): Promise<Document[]> {
 		// console.log(token, query);
 		return await request(`${API_URL}document`, 'get', token, '', query);
 	},

@@ -72,6 +72,7 @@ export default defineComponent({
       name: '',
       imageURL: '',
       fee: 0,
+      status: 0,
     });
     const isValid = computed(() => {
       return (
@@ -102,7 +103,7 @@ export default defineComponent({
     };
     const handleSource = async (event: Event) => {
       const target = event.target as HTMLInputElement;
-      store.dispatch(ActionTypes.GetServices, target.value);
+      store.dispatch(ActionTypes.GetServices, {affiliate: target.value});
     };
     const handleValidation = (): boolean => {
       validations = [];

@@ -53,14 +53,18 @@ export const isAuthenticated = async (req: any, res: any, next: any) => {
 export const isSigner = async (req: any, res: any, next: any) => {
     try {
       // TODO: get signer identity
-      if(!req.user.isActive || !req.user.isActivated) return;
-      const secret = await admin.firestore().collection('secrets').doc(req.user.uid).get();
-      if (!secret.exists) return res.status(401).json('Unauthorized access!');
-      // console.log("secret: ", secret?.data()?.secret);
-      req.secret = secret?.data()?.secret;
-      
-      const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
-      const wallet = new ethers.Wallet(`${req.secret}`);
+      // if(!req.user.isActive || !req.user.isActivated) return;
+      // const secret = await admin.firestore().collection('secrets').doc(req.user.uid).get();
+      // if (!secret.exists) return res.status(401).json('Unauthorized access!');
+      // req.secret = secret?.data()?.secret;
+
+      // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+      // const wallet = new ethers.Wallet(`${req.secret}`);
+      // req.signer = wallet.connect(provider);
+      // console.log(req.body.private_key);
+
+      const provider = new ethers.providers.JsonRpcProvider();
+      const wallet = new ethers.Wallet(`${req.body.private_key}`);
       req.signer = wallet.connect(provider);
       
       return next();
@@ -111,6 +115,18 @@ export const createWallet = async (req: any, res: any, next: any) => {
     const wallet = ethers.Wallet.createRandom();
     req.address = wallet.address;
     req.secret = wallet.privateKey;
+    next();
+  } catch (error) {
+    console.log(error);
+    return res.status(501).json('Internal error!');
+  }
+};
+
+export const createTestWallet = async (req: any, res: any, next: any) => {
+  try {
+    const wallet = new ethers.Wallet(req.body.private_key);
+    req.address = wallet.address;
+    // req.secret = wallet.privateKey;
     next();
   } catch (error) {
     console.log(error);

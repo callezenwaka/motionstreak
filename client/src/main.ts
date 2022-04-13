@@ -3,7 +3,8 @@ import App from './App.vue'
 import './registerServiceWorker'
 import router from './router';
 import { store } from './store';
-import firebase from 'firebase';
+// import firebase from 'firebase';
+import firebase from 'firebase/app';
 import { ActionTypes } from './store/actions';
 
 // define firebase config

@@ -27,21 +27,17 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// admin.auth().updateUser('5wMOSvr11qaW8b2XkikWyUEBW8W2', {
-//   photoURL: 'https://ipfs.infura.io/ipfs/QmUHa9QV34uPdJ1JZ5XqcQgn5jfmW3SxUnt3yoFfHu8Sow',
-// })
-
 // Ping healthz route
 app.get('/healthz',async (req: Request, res: Response) => {
   try {
-    return res.status(200).json('Ok');
+    return res.status(200).json('Healthz');
   } catch (error) {
     return res.status(500).json('Internal Server Error!');
   }
 });
 
 // Verify request
-app.use('/', isAuthenticated, isSigner);
+// app.use('/', isAuthenticated, isSigner);
 app.use('/account', account);
 app.use('/service', service);
 app.use('/document', document);

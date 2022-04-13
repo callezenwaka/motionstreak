@@ -1,18 +1,18 @@
 // import packages and dependencies
-// import { isAuthenticated } from '../utils';
+import { isAuthenticated, isSigner } from '../utils';
 import document from "../controllers/document";
 import { multer } from "../utils";
 import express from "express";
 const router = express();
 
-router.get('/', document.getDocuments);
+router.get('/', isSigner, document.getDocuments);
 
-router.post('/', document.addDocument);
+router.post('/', isSigner, document.addDocument);
 
 router.post('/image', multer.single('file'), document.postImage);
 
-router.put('/:index', document.updateDocument);
+router.put('/:index', isSigner, document.updateDocument);
 
-router.get('/:index', document.getDocument);
+router.get('/:index', isSigner, document.getDocument);
  
 export default router;

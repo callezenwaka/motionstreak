@@ -69,11 +69,11 @@ export default defineComponent({
     let validations = reactive<string[]>([]);
     const profile = computed((): Profile => store.getters.profile);
     const services = computed((): Service[] => store.getters.services);
-    onMounted(() => store.dispatch(ActionTypes.GetServices, profile.value.affiliate));
+    onMounted(() => store.dispatch(ActionTypes.GetServices, {affiliate: profile.value.affiliate}));
     type Item = {
       name: string;
       cost: number;
-      index?: number;
+      index: number;
       value?: boolean;
     }
     // let updating:Updating = reactive({
@@ -83,6 +83,7 @@ export default defineComponent({
     let item:Item = reactive({
       name: '',
       cost: 0,
+      index: 0,
     });
     const isValid = computed(() => {
       return (
@@ -121,8 +122,8 @@ export default defineComponent({
           const { name, cost, index } = item;
           store.dispatch(ActionTypes.UpdateService, { name, cost, index });
         } else {
-          const { name, cost } = item;
-          store.dispatch(ActionTypes.AddService, { name, cost });
+          const { name, cost, index} = item;
+          store.dispatch(ActionTypes.AddService, { name, cost, index });
         }
         router.push({ name: "Dashboard" });
       } catch (error) {

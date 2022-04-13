@@ -36,14 +36,18 @@ export type Document = {
   imageURL?: string;
   fee: number;
   index?: number;
-  status?: number;
+  status: number;
 };
 
 export type Service = {
   name: string;
   cost: number;
-  index?: number;
+  index: number;
 };
+
+export type Query = {
+  affiliate: string;
+}
 
 export type Register = {
   displayName: string;
