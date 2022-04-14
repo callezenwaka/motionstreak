@@ -13,6 +13,8 @@ router.post('/image', multer.single('file'), document.postImage);
 
 router.put('/:index', isSigner, document.updateDocument);
 
+router.get('/metrics', isSigner, document.getMetrics);
+
 router.get('/:index', isSigner, document.getDocument);
  
 export default router;

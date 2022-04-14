@@ -22,9 +22,9 @@ const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
  */
 export const getDocuments = async (req: any, res: Response, next: NextFunction) => {
 	try {
-		// Todo: create a provider and query for fees
+		// Todo: create a provider and query for documents
     // const affiliate = req.query['0'];
-    const {affiliate} = req.body;
+    const {affiliate} = req.query;
     if (!affiliate) return;
     // let data = documents.filter(document => {
     //   if (affiliate == document.certifier) {
@@ -49,19 +49,19 @@ export const getDocuments = async (req: any, res: Response, next: NextFunction) 
     if (!results.length) {
 			return res.status(200).json([]);
 		}
-    documents = await results.map(async (result:any) => {
+    documents =  await Promise.all(results.map(async (result:any) => {
       return {
         requester: result.requester,
         verifier: result.verifier,
         certifier: result.certifier,
         name: result.name,
-        description: result.description,
         imageURL: result.imageURL,
-        fee: result.fee,
-        index: result.index,
+        fee: Number(ethers.utils.formatUnits(result.fee.toString(), 'ether')),
+        index: Number(result.index),
         status: result.status,
       }
-    });
+    }));
+    console.log(documents);
     
 		return res.status(200).json(documents);
 	} catch (error) {
@@ -80,7 +80,7 @@ export const getDocuments = async (req: any, res: Response, next: NextFunction) 
  */
 export const addDocument = async (req: any, res: Response, next: NextFunction) => {
 	try {
-		// TODO: create a provider and  add a fee
+		// TODO: create a provider and add a document
     const { certifier, verifier, requester, name, imageURL, fee } = req.body;
     if (!certifier || !verifier || !name || !requester || !fee) return;
     console.log(req.body);
@@ -101,12 +101,14 @@ export const addDocument = async (req: any, res: Response, next: NextFunction) =
     // const signer = wallet.connect(provider);
     const documentContract = new ethers.Contract(documentAddress, Documents.abi, req.signer);
 
-    const res = await documentContract.addDocument(certifier, verifier, name, imageURL, fee);
-    await res.wait();
-    console.log(res.blockNumber);
+    const _fee = ethers.utils.parseUnits(fee.toString(), 'ether');
+    const result = await documentContract.addDocument(certifier, verifier, name, _fee, { value: _fee });
+    await result.wait();
+    console.log(result);
     
 		return res.status(200).json('Success');
 	} catch (error) {
+    console.log(error);
 		return res.status(500).json('Internal Server Error!');
 	}
 }
@@ -122,13 +124,13 @@ export const addDocument = async (req: any, res: Response, next: NextFunction) =
  */
 export const getDocument = async (req: any, res: Response, next: NextFunction) => {
 	try {
-		// Todo: create a provider and query for fee
-    const { index } = req.query;
+		// Todo: create a provider and query for document
+    const { index } = req.params;
     if (!index) return;
-    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
-    const wallet = new ethers.Wallet(`${req.secret}`);
-    const signer = wallet.connect(provider);
-    const documentContract = new ethers.Contract(documentAddress, Documents.abi, signer);
+    // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+    // const wallet = new ethers.Wallet(`${req.secret}`);
+    // const signer = wallet.connect(provider);
+    const documentContract = new ethers.Contract(documentAddress, Documents.abi, req.signer);
 
     const result = await documentContract.getDocument(index);
 		if (!result) {
@@ -139,15 +141,57 @@ export const getDocument = async (req: any, res: Response, next: NextFunction) =
       verifier: result.verifier,
       certifier: result.certifier,
       name: result.name,
-      description: result.description,
       imageURL: result.imageURL,
-      fee: result.fee,
-      index: result.index,
+      fee: Number(ethers.utils.formatUnits(result.fee.toString(), 'ether')),
+      index: Number(result.index),
       status: result.status,
     }
 
 		return res.status(200).json(document);
 	} catch (error) {
+		return res.status(500).json('Internal Server Error!');
+	}
+}
+// [END GET DOCUMENT]
+
+/**
+ * [START GET DOCUMENT]
+ * @param {object} req Express request context.
+ * @param {object} res Express response context.
+ * @param {object} next Express next context.
+ * @return {object} json account
+ * Retrieve items
+ */
+export const getMetrics = async (req: any, res: Response, next: NextFunction) => {
+	try {
+		// Todo: create a provider and query for metrics
+    console.log(req.query);
+    const { address } = req.query;
+    console.log(address);
+    if (!address) return;
+    // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+    // const wallet = new ethers.Wallet(`${req.secret}`);
+    // const signer = wallet.connect(provider);
+    const documentContract = new ethers.Contract(documentAddress, Documents.abi, req.signer);
+
+    const result = await documentContract.getMetrics(address);
+    console.log(result);
+		if (!result) {
+			return res.status(200).json({});
+		}
+    let metrics = {
+      pending: Number(result[0]),
+      certified: Number(result[1]),
+      declined: Number(result[2]),
+      verified: Number(result[3]),
+      rejected: Number(result[4]),
+      total: Number(result[5]),
+    }
+    console.log(metrics);
+
+		return res.status(200).json(metrics);
+	} catch (error) {
+    console.log(error);
 		return res.status(500).json('Internal Server Error!');
 	}
 }
@@ -171,6 +215,7 @@ export const getDocument = async (req: any, res: Response, next: NextFunction) =
     // Send url back to client
     const result = await client.add(Buffer.from(req.file.buffer));
     const imageURL = `https://ipfs.infura.io/ipfs/${result.path}`;
+
     return res.status(200).json(imageURL);
   } catch (error) {
 		return res.status(500).json('Internal Server Error!');
@@ -188,10 +233,12 @@ export const getDocument = async (req: any, res: Response, next: NextFunction) =
  */
 export const updateDocument = async (req: any, res: Response, next: NextFunction) => {
 	try {
-		// TODO: create a provider and update a fee
-    const { imageURL, fee, status, index } = req.body;
+		// TODO: create a provider and update a document
+    const { index } = req.params;
+    console.log(req.params);
+    console.log(req.body);
+    const { imageURL, fee, status } = req.body;
     if (!imageURL || !fee || !status || !index) return;
-    
     // const index = documents.findIndex(document => document.address == address);
     // let document = documents.find(document => document.index == req.params.index);
     // console.log('req: ', req.params);
@@ -207,11 +254,14 @@ export const updateDocument = async (req: any, res: Response, next: NextFunction
     // const signer = wallet.connect(provider);
     const documentContract = new ethers.Contract(documentAddress, Documents.abi, req.signer);
 
-    const res = await documentContract.updateDocument(imageURL, index, fee, status);
-    await res.wait();
+    // const _fee = ethers.utils.parseUnits(fee.toString(), 'ether');
+    const result = await documentContract.updateDocument(imageURL, index, status);
+    await result.wait();
+    console.log(result);
     
 		return res.status(200).json('Success');
 	} catch (error) {
+    console.log(error);
 		return res.status(500).json('Internal Server Error!');
 	}
 }
@@ -222,6 +272,7 @@ export default {
   getDocuments,
 	addDocument,
   getDocument,
+  getMetrics,
   postImage,
   updateDocument,
 }

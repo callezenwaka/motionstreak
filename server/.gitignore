@@ -8,6 +8,8 @@ typechain
 cache
 artifacts
 
+# accounts
+accounts.txt
 
 # data
 firebase.json

@@ -61,11 +61,14 @@ export const isSigner = async (req: any, res: any, next: any) => {
       // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
       // const wallet = new ethers.Wallet(`${req.secret}`);
       // req.signer = wallet.connect(provider);
-      // console.log(req.body.private_key);
+      // console.log(req.body);
 
+      const { private_key } = req.query;
+      // console.log(private_key);
       const provider = new ethers.providers.JsonRpcProvider();
-      const wallet = new ethers.Wallet(`${req.body.private_key}`);
+      const wallet = new ethers.Wallet(`${private_key}`);
       req.signer = wallet.connect(provider);
+      console.log(req.signer);
       
       return next();
     } 
@@ -112,9 +115,16 @@ export const updateUser = async (req: any, res: any, next: any) => {
 
 export const createWallet = async (req: any, res: any, next: any) => {
   try {
+    // TODO: create wallet
+    const { address } = req.body;
     const wallet = ethers.Wallet.createRandom();
     req.address = wallet.address;
     req.secret = wallet.privateKey;
+    if(req.role.toLowerCase() === 'admin') {
+      req.affiliate = address;
+    } else {
+      req.affiliate = wallet.address;
+    }
     next();
   } catch (error) {
     console.log(error);
@@ -124,9 +134,19 @@ export const createWallet = async (req: any, res: any, next: any) => {
 
 export const createTestWallet = async (req: any, res: any, next: any) => {
   try {
-    const wallet = new ethers.Wallet(req.body.private_key);
+    // TODO: create test wallet
+    const { private_key, address, role } = req.body;
+    const wallet = new ethers.Wallet(`${private_key}`);
     req.address = wallet.address;
-    // req.secret = wallet.privateKey;
+    if(role.toLowerCase() === 'admin') {
+      req.affiliate = address;
+    } else {
+      req.affiliate = wallet.address;
+    }
+    // req.affiliate = address;
+    // req.affiliate = wallet.address;
+    // console.log(req.address);
+
     next();
   } catch (error) {
     console.log(error);

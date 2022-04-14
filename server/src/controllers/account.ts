@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { create } from 'ipfs-http-client';
 import { accountAddress } from '../config';
 import Accounts from '../../artifacts/contracts/Accounts.sol/Accounts.json';
-import { accounts } from "../../data/data";
+// import { accounts } from "../../data/data";
 const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 
 /**
@@ -17,8 +17,8 @@ const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
  export const addAccount = async (req: any, res: Response, next: NextFunction) => {
 	try {
 		// TODO: create an account
-    const { displayName, email, phoneNumber, photoURL, role, isActivated } = req.body;
-    if (!displayName || !email || !phoneNumber || !photoURL || !role || !isActivated) return;
+    const { displayName, email, phoneNumber, photoURL, role, isActive, isActivated } = req.body;
+    if (!displayName || !email || !phoneNumber || !photoURL || !role || !isActive || !isActivated) return;
     console.log(req.body);
     // return;
     // TODO: could refactor signer should be deployed account
@@ -31,11 +31,13 @@ const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
     const signer = wallet.connect(provider);
 
     const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, signer);
-    const res = await accountsContract.addAccount(req.address, displayName, email, phoneNumber, photoURL, role, isActivated);
-    await res.wait();
+    const result = await accountsContract.addAccount(req.address, req.affiliate, displayName, email, phoneNumber, photoURL, role, isActive, isActivated);
+    await result.wait();
+    console.log(result);
     
 		return res.status(200).json('Success');
 	} catch (error) {
+    console.log(error);
 		return res.status(500).json('Internal Server Error!');
 	}
 }
@@ -54,6 +56,10 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
 		// Todo: create a provider and query for transaction
     const { address } = req.params;
     // console.log(req.params);
+
+    // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+    // const wallet = new ethers.Wallet(`${req.secret}`);
+    // const signer = wallet.connect(provider);
     const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, req.signer);
 
     const result = await accountsContract.getAccount(address);
@@ -72,6 +78,7 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
     
 		return res.status(200).json(account);
 	} catch (error) {
+    console.log(error);
 		return res.status(500).json('Internal Server Error!');
 	}
 }
@@ -95,6 +102,7 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
     const result = await client.add(Buffer.from(req.file.buffer));
     const photoURL = `https://ipfs.infura.io/ipfs/${result.path}`;
     console.log(photoURL);
+
     return res.status(200).json(photoURL);
   } catch (error) {
 		return res.status(500).json('Internal Server Error!');
@@ -118,6 +126,7 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
     // console.log('req: ',req.params);
     const { address, displayName, email, phoneNumber, photoURL, isActive } = req.body;
     if (!address || !displayName || !email || !phoneNumber || !photoURL || !isActive) return;
+    console.log(req.body);
     // if(!account) return;
     // account.displayName = displayName;
     // account.phoneNumber = phoneNumber;
@@ -130,8 +139,8 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
     // const wallet = new ethers.Wallet(`${req.secret}`);
     // const signer = wallet.connect(provider);
     const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, req.signer);
-    const res = await accountsContract.updateAccount(address, displayName, email, phoneNumber, photoURL, isActive);
-    await res.wait();
+    const result = await accountsContract.updateAccount(address, displayName, email, phoneNumber, photoURL, isActive);
+    await result.wait();
     
 		return res.status(200).json('Success');
 	} catch (error) {

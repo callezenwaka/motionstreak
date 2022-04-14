@@ -1,9 +1,9 @@
 import { Response, NextFunction } from "express";
-import { ethers } from 'ethers';
+import { BigNumber, ethers, utils } from 'ethers';
 import Service from '../types/Service';
 import { serviceAddress } from '../config';
 import Services from '../../artifacts/contracts/Services.sol/Services.json';
-import { services } from "../../data/data";
+// import { services } from "../../data/data";
 
 /**
  * [START GET SERVICES]
@@ -17,9 +17,9 @@ import { services } from "../../data/data";
 	try {
 		// Todo: create a provider and query for services
     const { affiliate } = req.query;
-    console.log("affiliate: ", affiliate);
+    // console.log("affiliate: ", affiliate);
     // console.log(req.signer);
-    return res.status(200).json(req.signer);
+    // return res.status(200).json(req.signer);
     
     // const address = req.query['0'];
     // console.log(address)
@@ -34,25 +34,28 @@ import { services } from "../../data/data";
     // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
     // const wallet = new ethers.Wallet(`${req.secret}`);
     // const signer = wallet.connect(provider);
-    const accountsContract = new ethers.Contract(serviceAddress, Services.abi, req.signer);
+    const servicesContract = new ethers.Contract(serviceAddress, Services.abi, req.signer);
 
     let services:Service[] = [];
-    const results = await accountsContract.getServices(affiliate);
+    const results = await servicesContract.getServices(affiliate);
     if (!results.length) {
 			return res.status(200).json([]);
 		}
-    services = await results.map(async (result:any) => {
+    services =  await Promise.all(results.map(async (result:any) => {
       console.log(result);
       return {
         name: result.name,
-        cost: result.cost,
-        index: result.index,
+        // cost: BigNumber.from(result.cost.toString()),
+        // cost: utils.parseEther(result.cost.toString()),
+        cost: Number(ethers.utils.formatUnits(result.cost.toString(), 'ether')),
+        index: result.index.toNumber(),
       }
-    });
-    console.log(services)
+    }));
+    console.log("services: ", services)
     
 		return res.status(200).json(services);
 	} catch (error) {
+    console.log(error);
 		return res.status(500).json('Internal Server Error!');
 	}
 }
@@ -71,18 +74,20 @@ import { services } from "../../data/data";
 		// TODO: create a provider and  add a service
     const { name, cost } = req.body;
     if (!name || !cost) return;
-    console.log(name, cost);
+    const _cost = ethers.utils.parseUnits(cost.toString(), 'ether');
+    console.log(name, _cost);
     // return;
     // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
     // const wallet = new ethers.Wallet(`${req.secret}`);
     // const signer = wallet.connect(provider);
     const servicesContract = new ethers.Contract(serviceAddress, Services.abi, req.signer);
 
-    const res = await servicesContract.addService(name, cost);
-    await res.wait();
+    const result = await servicesContract.addService(name, _cost);
+    await result.wait();
     
 		return res.status(200).json('Success');
 	} catch (error) {
+    console.log(error);
 		return res.status(500).json('Internal Server Error!');
 	}
 }
@@ -114,7 +119,9 @@ export const getService = async (req: any, res: Response, next: NextFunction) =>
 		}
     let service = { 
       name: result.name,
-      cost: result.cost
+      // cost: result.cost
+      cost: Number(ethers.utils.formatUnits(result.cost.toString(), 'ether')),
+      index: result.index.toNumber(),
     }
     
 		return res.status(200).json(service);
@@ -136,15 +143,17 @@ export const updateService = async (req: any, res: Response, next: NextFunction)
 	try {
 		// TODO: create a provider and update a service
     const { name, cost } = req.body;
-    if (!name || !cost) return;
+    const { index } = req.params;
+    if (!name || !cost || !index) return;
+    const _cost = ethers.utils.parseUnits(cost.toString(), 'ether');
 
     // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
     // const wallet = new ethers.Wallet(`${req.secret}`);
     // const signer = wallet.connect(provider);
     const servicesContract = new ethers.Contract(serviceAddress, Services.abi, req.signer);
 
-    const res = await servicesContract.updateService(name, cost, req.params.index);
-    await res.wait();
+    const result = await servicesContract.updateService(name, _cost, index);
+    await result.wait();
     
 		return res.status(200).json('Success');
 	} catch (error) {
@@ -172,8 +181,8 @@ export const deleteService = async (req: any, res: Response, next: NextFunction)
     // const signer = wallet.connect(provider);
     const servicesContract = new ethers.Contract(serviceAddress, Services.abi, req.signer);
 
-    const res = await servicesContract.deleteService(index);
-    await res.wait();
+    const result = await servicesContract.deleteService(index);
+    await result.wait();
     
 		return res.status(200).json('Success');
 	} catch (error) {

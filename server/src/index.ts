@@ -45,7 +45,7 @@ app.use('/document', document);
 // Ping home route
 app.get('/', (req: Request, res: Response) => {
   try {
-    return res.status(200).json('createWallet');
+    return res.status(200).json('Ok');
   } catch (error) {
     return res.status(500).json('Internal Server Error!');
   }

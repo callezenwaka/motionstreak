@@ -4,7 +4,7 @@ import service from "../controllers/service";
 import express from "express";
 const router = express();
 
-router.get('/', service.getServices);
+router.get('/', isSigner, service.getServices);
 
 router.post('/', isSigner, service.addService);
 
