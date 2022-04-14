@@ -3,7 +3,6 @@ import { ethers } from 'ethers';
 import { create } from 'ipfs-http-client';
 import { accountAddress } from '../config';
 import Accounts from '../../artifacts/contracts/Accounts.sol/Accounts.json';
-// import { accounts } from "../../data/data";
 const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 
 /**
@@ -12,28 +11,21 @@ const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
  * @param {object} res Express response context.
  * @param {object} next Express next context.
  * @return {object} json account
- * Add account
+ * Add item
  */
  export const addAccount = async (req: any, res: Response, next: NextFunction) => {
 	try {
-		// TODO: create an account
+    // TODO: should refactor, signer should be deployed account
     const { displayName, email, phoneNumber, photoURL, role, isActive, isActivated } = req.body;
     if (!displayName || !email || !phoneNumber || !photoURL || !role || !isActive || !isActivated) return;
-    console.log(req.body);
-    // return;
-    // TODO: could refactor signer should be deployed account
-    // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
-    // const wallet = new ethers.Wallet(`${process.env.PRIVATE_KEY}`);
-    // const signer = wallet.connect(provider);
 
-    const provider = new ethers.providers.JsonRpcProvider();
-    const wallet = new ethers.Wallet(`0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80`);
+    const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+    const wallet = new ethers.Wallet(`${process.env.PRIVATE_KEY}`);
     const signer = wallet.connect(provider);
 
     const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, signer);
     const result = await accountsContract.addAccount(req.address, req.affiliate, displayName, email, phoneNumber, photoURL, role, isActive, isActivated);
     await result.wait();
-    console.log(result);
     
 		return res.status(200).json('Success');
 	} catch (error) {
@@ -49,20 +41,17 @@ const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
  * @param {object} res Express response context.
  * @param {object} next Express next context.
  * @return {object} json account
- * Retrieve account
+ * Retrieve item
  */
 export const getAccount = async (req: any, res: Response, next: NextFunction) => {
 	try {
 		// Todo: create a provider and query for transaction
     const { address } = req.params;
-    // console.log(req.params);
+    if(!address) return;
 
-    // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
-    // const wallet = new ethers.Wallet(`${req.secret}`);
-    // const signer = wallet.connect(provider);
     const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, req.signer);
-
     const result = await accountsContract.getAccount(address);
+
     let account = {
       displayName: result.displayName,
       email: result.email,
@@ -86,7 +75,7 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
 
 /**
  * [START POST IMAGE]
- * Create a request. If an image is uploaded, add public URL from cloud storage to firestore
+ * Create a request. If an image is uploaded, add public URL from ipfs to blockchain
  * @param {object} req Express request context.
  * @param {object} res Express response context.
  * @param {object} next Express next context.
@@ -101,7 +90,6 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
     // Send url back to client
     const result = await client.add(Buffer.from(req.file.buffer));
     const photoURL = `https://ipfs.infura.io/ipfs/${result.path}`;
-    console.log(photoURL);
 
     return res.status(200).json(photoURL);
   } catch (error) {
@@ -116,28 +104,14 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
  * @param {object} res Express response context.
  * @param {object} next Express next context.
  * @return {object} json items
- * Update account
+ * Update item
  */
  export const updateAccount = async (req: any, res: Response, next: NextFunction) => {
 	try {
 		// Todo: update an account
-    // const index = accounts.findIndex(account => account.address == address);
-    // let account = accounts.find(account => account.address == address);
-    // console.log('req: ',req.params);
     const { address, displayName, email, phoneNumber, photoURL, isActive } = req.body;
     if (!address || !displayName || !email || !phoneNumber || !photoURL || !isActive) return;
-    console.log(req.body);
-    // if(!account) return;
-    // account.displayName = displayName;
-    // account.phoneNumber = phoneNumber;
-    // account.photoURL = photoURL;
-    // account.email = email;
-    // if(!index) return;
-    // accounts.splice(index, 1, account);
 
-    // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
-    // const wallet = new ethers.Wallet(`${req.secret}`);
-    // const signer = wallet.connect(provider);
     const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, req.signer);
     const result = await accountsContract.updateAccount(address, displayName, email, phoneNumber, photoURL, isActive);
     await result.wait();

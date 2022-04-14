@@ -11,5 +11,8 @@ artifacts
 # accounts
 accounts.txt
 
-# data
+# service account
 firebase.json
+
+# data
+data

@@ -4,15 +4,22 @@
 import Multer from 'multer';
 import admin from 'firebase-admin';
 import { ethers } from 'ethers';
+import { NextFunction } from 'express';
+
+export const multer = Multer({
+  storage: Multer.memoryStorage(),
+  // no larger than 5mb
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
 
 /**
- * [START GET TOKEN]
+ * [START GET AUTH TOKEN]
  * @param {object} req Express request context.
  * @param {object} res Express response context.
  * @param {object} next Express next context.
+ * Define auth helper function.
  */
-const getAuthToken = (req: any, res: any, next: any) => {
-	// console.log(req.headers.authorization);
+const getAuthToken = (req: any, res: Response, next: NextFunction) => {
 	if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
 		req.authToken = req.headers.authorization.split(' ')[1];
 	} else {
@@ -20,16 +27,16 @@ const getAuthToken = (req: any, res: any, next: any) => {
 	}
 	next();
 };
-// [END GET TOKEN]
+// [END GET AUTH TOKEN]
 
 /**
- * [START CHECK AUTH]
+ * [START CHECK AUTHENTICATED]
  * @param {object} req Express request context.
  * @param {object} res Express response context.
  * @param {object} next Express next context.
- * Define auth middleware.
+ * Define authenticated middleware.
  */
-export const isAuthenticated = async (req: any, res: any, next: any) => {
+export const isAuthenticated = async (req: any, res: any, next: NextFunction) => {
 	getAuthToken(req, res, async () => {
 		try {
       // TODO: verify token
@@ -42,33 +49,26 @@ export const isAuthenticated = async (req: any, res: any, next: any) => {
 		}
 	});
 }
-// [END CHECK AUTH]
+// [END CHECK AUTHENTICATED]
 
 /**
- * [START CHECK ADMIN]
+ * [START CHECK SIGNER]
  * @param {*} req 
  * @param {*} res 
  * @param {*} next 
+ * Define signer middleware.
  */
 export const isSigner = async (req: any, res: any, next: any) => {
     try {
       // TODO: get signer identity
-      // if(!req.user.isActive || !req.user.isActivated) return;
-      // const secret = await admin.firestore().collection('secrets').doc(req.user.uid).get();
-      // if (!secret.exists) return res.status(401).json('Unauthorized access!');
-      // req.secret = secret?.data()?.secret;
+      if(!req.user.isActive || !req.user.isActivated) return;
+      const secret = await admin.firestore().collection('secrets').doc(req.user.uid).get();
+      if (!secret.exists) return res.status(401).json('Unauthorized access!');
+      req.secret = secret?.data()?.secret;
 
-      // const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
-      // const wallet = new ethers.Wallet(`${req.secret}`);
-      // req.signer = wallet.connect(provider);
-      // console.log(req.body);
-
-      const { private_key } = req.query;
-      // console.log(private_key);
-      const provider = new ethers.providers.JsonRpcProvider();
-      const wallet = new ethers.Wallet(`${private_key}`);
+      const provider = new ethers.providers.JsonRpcProvider(`https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`);
+      const wallet = new ethers.Wallet(`${req.secret}`);
       req.signer = wallet.connect(provider);
-      console.log(req.signer);
       
       return next();
     } 
@@ -77,12 +77,20 @@ export const isSigner = async (req: any, res: any, next: any) => {
       return res.status(501).json('Unauthorized request!');
     }
 };
-// [END CHECK ADMIN]
+// [END CHECK SIGNER]
 
+/**
+ * [START UPDATE USER]
+ * @param {object} req Express request context.
+ * @param {object} res Express response context.
+ * @param {object} next Express next context.
+ * Define update user middleware.
+ */
 export const updateUser = async (req: any, res: any, next: any) => {
   try {
     // Get users from request body, and add each to database
     const { displayName, photoURL, phoneNumber, uid, email, password, role, isActive, isActivated } = req.body;
+    if(!displayName || !email || !role || !isActive || !isActivated) return;
     req.uid = uid;
     req.role = role;
     req.isActive = isActive;
@@ -112,11 +120,21 @@ export const updateUser = async (req: any, res: any, next: any) => {
     return res.status(501).json('Internal error!');
   }
 };
+// [END UPDATE USER]
 
+/**
+ * [START CREATE WALLET]
+ * @param {object} req Express request context.
+ * @param {object} res Express response context.
+ * @param {object} next Express next context.
+ * Define create wallet middleware.
+ */
 export const createWallet = async (req: any, res: any, next: any) => {
   try {
     // TODO: create wallet
     const { address } = req.body;
+    if(!address) return;
+
     const wallet = ethers.Wallet.createRandom();
     req.address = wallet.address;
     req.secret = wallet.privateKey;
@@ -131,35 +149,21 @@ export const createWallet = async (req: any, res: any, next: any) => {
     return res.status(501).json('Internal error!');
   }
 };
+// [END CREATE WALLET]
 
-export const createTestWallet = async (req: any, res: any, next: any) => {
-  try {
-    // TODO: create test wallet
-    const { private_key, address, role } = req.body;
-    const wallet = new ethers.Wallet(`${private_key}`);
-    req.address = wallet.address;
-    if(role.toLowerCase() === 'admin') {
-      req.affiliate = address;
-    } else {
-      req.affiliate = wallet.address;
-    }
-    // req.affiliate = address;
-    // req.affiliate = wallet.address;
-    // console.log(req.address);
-
-    next();
-  } catch (error) {
-    console.log(error);
-    return res.status(501).json('Internal error!');
-  }
-};
-
+/**
+ * [START SET CLAIM]
+ * @param {object} req Express request context.
+ * @param {object} res Express response context.
+ * @param {object} next Express next context.
+ * Define set claim middleware.
+ */
 export const setClaim = async (req: any, res: any, next: any) => {
   try {
-    const { address, role, isActive, isActivated, uid } = req;
-    // const { role, isActive, isActivated, uid } = req.body;
-    const affiliate = role.toLowerCase() === 'admin'? req.body.affiliate : address;
-    console.log(role, isActive, isActivated, affiliate, address, uid);
+    // TODO: set claim
+    const { address, affiliate, role, isActive, isActivated, uid } = req;
+    if(!address || !affiliate || !role ||!isActive || !isActivated || !uid) return;
+
     await admin.auth().setCustomUserClaims(uid, {
       role, 
       isActive, 
@@ -173,10 +177,18 @@ export const setClaim = async (req: any, res: any, next: any) => {
     return res.status(501).json('Internal error!');
   }
 }
+// [END SET CLAIM]
 
+/**
+ * [START POST SECRET]
+ * @param {object} req Express request context.
+ * @param {object} res Express response context.
+ * @param {object} next Express next context.
+ * Define post secret middleware.
+ */
 export const postSecret = async (req: any, res: any, next: any) => {
   try {
-    // Get users from request body, and add each to database
+    // TODO: post secret to firestore
     await admin.firestore().collection('secrets').doc(req.uid).set({ secret: req.secret });
     next();
   } catch (error) {
@@ -184,9 +196,4 @@ export const postSecret = async (req: any, res: any, next: any) => {
     return res.status(501).json('Internal error!');
   }
 };
-
-export const multer = Multer({
-  storage: Multer.memoryStorage(),
-  // no larger than 5mb
-  limits: { fileSize: 5 * 1024 * 1024 },
-});
+// [END POST SECRET]

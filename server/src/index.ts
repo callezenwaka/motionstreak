@@ -1,4 +1,4 @@
-import 'dotenv/config';
+// import 'dotenv/config';
 
 import express, {Application, Request, Response, NextFunction} from "express";
 import admin from 'firebase-admin';
@@ -6,7 +6,6 @@ import cors from "cors";
 import document from "./routes/document";
 import service from "./routes/service";
 import account from "./routes/account";
-import { isAuthenticated, isSigner } from "./utils";
 
 const app: Application = express();
 // Initialize firebase admin sdk config
@@ -37,7 +36,6 @@ app.get('/healthz',async (req: Request, res: Response) => {
 });
 
 // Verify request
-// app.use('/', isAuthenticated, isSigner);
 app.use('/account', account);
 app.use('/service', service);
 app.use('/document', document);
