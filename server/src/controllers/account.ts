@@ -1,8 +1,7 @@
 import { Response, NextFunction } from "express";
 import { ethers } from 'ethers';
 import { create } from 'ipfs-http-client';
-import { accountAddress } from '../config';
-import Accounts from '../../artifacts/contracts/Accounts.sol/Accounts.json';
+import { accountAddress, accountsABI } from '../config';
 const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 
 /**
@@ -23,7 +22,7 @@ const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' })
     const wallet = new ethers.Wallet(`${process.env.ACCOUNT_PRIVATE_KEY}`);
     const signer = wallet.connect(provider);
 
-    const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, signer);
+    const accountsContract = new ethers.Contract(accountAddress, accountsABI, signer);
     const result = await accountsContract.addAccount(req.address, req.affiliate, displayName, email, phoneNumber, photoURL, role, isActive, isActivated);
     await result.wait();
     
@@ -48,7 +47,7 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
     const { address } = req.params;
     if(!address) return;
 
-    const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, req.signer);
+    const accountsContract = new ethers.Contract(accountAddress, accountsABI, req.signer);
     const result = await accountsContract.getAccount(address);
 
     let account = {
@@ -110,7 +109,7 @@ export const getAccount = async (req: any, res: Response, next: NextFunction) =>
     const { address, displayName, email, phoneNumber, photoURL, isActive } = req.body;
     if (!address || !displayName || !email || !phoneNumber || !photoURL || !isActive) return;
 
-    const accountsContract = new ethers.Contract(accountAddress, Accounts.abi, req.signer);
+    const accountsContract = new ethers.Contract(accountAddress, accountsABI, req.signer);
     const result = await accountsContract.updateAccount(address, displayName, email, phoneNumber, photoURL, isActive);
     await result.wait();
     

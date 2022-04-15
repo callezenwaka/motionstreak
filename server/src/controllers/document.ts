@@ -2,8 +2,7 @@ import { Response, NextFunction } from "express";
 import { ethers } from 'ethers';
 import { create } from 'ipfs-http-client';
 import Document from '../types/Document';
-import { documentAddress } from '../config';
-import Documents from '../../artifacts/contracts/Documents.sol/Documents.json';
+import { documentAddress, documentsABI } from '../config';
 const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 
 /**
@@ -20,7 +19,7 @@ export const getDocuments = async (req: any, res: Response, next: NextFunction) 
     const {affiliate} = req.query;
     if (!affiliate) return;
 
-    const documentContract = new ethers.Contract(documentAddress, Documents.abi, req.signer);
+    const documentContract = new ethers.Contract(documentAddress, documentsABI, req.signer);
     const results = await documentContract.getDocuments(affiliate);
     if (!results.length) return res.status(200).json([]);
 
@@ -60,7 +59,7 @@ export const addDocument = async (req: any, res: Response, next: NextFunction) =
     if (!certifier || !verifier || !name || !requester || !fee) return;
     const _fee = ethers.utils.parseUnits(fee.toString(), 'ether');
 
-    const documentContract = new ethers.Contract(documentAddress, Documents.abi, req.signer);
+    const documentContract = new ethers.Contract(documentAddress, documentsABI, req.signer);
     const result = await documentContract.addDocument(certifier, verifier, name, _fee, { value: _fee });
     await result.wait();
     
@@ -85,7 +84,7 @@ export const getDocument = async (req: any, res: Response, next: NextFunction) =
     const { index } = req.params;
     if (!index) return;
 
-    const documentContract = new ethers.Contract(documentAddress, Documents.abi, req.signer);
+    const documentContract = new ethers.Contract(documentAddress, documentsABI, req.signer);
     const result = await documentContract.getDocument(index);
 		if (!result) return res.status(200).json({});
 
@@ -121,7 +120,7 @@ export const getMetrics = async (req: any, res: Response, next: NextFunction) =>
     const { address } = req.query;
     if (!address) return;
 
-    const documentContract = new ethers.Contract(documentAddress, Documents.abi, req.signer);
+    const documentContract = new ethers.Contract(documentAddress, documentsABI, req.signer);
     const result = await documentContract.getMetrics(address);
 		if (!result) return res.status(200).json({});
 
@@ -181,7 +180,7 @@ export const updateDocument = async (req: any, res: Response, next: NextFunction
     const { imageURL, fee, status } = req.body;
     if (!imageURL || !fee || !status || !index) return;
 
-    const documentContract = new ethers.Contract(documentAddress, Documents.abi, req.signer);
+    const documentContract = new ethers.Contract(documentAddress, documentsABI, req.signer);
     const result = await documentContract.updateDocument(imageURL, index, status);
     await result.wait();
     

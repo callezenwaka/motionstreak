@@ -1,8 +1,7 @@
 import { Response, NextFunction } from "express";
 import { ethers } from 'ethers';
 import Service from '../types/Service';
-import { serviceAddress } from '../config';
-import Services from '../../artifacts/contracts/Services.sol/Services.json';
+import { serviceAddress, servicesABI } from '../config';
 
 /**
  * [START GET SERVICES]
@@ -18,7 +17,7 @@ import Services from '../../artifacts/contracts/Services.sol/Services.json';
     const { affiliate } = req.query;
     if (!affiliate) return;
 
-    const servicesContract = new ethers.Contract(serviceAddress, Services.abi, req.signer);
+    const servicesContract = new ethers.Contract(serviceAddress, servicesABI, req.signer);
     const results = await servicesContract.getServices(affiliate);
     if (!results.length) return res.status(200).json([]);
 
@@ -53,7 +52,7 @@ import Services from '../../artifacts/contracts/Services.sol/Services.json';
     if (!name || !cost) return;
     const _cost = ethers.utils.parseUnits(cost.toString(), 'ether');
 
-    const servicesContract = new ethers.Contract(serviceAddress, Services.abi, req.signer);
+    const servicesContract = new ethers.Contract(serviceAddress, servicesABI, req.signer);
     const result = await servicesContract.addService(name, _cost);
     await result.wait();
     
@@ -80,7 +79,7 @@ export const getService = async (req: any, res: Response, next: NextFunction) =>
     const { index } = req.params;
     if (!index) return;
 
-    const servicesContract = new ethers.Contract(serviceAddress, Services.abi, req.signer);
+    const servicesContract = new ethers.Contract(serviceAddress, servicesABI, req.signer);
     const result = await servicesContract.getService(index);
     if (!result) return res.status(200).json({});
 
@@ -113,7 +112,7 @@ export const updateService = async (req: any, res: Response, next: NextFunction)
     if (!name || !cost || !index) return;
     const _cost = ethers.utils.parseUnits(cost.toString(), 'ether');
 
-    const servicesContract = new ethers.Contract(serviceAddress, Services.abi, req.signer);
+    const servicesContract = new ethers.Contract(serviceAddress, servicesABI, req.signer);
     const result = await servicesContract.updateService(name, _cost, index);
     await result.wait();
     
@@ -138,7 +137,7 @@ export const deleteService = async (req: any, res: Response, next: NextFunction)
     const { index } = req.params;
     if (!index) return;
 
-    const servicesContract = new ethers.Contract(serviceAddress, Services.abi, req.signer);
+    const servicesContract = new ethers.Contract(serviceAddress, servicesABI, req.signer);
     const result = await servicesContract.deleteService(index);
     await result.wait();
     
