@@ -65,7 +65,8 @@ export type Login = {
   password: string;
 };
 
-export type Message = {
+export type Toast = {
+  title: string;
   text: string;
   status: boolean;
 }
@@ -79,7 +80,7 @@ export type State = {
   service: Service;
   profile: Profile;
   isLoading: boolean;
-  isToast: boolean;
+  toast: Toast;
   isTenant: boolean
   isAdmin: boolean;
   isUser: boolean;
@@ -94,7 +95,7 @@ export const state: State = {
   service: {} as Service,
   profile: {} as Profile,
   isLoading: false,
-  isToast: false,
+  toast: {} as Toast,
   isTenant: false,
   isAdmin: false,
   isUser: false,

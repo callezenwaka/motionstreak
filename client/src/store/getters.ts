@@ -1,5 +1,5 @@
 import { GetterTree } from 'vuex'
-import { State, Account, Document, Service, Profile } from './state'
+import { State, Account, Document, Service, Profile, Toast } from './state'
 
 export type Getters = {
   account(state: State): Account;
@@ -13,6 +13,7 @@ export type Getters = {
   getDocumentByIndex(state: State): (index: number) => Document | undefined;
   getDocumentCount(state: State): number;
   profile(state: State): Profile;
+  toast(state: State): Toast;
   isLoading(state: State): boolean;
   isTenant(state: State): boolean;
   isAdmin(state: State): boolean;
@@ -53,6 +54,7 @@ export const getters: GetterTree<State, State> & Getters = {
   },
   profile(state) { return state.profile },
   isLoading(state) { return state.isLoading },
+  toast(state) { return state.toast },
   isTenant(state) { return state.isTenant },
   isAdmin(state) { return state.isAdmin },
   isUser(state) { return state.isUser },

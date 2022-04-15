@@ -1,6 +1,6 @@
 import { ActionContext, ActionTree } from 'vuex'
 import { Mutations, MutationType } from './mutations'
-import { State, Account, Document, Service, Register, Login, Profile, Message, Query } from './state'
+import { State, Account, Document, Service, Register, Login, Profile, Query, Toast } from './state'
 import account from '@/services/account';
 import service from '@/services/service';
 import document from '@/services/document';
@@ -39,6 +39,7 @@ export enum ActionTypes {
   SetProfile = `SET_Profile`,
   SetIsLoading = 'SET_IS_LOADING',
   SetIdentity = 'SET_IDENTITY',
+  SetToast = `SET_TOAST`,
 }
 
 type ActionAugments = Omit<ActionContext<State, State>, 'commit'> & {
@@ -74,12 +75,13 @@ export type Actions = {
   // auth
   [ActionTypes.Register](context: ActionAugments, payload: Register): void;
   [ActionTypes.Login](context: ActionAugments, payload: Login): void;
-  [ActionTypes.Logout](context: ActionAugments, payload: Message): void;
+  [ActionTypes.Logout](context: ActionAugments, payload: Toast): void;
 
   // others
   [ActionTypes.SetIsLoading](context: ActionAugments, payload: boolean): void;
   [ActionTypes.SetProfile](context: ActionAugments, payload: Profile): void;
   [ActionTypes.SetIdentity](context: ActionAugments, payload: string): void;
+  [ActionTypes.SetToast](context: ActionAugments, payload: Toast): void;
 }
 
 // const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
@@ -383,5 +385,8 @@ export const actions: ActionTree<State, State> & Actions = {
   },
   async [ActionTypes.SetIdentity](context, payload) {
     context.commit(MutationType.SetIdentity, payload);
+  },
+  async [ActionTypes.SetToast](context, payload) {
+    context.commit(MutationType.SetToast, payload);
   },
 }

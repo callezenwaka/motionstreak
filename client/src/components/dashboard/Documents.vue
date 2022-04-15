@@ -86,6 +86,11 @@ export default defineComponent({
         store.dispatch(ActionTypes.GetAccount, document.verifier);
         context.emit("handlePages", "isPreview");
       } else {
+        store.dispatch(ActionTypes.SetToast, {
+          title: 'Bad Request!',
+          text: 'Not authorised to make request.',
+          status: true,
+        });
         return;
       }
       // const res = (profile.value.affiliate == document.verifier)

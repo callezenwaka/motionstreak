@@ -1,5 +1,5 @@
 import { MutationTree } from 'vuex'
-import { State, Account, Document, Service, Profile, Message } from './state'
+import { State, Account, Document, Service, Profile, Toast } from './state'
 
 export enum MutationType {
   // account
@@ -30,6 +30,7 @@ export enum MutationType {
   SetProfile = `SET_PROFILE`,
   SetIsLoading = `SET_IS_LOADING`,
   SetIdentity = `SET_IDENTITY`,
+  SetToast = `SET_TOAST`,
 }
 
 export type Mutations = {
@@ -64,12 +65,13 @@ export type Mutations = {
   // ): void;
 
   // auth
-  [MutationType.Logout](state: State, message: Message): void;
+  [MutationType.Logout](state: State, message: Toast): void;
 
   // others
   [MutationType.SetProfile](state: State, value: Profile): void;
   [MutationType.SetIsLoading](state: State, value: boolean): void;
   [MutationType.SetIdentity](state: State, value: string): void;
+  [MutationType.SetToast](state: State, value: Toast): void;
 };
 
 export const mutations: MutationTree<State> & Mutations = {
@@ -129,5 +131,8 @@ export const mutations: MutationTree<State> & Mutations = {
     } else {
       state.isUser = true;
     }
+  },
+  [MutationType.SetToast](state, value) {
+    state.toast = value;
   },
 }
