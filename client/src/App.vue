@@ -11,10 +11,33 @@
         <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
       </svg>
     </div>
+    <Toast></Toast>
     <div class="app">
       <router-view/>
     </div>
 </template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+import Toast from "@/components/partials/Toast.vue";
+import { useRouter } from 'vue-router';
+export default defineComponent({
+  name: "HomeView",
+  components: {
+    Toast,
+  },
+  setup() {
+    const router = useRouter();
+    const handleLogin = () => {
+      router.push({ name: 'Login' });
+    }
+
+    return {
+      handleLogin,
+    }
+  }
+});
+</script>
 
 <style>
 

@@ -17,8 +17,10 @@
             <span>Verifier: {{handleAddress(document.verifier)}}</span>
           </div> -->
           <div class="app-card-buttons">
-            <button v-if="profile.role.toLowerCase() === 'admin'" class="content-button status-button" @click="handleUpdate(document)">Update</button>
-            <div style=" text-transform: capitalize;">Status: {{status[document.status]}}</div>
+            <!-- <div v-if="profile.role.toLowerCase() !== 'admin'" style=" text-transform: capitalize;">Status: {{Status[document.status]}}</div> -->
+            <div style=" text-transform: capitalize;">Status: {{Status[document.status]}}</div>
+            <button v-if="isAdmin" class="content-button status-button" @click="handleUpdate(document)">Update</button>
+            <!-- <button v-if="isAdmin" class="content-button status-button" @click="handleUpdate(document)">Update</button> -->
             <!-- <div class="menu"></div> -->
           </div>
         </div>
@@ -30,7 +32,7 @@
 
 <script lang="ts">
 // @ is an alias to /src
-import { computed, defineComponent, onMounted } from "vue";
+import { computed, defineComponent } from "vue";
 import { useStore } from '@/store'
 import { ActionTypes } from '@/store/actions'
 import { MutationType } from "@/store/mutations";
@@ -43,27 +45,65 @@ export default defineComponent({
   },
   setup(props, context) {
     const store = useStore();
-    enum status { PENDING, CERTIFIED = 1, DECLINED, VERIFIED, REJECTED }
+    enum Status { PENDING, CERTIFIED = 1, DECLINED, VERIFIED, REJECTED }
     // console.log(profile.value.affiliate);
     // onMounted(() => store.dispatch(ActionTypes.GetDocuments, {affiliate: profile.value.affiliate}));
     const documents = computed((): Document[] => store.getters.documents);
     const profile = computed((): Profile => store.getters.profile);
-    const isLoading = computed((): boolean => store.state.isLoading);
+    const isAdmin = computed((): boolean => store.getters.isAdmin);
+    const isLoading = computed((): boolean => store.getters.isLoading);
+    // const isValid = computed(() => {
+    //   return user.email !== "" && user.password !== "";
+    // });
+    const handleCertify = (document: Document): boolean => {
+      console.log(document.certifier === profile.value.affiliate && Status[document.status] === 'PENDING' && isAdmin);
+      // console.log(Status[document.status] === 'PENDING');
+      if (document.certifier === profile.value.affiliate && Status[document.status] === 'PENDING' && isAdmin) {
+        return true;
+      }
+      return false
+    };
+    const handleVerify = (document: Document): boolean => {
+      console.log(document.certifier === profile.value.affiliate && Status[document.status] === 'CERTIFIED' && isAdmin);
+      // console.log(Status[document.status] === 'CERTIFIED');
+      if (document.certifier === profile.value.affiliate && Status[document.status] === 'CERTIFIED' && isAdmin) {
+        return true;
+      }
+      return false
+    };
+
+    // console.log(handleCertify);
     
     const handleUpdate = async (document: Document) => {
-      const res = (profile.value.affiliate == document.verifier)
-      ? {address: document.verifier, page: "isVerify"}
-      : {address: document.certifier, page: "isCertify"};
-      store.commit(MutationType.SetDocument, document);
-      store.dispatch(ActionTypes.GetAccount, res.address)
-      context.emit("handlePages", res.page);
+      if (Status[document.status] === 'PENDING' && document.certifier === profile.value.affiliate) {
+        console.log(true);
+        store.commit(MutationType.SetDocument, document);
+        store.dispatch(ActionTypes.GetAccount, document.certifier);
+        context.emit("handlePages", "isPreview");
+      } else if (Status[document.status] === 'CERTIFIED' && document.verifier === profile.value.affiliate) {
+        console.log(true);
+        store.commit(MutationType.SetDocument, document);
+        store.dispatch(ActionTypes.GetAccount, document.verifier);
+        context.emit("handlePages", "isPreview");
+      } else {
+        return;
+      }
+      // const res = (profile.value.affiliate == document.verifier)
+      // ? {address: document.verifier, page: "isVerify"}
+      // : {address: document.certifier, page: "isCertify"};
+      // store.commit(MutationType.SetDocument, document);
+      // store.dispatch(ActionTypes.GetAccount, res.address)
+      // context.emit("handlePages", res.page);
     }
 
     return {
-      status,
+      Status,
+      isAdmin,
       isLoading,
       profile, 
       documents,
+      handleCertify,
+      handleVerify,
       handleUpdate,
       handleAddress,
     };

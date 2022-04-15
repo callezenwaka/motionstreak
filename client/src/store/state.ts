@@ -22,7 +22,7 @@ export type Account = {
   role: string;
   isActive: boolean;
   isActivated: boolean;
-  address?: string;
+  address?: string | undefined;
   affiliate?: string;
   password?: string;
   uid?: string;
@@ -79,6 +79,7 @@ export type State = {
   service: Service;
   profile: Profile;
   isLoading: boolean;
+  isToast: boolean;
   isTenant: boolean
   isAdmin: boolean;
   isUser: boolean;
@@ -93,6 +94,7 @@ export const state: State = {
   service: {} as Service,
   profile: {} as Profile,
   isLoading: false,
+  isToast: false,
   isTenant: false,
   isAdmin: false,
   isUser: false,

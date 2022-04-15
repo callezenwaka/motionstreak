@@ -187,7 +187,7 @@ export const actions: ActionTree<State, State> & Actions = {
   async [ActionTypes.GetDocuments](context, payload) {
     try {
       // TODO: api call
-      console.log(payload);
+      // console.log(payload);
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
       const data = await document.getDocuments(context.getters.profile.token, payload);      

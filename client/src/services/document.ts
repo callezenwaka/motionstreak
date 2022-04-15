@@ -7,11 +7,11 @@ export default {
 		return await request(`${API_URL}document/image`, 'post', token, params);
 	},
 	async addDocument(token: string, params: Document): Promise<string> {
-		console.log(params);
+		// console.log(params);
 		return await request(`${API_URL}document`, 'post', token, params);
 	},
 	async getDocuments(token: string, query: Query): Promise<Document[]> {
-		console.log(token, query);
+		// console.log(token, query);
 		return await request(`${API_URL}document`, 'get', token, '', query);
 	},
 	async getDocument(token: string, index: number): Promise<Document> {

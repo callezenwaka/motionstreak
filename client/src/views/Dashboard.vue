@@ -68,7 +68,7 @@
                 </svg>
                 Request
               </button>
-              <button v-if="isAdmin && profile.affiliate == document.certifier" type="button" :class="{ active: pages.isCertify }" @click="handlePages('isCertify')">
+              <button v-if="isAdmin && pages.isCertify && profile.affiliate == document.certifier" type="button" :class="{ active: pages.isCertify }" @click="handlePages('isCertify')">
                 <svg viewBox="0 0 512 512" fill="currentColor">
                   <path
                     d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
@@ -79,7 +79,7 @@
                 </svg>
                 Certify
               </button>
-              <button v-if="isAdmin && profile.affiliate == document.verifier" type="button" :class="{ active: pages.isVerify }" @click="handlePages('isVerify')">
+              <button v-if="isAdmin && pages.isVerify && profile.affiliate == document.verifier" type="button" :class="{ active: pages.isVerify }" @click="handlePages('isVerify')">
                 <svg viewBox="0 0 512 512" fill="currentColor">
                   <path
                     d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
@@ -89,6 +89,17 @@
                   />
                 </svg>
                 Verify
+              </button>
+              <button v-if="isAdmin && profile.affiliate == document.verifier && pages.isPreview" type="button" :class="{ active: pages.isVerify }" @click="handlePages('isVerify')">
+                <svg viewBox="0 0 512 512" fill="currentColor">
+                  <path
+                    d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
+                  />
+                  <path
+                    d="M15 331h196v60h-75c-8.291 0-15 6.709-15 15s6.709 15 15 15h135v-30h-30v-60h30V166c0-24.814 20.186-45 45-45h135V46c0-8.284-6.716-15-15-15H15C6.716 31 0 37.716 0 46v270c0 8.284 6.716 15 15 15z"
+                  />
+                </svg>
+                Preview
               </button>
             </div>
           </div>
@@ -159,6 +170,7 @@
             <User v-if="pages.isUser"></User>
             <Help v-if="pages.isHelp"></Help>
             <Wallet v-if="pages.isWallet"></Wallet>
+            <Preview v-if="pages.isPreview"></Preview>
           </div>
         </div>
       </div>
@@ -180,6 +192,7 @@ import Verify from "@/components/dashboard/Verify.vue";
 import User from "@/components/dashboard/User.vue";
 import Help from "@/components/dashboard/Help.vue";
 import Wallet from "@/components/dashboard/Wallet.vue";
+import Preview from "@/components/dashboard/Preview.vue";
 import { computed, defineComponent, reactive, ref } from 'vue';
 import { useStore } from "@/store";
 import { Profile, Document } from "@/store/state";
@@ -199,6 +212,7 @@ export default defineComponent({
     User,
     Help,
     Wallet,
+    Preview,
   },
   setup() {
     const store = useStore();
@@ -213,16 +227,17 @@ export default defineComponent({
     const isUser = computed((): boolean => store.getters.isUser);
     let isOpen = ref(false);
     type Pages = {
-      isDocuments: boolean,
-      isAccount: boolean,
-      isAdmin: boolean,
-      isService: boolean,
-      isRequest: boolean,
-      isCertify: boolean,
-      isVerify: boolean,
-      isUser: boolean,
-      isHelp: boolean,
-      isWallet: boolean,
+      isDocuments: boolean;
+      isAccount: boolean;
+      isAdmin: boolean;
+      isService: boolean;
+      isRequest: boolean;
+      isCertify: boolean;
+      isVerify: boolean;
+      isUser: boolean;
+      isHelp: boolean;
+      isWallet: boolean;
+      isPreview: boolean;
     };
     const pages:Pages = reactive({
       isDocuments: true,
@@ -235,6 +250,7 @@ export default defineComponent({
       isUser: false,
       isHelp: false,
       isWallet: false,
+      isPreview: false,
     });
 
     const handlePages = async (current: string) => {

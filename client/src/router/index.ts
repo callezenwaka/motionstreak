@@ -1,9 +1,9 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Home from '../views/Home.vue';
-import { store } from "@/store";
+// import { store } from "@/store";
 import firebase from 'firebase/app';
 
-console.log("main", store.getters.profile.isActive);
+// console.log("main", store.getters.profile.isActive);
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -27,7 +27,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: true },
     beforeEnter: (to) => {
       firebase.auth().onAuthStateChanged( async user => {
-        console.log(user);
+        // console.log(user);
         if (to.meta.requiresAuth && !user)
         return {
           path: '/login',

@@ -1,7 +1,7 @@
 <template>
   <div class="certify">
     <!-- <Header></Header> -->
-    <form class="form--container" @submit.prevent="handleCertify">
+    <!-- <form class="form--container" @submit.prevent="handleCertify">
       <div class="form--header">
         <h2 class="form--title">Certify Document</h2>
       </div>
@@ -42,7 +42,7 @@
       <div class="form--item">
         <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Send</button>
       </div>
-    </form>
+    </form> -->
   </div>
 </template>
 
@@ -56,7 +56,7 @@ import { useRouter } from 'vue-router';
 import { Account, Document } from "@/store/state";
 import { handleBlur } from "@/utils";
 export default defineComponent({
-  name: "CertifyView",
+  name: "PreviewView",
   components: {
     // Header
   },
