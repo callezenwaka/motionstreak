@@ -7,14 +7,12 @@ const router = express();
 
 // router.get('/', account.getAccounts);
 
-// router.post('/', createTestWallet, account.addAccount);
-
 router.post('/', updateUser, createWallet, setClaim, postSecret, account.addAccount);
 
 router.post('/image', multer.single('file'), account.postImage);
 
-router.put('/:address', isSigner, account.updateAccount);
+router.put('/:address', isAuthenticated, updateUser, isSigner, account.updateAccount);
 
-router.get('/:address', isSigner, account.getAccount);
+router.get('/:address', isAuthenticated, isSigner, account.getAccount);
  
 export default router;

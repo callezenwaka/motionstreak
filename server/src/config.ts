@@ -1,4 +1,4 @@
-export const utilsAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-export const accountAddress = "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512";
-export const serviceAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
-export const documentAddress = "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9";
+export const utilsAddress = "0x891d040B70781f3C8458d97Bf8685335d7fd00E2";
+export const accountAddress = "0x6cc8E9928Fdb73cEb4F0d18b649ACdF03C38CF4c";
+export const serviceAddress = "0x48Be994305bB44D90AF869Dd7984B93dAEaD3d30";
+export const documentAddress = "0xfe2b17226F8002eef761ce46F8f6831B2bBeA3e6";

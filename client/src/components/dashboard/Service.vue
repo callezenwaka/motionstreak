@@ -126,6 +126,8 @@ export default defineComponent({
           store.dispatch(ActionTypes.AddService, { name, cost, index });
         }
         router.push({ name: "Dashboard" });
+        item.name = '';
+        item.cost = 0;
       } catch (error) {
         console.log(error);
       }

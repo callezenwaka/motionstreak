@@ -182,7 +182,10 @@ export const actions: ActionTree<State, State> & Actions = {
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
       const data = await document.addDocument(context.getters.profile.token, payload);
-      context.commit(MutationType.SetIsLoading, false)
+      console.log(data);
+      if(typeof data !== 'string') return;
+      context.commit(MutationType.SetIsLoading, false);
+      context.dispatch(ActionTypes.GetServices, {affiliate: context.getters.profile.affiliate});
       return data;
     } catch (error) {
       return error
@@ -235,8 +238,10 @@ export const actions: ActionTree<State, State> & Actions = {
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
       const data = await service.addService(context.getters.profile.token, payload);
+      console.log(data);
       if(typeof data !== 'string') return;
-      context.commit(MutationType.SetIsLoading, false)
+      context.commit(MutationType.SetIsLoading, false);
+      context.dispatch(ActionTypes.GetServices, {affiliate: context.getters.profile.affiliate});
       return data;
     } catch (error) {
       return error
@@ -278,11 +283,14 @@ export const actions: ActionTree<State, State> & Actions = {
   async [ActionTypes.UpdateService](context, payload) {
     try {
       console.log(payload);
-      return;
+      // return;
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
       const data = await service.updateService(context.getters.profile.token, payload);
+      console.log(data);
+      if(typeof data !== 'string') return;
       context.commit(MutationType.SetIsLoading, false)
+      context.dispatch(ActionTypes.GetServices, {affiliate: context.getters.profile.affiliate});
       return data;
     } catch (error) {
       return error;

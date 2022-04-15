@@ -26,17 +26,16 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 const config: HardhatUserConfig = {
   solidity: "0.8.4",
   networks: {
-    // localhost: {
-    //   url: "http://127.0.0.1:8545"
-    // },
+    localhost: {
+      url: "http://127.0.0.1:8545"
+    },
     hardhat: {
       // See its defaults
     },
-    // ropsten: {
-    //   url: process.env.ROPSTEN_URL || "",
-    //   accounts:
-    //     process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-    // },
+    ropsten: {
+      url: `https://ropsten.infura.io/v3/${process.env.INFURA_PROJECT_ID}`,
+      accounts: process.env.ACCOUNT_PRIVATE_KEY !== undefined ? [process.env.ACCOUNT_PRIVATE_KEY] : [],
+    },
   },
   paths: {
     sources: "./contracts",

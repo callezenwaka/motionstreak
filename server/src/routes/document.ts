@@ -5,16 +5,16 @@ import { multer } from "../utils";
 import express from "express";
 const router = express();
 
-router.get('/', isSigner, document.getDocuments);
+router.get('/', isAuthenticated, isSigner, document.getDocuments);
 
-router.post('/', isSigner, document.addDocument);
+router.post('/', isAuthenticated, isSigner, document.addDocument);
 
-router.post('/image', multer.single('file'), document.postImage);
+router.post('/image', isAuthenticated, multer.single('file'), document.postImage);
 
-router.put('/:index', isSigner, document.updateDocument);
+router.put('/:index', isAuthenticated, isSigner, document.updateDocument);
 
-router.get('/metrics', isSigner, document.getMetrics);
+router.get('/metrics', isAuthenticated, isSigner, document.getMetrics);
 
-router.get('/:index', isSigner, document.getDocument);
+router.get('/:index', isAuthenticated, isSigner, document.getDocument);
  
 export default router;

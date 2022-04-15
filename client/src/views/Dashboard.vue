@@ -24,7 +24,7 @@
                 </svg>
                 Documents
               </button>
-              <button type="button" :class="{ active: pages.isService }" @click="handlePages('isService')">
+              <button v-if="isTenant" type="button" :class="{ active: pages.isService }" @click="handlePages('isService')">
                 <svg viewBox="0 0 512 512" fill="currentColor">
                   <path
                     d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
@@ -46,7 +46,7 @@
                 </svg>
                 Account
               </button>
-              <button type="button" :class="{ active: pages.isAdmin }" @click="handlePages('isAdmin')">
+              <button v-if="isTenant" type="button" :class="{ active: pages.isAdmin }" @click="handlePages('isAdmin')">
                 <svg viewBox="0 0 512 512" fill="currentColor">
                   <path
                     d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
@@ -57,7 +57,7 @@
                 </svg>
                 Admin
               </button>
-              <button type="button" :class="{ active: pages.isRequest }" @click="handlePages('isRequest')">
+              <button v-if="isUser" type="button" :class="{ active: pages.isRequest }" @click="handlePages('isRequest')">
                 <svg viewBox="0 0 512 512" fill="currentColor">
                   <path
                     d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
@@ -68,7 +68,7 @@
                 </svg>
                 Request
               </button>
-              <button type="button" :class="{ active: pages.isCertify }" @click="handlePages('isCertify')">
+              <button v-if="isAdmin && profile.affiliate == document.certifier" type="button" :class="{ active: pages.isCertify }" @click="handlePages('isCertify')">
                 <svg viewBox="0 0 512 512" fill="currentColor">
                   <path
                     d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
@@ -79,7 +79,7 @@
                 </svg>
                 Certify
               </button>
-              <button type="button" :class="{ active: pages.isVerify }" @click="handlePages('isVerify')">
+              <button v-if="isAdmin && profile.affiliate == document.verifier" type="button" :class="{ active: pages.isVerify }" @click="handlePages('isVerify')">
                 <svg viewBox="0 0 512 512" fill="currentColor">
                   <path
                     d="M497 151H316c-8.401 0-15 6.599-15 15v300c0 8.401 6.599 15 15 15h181c8.401 0 15-6.599 15-15V166c0-8.401-6.599-15-15-15zm-76 270h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15zm0-180h-30c-8.401 0-15-6.599-15-15s6.599-15 15-15h30c8.401 0 15 6.599 15 15s-6.599 15-15 15z"
@@ -145,17 +145,17 @@
         </div>
         <div class="main-container" :class="{ active: isOpen }">
           <div class="content-wrapper">
-            <!-- <Service v-if="isTenant && pages.isService"></Service> -->
-            <!-- <Request v-if="isUser"></Request> -->
+            <Service v-if="isTenant && pages.isService"></Service>
+            <Request v-if="isUser && pages.isRequest"></Request>
             <!-- <Certify v-if="isAdmin && profile.affiliate == document.certifier"></Certify> -->
             <!-- <Verify v-if="isAdmin && profile.affiliate == document.verifier"></Verify> -->
-            <Service v-if="pages.isService"></Service>
-            <Request v-if="pages.isRequest"></Request>
-            <Certify v-if="pages.isCertify"></Certify>
-            <Verify v-if="pages.isVerify"></Verify>
+            <!-- <Service v-if="pages.isService"></Service> -->
+            <!-- <Request v-if="pages.isRequest"></Request> -->
+            <Certify v-if="isAdmin && pages.isCertify && profile.affiliate == document.certifier"></Certify>
+            <Verify v-if="isAdmin && pages.isVerify && profile.affiliate == document.verifier"></Verify>
             <Documents v-if="pages.isDocuments" @handlePages="handlePages"></Documents>
             <Account v-if="pages.isAccount"></Account>
-            <Admin v-if="pages.isAdmin"></Admin>
+            <Admin v-if="isTenant && pages.isAdmin"></Admin>
             <User v-if="pages.isUser"></User>
             <Help v-if="pages.isHelp"></Help>
             <Wallet v-if="pages.isWallet"></Wallet>
@@ -205,9 +205,11 @@ export default defineComponent({
     const avatar = computed(() => {return require(`@/assets/avatar.png`)});
     const profile = computed((): Profile => store.getters.profile);
     const document = computed((): Document => store.getters.document);
-    const isTenant = computed((): boolean => store.getters.isTenant);
-    const isAdmin = computed((): boolean => store.getters.isAdmin);
-    const isUser = computed((): boolean => store.getters.isUser);
+    const isTenant = computed((): boolean => profile.value.role.toLowerCase() === "Tenant".toLowerCase()? true : false);
+    const isAdmin = computed((): boolean => profile.value.role.toLowerCase() === "Admin".toLowerCase()? true : false);
+    const isUser = computed((): boolean => profile.value.role.toLowerCase() === "User".toLowerCase()? true : false);
+    // const isAdmin = computed((): boolean => store.getters.isAdmin);
+    // const isUser = computed((): boolean => store.getters.isUser);
     let isOpen = ref(false);
     type Pages = {
       isDocuments: boolean,
@@ -302,6 +304,7 @@ export default defineComponent({
   display: block;
   display: flex;
   flex-direction: column;
+  height: 100vh;
   /* margin-left: 120px; */
   /* flex-basis: 340px; */
   /* display: none; */

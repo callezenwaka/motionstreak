@@ -3,7 +3,7 @@
     <!-- <Header></Header> -->    
     <div class="content-section">
       <div class="content-section-title"><h2>Documents in your vault</h2></div>
-      <div class="apps-card">
+      <div  v-if="documents.length" class="apps-card">
         <div class="app-card" v-for="document in documents" :key="document.index">
           <span>
             <img src="@/assets/certificate.svg" alt="certificate" srcset="">
@@ -23,13 +23,14 @@
           </div>
         </div>
       </div>
+      <div v-else><span>No document exist</span></div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
 // @ is an alias to /src
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, onMounted } from "vue";
 import { useStore } from '@/store'
 import { ActionTypes } from '@/store/actions'
 import { MutationType } from "@/store/mutations";
@@ -43,7 +44,7 @@ export default defineComponent({
   setup(props, context) {
     const store = useStore();
     enum status { PENDING, CERTIFIED = 1, DECLINED, VERIFIED, REJECTED }
-    // onMounted(() => store.dispatch(ActionTypes.GetDocuments, profile.value.affiliate));
+    onMounted(() => store.dispatch(ActionTypes.GetDocuments, {affiliate: profile.value.affiliate}));
     const documents = computed((): Document[] => store.getters.documents);
     const profile = computed((): Profile => store.getters.profile);
     const isLoading = computed((): boolean => store.state.isLoading);

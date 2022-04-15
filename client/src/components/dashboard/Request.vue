@@ -18,7 +18,7 @@
       </div>
       <div class="form--item">
         <label class="form--label" for="destination">Destination Name: </label>
-        <input class="form--input" type="text" name="destination" id="destination" v-model="account.displayName" @blur="handleBlur($event)" @input="handleDestination($event)" placeholder="Enter destination address" required />
+        <input class="form--input" type="text" name="destination" id="destination" v-model="account.displayName" @blur="handleBlur($event)" @input="handleDestination($event)" placeholder="Enter destination address" readonly required />
       </div>
       <div class="form--item">
         <label class="form--label" for="certifier">Source Address: </label>
@@ -91,12 +91,6 @@ export default defineComponent({
       request.name = item.name;
       request.fee = item.cost;
     }
-    // const handleBlur = (event: Event) => {
-    //   const target = event.target as HTMLInputElement;
-    //   target.style.borderColor = target.value
-    //     ? "rgba(229,231,235, 1)"
-    //     : "rgba(255, 0, 0, 1)";
-    // };
     const handleDestination = async (event: Event) => {
       const target = event.target as HTMLInputElement;
       store.dispatch(ActionTypes.GetAccount, target.value);
@@ -115,17 +109,6 @@ export default defineComponent({
       if (validations.length) return false;
       return true;
     };
-    const handleImage = async (event: Event) => {
-      const target = event.target as HTMLInputElement;
-      const file = (target.files as FileList)[0];
-      let formData = new FormData();
-      formData.append("file", file);
-      try {
-        // request.imageURL = await addDocumentImage(formData);
-      } catch (error) {
-        console.log(error);
-      }
-    }
     const handleDocument = async () => {
       if (!handleValidation()) return;
       try {
@@ -147,8 +130,7 @@ export default defineComponent({
       handleBlur,
       handleDestination,
       handleSource,
-      handleValidation, 
-      handleImage, 
+      handleValidation,
       handleDocument 
     };
   },

@@ -4,15 +4,15 @@ import service from "../controllers/service";
 import express from "express";
 const router = express();
 
-router.get('/', isSigner, service.getServices);
+router.get('/', isAuthenticated, isSigner, service.getServices);
 
-router.post('/', isSigner, service.addService);
+router.post('/', isAuthenticated, isSigner, service.addService);
 
-router.put('/:index', isSigner, service.updateService);
+router.put('/:index', isAuthenticated, isSigner, service.updateService);
 
-router.get('/:index', isSigner, service.getService);
+router.get('/:index', isAuthenticated, isSigner, service.getService);
 
-router.delete('/:index', isSigner, service.deleteService);
+router.delete('/:index', isAuthenticated, isSigner, service.deleteService);
 
 // router.get('/', isAuthenticated, service.getServices);
  

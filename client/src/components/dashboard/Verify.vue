@@ -105,7 +105,7 @@ export default defineComponent({
       if (!handleValidation()) return;
       try {
         await updateDocument({...verify});
-        router.push({ name: "Dashboard" });
+        router.push({ name: "Home" });
         context.emit("handlePages", "isDocuments");
       } catch (error) {
         console.log(error);

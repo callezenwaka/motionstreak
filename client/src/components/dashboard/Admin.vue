@@ -2,7 +2,7 @@
   <div class="account">
     <div class="address--container">
       <div class="form--header">
-        <h2 class="form--title">Search Account</h2>
+        <h2 class="form--title">Search Admin</h2>
       </div>
       <div class="form--item">
         <label class="form--label" for="address">Account Address: </label>
@@ -43,7 +43,7 @@
         </select>
       </div>
       <div v-if="isTenant" class="form--item">
-        <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">{{(isUpdating)? 'Update' : 'Submit'}}</button>
+        <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">{{(isUpdating)? 'Update' : 'Create'}}</button>
       </div>
     </form>
   </div>
@@ -93,22 +93,6 @@ export default defineComponent({
     const isValid = computed(() => {
       return isTenant.value;
     });
-    // const handleAddress = (address: string) => {
-    //   return `${address.slice(0, 4)}...${address.slice(address.length - 3)}`;
-    // }
-    // const handleCopy = async (word: string) => {
-    //   copy.isCopying = true;
-    //   await navigator.clipboard.writeText(word);
-    //   setTimeout(() => {
-    //     copy.isCopying = false;
-    //   }, 5000);
-    // };
-    // const handleBlur = (event: Event) => {
-    //   const target = event.target as HTMLInputElement;
-    //   target.style.borderColor = target.value
-    //     ? "rgba(229,231,235, 1)"
-    //     : "rgba(255, 0, 0, 1)";
-    // };
     const handleInput = async (event: Event) => {
       const target = event.target as HTMLInputElement;
       console.log(target.value);
