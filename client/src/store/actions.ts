@@ -295,7 +295,7 @@ export const actions: ActionTree<State, State> & Actions = {
       context.commit(MutationType.SetIsLoading, true)
       const { user } = await firebase.auth().signInWithEmailAndPassword(email, password);
       if(!user) return;
-      if(!user.emailVerified) return context.dispatch(ActionTypes.Logout, {text: `${email} not verified!`, status: true});
+      if(!user.emailVerified) return context.dispatch(ActionTypes.Logout, {title: 'Logout', text: `${email} not verified!`, status: true});
       const idTokenResult = await user.getIdTokenResult();
       const { address, affiliate, isActivated, isActive, phone_number, role, picture, name } = idTokenResult.claims;
       const { token } = idTokenResult;
