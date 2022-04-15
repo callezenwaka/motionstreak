@@ -1,6 +1,5 @@
 <template>
   <div class="service">
-    <!-- <Header></Header> -->
     <form class="form--container" @submit.prevent="handleService">
       <div class="form--header">
         <h2 class="form--title">Add Service</h2>
@@ -20,7 +19,6 @@
         <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Send</button>
       </div>
     </form>
-    <!-- service list -->
     <div class="content-section">
       <div class="content-section-title">Services</div>
       <div v-if="services.length">
@@ -32,10 +30,8 @@
             </div>
             <span class="status">ETH {{service.cost}}</span>
             <div class="button-wrapper">
-              <!-- <button type="button" class="content-button status-button" @click="handleUpdate(service)"> -->
               <button type="button" class="edit" @click="handleUpdate(service)">
                 <span>Edit</span>
-                <!-- &#9998; #ca8a04 &#128465; -->
               </button>
               <button type="button" class="delete" @click="handleDelete(service.index)">
                 <span>Delete</span>
@@ -51,7 +47,6 @@
 
 <script lang="ts">
 // @ is an alias to /src
-// import Header from "@/components/partials/HeaderView.vue";
 import { computed, defineComponent, onMounted, reactive } from "vue";
 import { useStore } from '@/store/index'
 import { ActionTypes } from '@/store/actions'
@@ -60,9 +55,6 @@ import { Profile, Service } from "@/store/state";
 import { handleBlur } from "@/utils";
 export default defineComponent({
   name: "ServiceView",
-  components: {
-    // Header
-  },
   setup() {
     const store = useStore();
     const router = useRouter();
@@ -76,10 +68,6 @@ export default defineComponent({
       index: number;
       value?: boolean;
     }
-    // let updating:Updating = reactive({
-    //   value: false,
-    //   index: 0
-    // });
     let item:Item = reactive({
       name: '',
       cost: 0,
@@ -91,12 +79,6 @@ export default defineComponent({
         item.cost !== 0
       );
     });
-    // const handleBlur = (event: Event) => {
-    //   const target = event.target as HTMLInputElement;
-    //   target.style.borderColor = target.value
-    //     ? "rgba(229,231,235, 1)"
-    //     : "rgba(255, 0, 0, 1)";
-    // };
     const handleUpdate = (service: Service) => {
       item.value = true;
       item.index = service.index;

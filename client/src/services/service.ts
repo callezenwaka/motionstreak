@@ -6,7 +6,6 @@ export default {
 		return await request(`${API_URL}service`, 'post', token, params);
 	},
 	async getServices(token: string, query: Query): Promise<Service[]> {
-		console.log(query)
 		return await request(`${API_URL}service`, 'get', token, '', query);
 	},
 	async getService(token: string, index: number): Promise<Service> {

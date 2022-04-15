@@ -1,9 +1,8 @@
 <template>
   <div class="preview">
-    <!-- <Header></Header> -->
-    <!-- <form class="form--container" @submit.prevent="handleCertify">
+    <form class="form--container" @submit.prevent="handleUpdate">
       <div class="form--header">
-        <h2 class="form--title">Certify Document</h2>
+        <h2 class="form--title">Preview Document</h2>
       </div>
       <div v-if="!!validations.length" class="validations">
         <ul style="text-align: left;"><li style="list-style-type: disc;" v-for="(validation, index) in validations" :key="index">{{validation}}</li></ul>
@@ -24,15 +23,23 @@
         <label class="form--label" for="fee">Processing Fee: </label>
         <input class="form--input" type="text" name="fee" id="fee" v-model="item.fee" readonly required />
       </div>
-      <div class="form--item">
+      <div v-if="Status[item.status] === 'CERTIFIED'" class="form--item">
         <label for="status" class="form--label">Document Status: </label>
         <select class="form--input" name="status" id="status" v-model="item.status">
           <option :value=0 disabled>Select Status</option>
-          <option :value="status.CERTIFIED">CERTIFIED</option>
-          <option :value="status.DECLINED">DECLINED</option>
+          <option :value="Status.VERIFIED">VERIFIED</option>
+          <option :value="Status.REJECTED">REJECTED</option>
         </select>
       </div>
-      <div class="form--item">
+      <div v-if="Status[item.status] === 'PENDING'" class="form--item">
+        <label for="status" class="form--label">Document Status: </label>
+        <select class="form--input" name="status" id="status" v-model="item.status">
+          <option :value=0 disabled>Select Status</option>
+          <option :value="Status.CERTIFIED">CERTIFIED</option>
+          <option :value="Status.DECLINED">DECLINED</option>
+        </select>
+      </div>
+      <div v-if="Status[item.status] === 'PENDING'" class="form--item">
         <label class="form--label" for="file">Document Image: </label>
         <input class="form--file" type="file" name="file" id="file" @change="handleImage" @blur="handleBlur($event)" required />
       </div>
@@ -42,7 +49,7 @@
       <div class="form--item">
         <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Send</button>
       </div>
-    </form> -->
+    </form>
   </div>
 </template>
 
@@ -52,7 +59,6 @@ import { computed, defineComponent, reactive } from "vue";
 import { useStore } from '@/store'
 import { ActionTypes } from '@/store/actions'
 import { useRouter } from 'vue-router';
-// import Document from '@/types/Document';
 import { Account, Document } from "@/store/state";
 import { handleBlur } from "@/utils";
 export default defineComponent({
@@ -63,7 +69,7 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const router = useRouter();
-    enum status { CERTIFIED = 1, DECLINED, VERIFIED, REJECTED }
+    enum Status { CERTIFIED = 1, DECLINED, VERIFIED, REJECTED }
     let validations = reactive<string[]>([]);
     const document = computed((): Document => store.getters.document);
     const account = computed((): Account => store.getters.account);
@@ -74,7 +80,7 @@ export default defineComponent({
       verifier: document.value.verifier,
       certifier: document.value.certifier,
       name: document.value.name,
-      imageURL: '',
+      imageURL: document.value.imageURL,
       fee: document.value.fee,
       index: document.value.index,
       status: document.value.status,
@@ -90,12 +96,6 @@ export default defineComponent({
         item.status !== 0
       );
     });
-    // const handleBlur = (event: Event) => {
-    //   const target = event.target as HTMLInputElement;
-    //   target.style.borderColor = target.value
-    //     ? "rgba(229,231,235, 1)"
-    //     : "rgba(255, 0, 0, 1)";
-    // };
     const handleValidation = (): boolean => {
       validations = [];
       if (!item.requester) {
@@ -113,13 +113,12 @@ export default defineComponent({
       formData.append("file", file);
       try {
         const data = await addDocumentImage(formData);
-        console.log(data);
         item.imageURL = typeof data === "string"? data : '';
       } catch (error) {
         console.log(error);
       }
     }
-    const handleCertify = async () => {
+    const handleUpdate = async () => {
       if (!handleValidation()) return;
       try {
         await updateDocument({...item});
@@ -135,11 +134,11 @@ export default defineComponent({
       document,
       item,
       isValid,
-      status,
+      Status,
       handleBlur,
       handleValidation, 
       handleImage, 
-      handleCertify 
+      handleUpdate,
     };
   },
 });

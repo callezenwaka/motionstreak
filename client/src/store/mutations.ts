@@ -35,34 +35,16 @@ export enum MutationType {
 
 export type Mutations = {
   // account
-  // [MutationType.AddAccount](state: State, account: Account): void;
   [MutationType.SetAccounts](state: State, account: Account[]): void;
   [MutationType.SetAccount](state: State, account: Account): void;
-  // [MutationType.UpdateAccount](state: State, account: Account): void;
 
   // document
-  // [MutationType.AddDocument](state: State, document: Document): void;
   [MutationType.SetDocuments](state: State, documents: Document[]): void;
   [MutationType.SetDocument](state: State, document: Document): void;
-  // [MutationType.EditDocument](
-  //   state: State,
-  //   document: Partial<Document> & { index: number }
-  // ): void;
-  // [MutationType.UpdateDocument](state: State, document: Document): void;
 
   // service
-  // [MutationType.AddService](state: State, service: Service): void;
   [MutationType.SetServices](state: State, services: Service[]): void;
   [MutationType.SetService](state: State, service: Service): void;
-  // [MutationType.EditService](
-  //   state: State,
-  //   service: Partial<Service> & { index: number }
-  // ): void;
-  // [MutationType.UpdateService](state: State, service: Service): void;
-  // [MutationType.DeleteService](
-  //   state: State,
-  //   service: Partial<Service> & { index: number }
-  // ): void;
 
   // auth
   [MutationType.Logout](state: State, message: Toast): void;
@@ -100,8 +82,8 @@ export const mutations: MutationTree<State> & Mutations = {
   },
 
   // auth 
-  [MutationType.Logout](state, message) {
-    console.log(message);
+  [MutationType.Logout](state, toast) {
+    state.toast = toast;
     state.profile = {
     displayName: '',
     phoneNumber: '',

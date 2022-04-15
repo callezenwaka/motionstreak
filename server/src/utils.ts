@@ -20,7 +20,6 @@ export const multer = Multer({
  * Define auth helper function.
  */
 const getAuthToken = (req: any, res: Response, next: NextFunction) => {
-  // console.log(req.headers.authorization);
 	if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
 		req.authToken = req.headers.authorization.split(' ')[1];
 	} else {
@@ -62,7 +61,6 @@ export const isAuthenticated = async (req: any, res: any, next: NextFunction) =>
 export const isSigner = async (req: any, res: any, next: any) => {
     try {
       // TODO: get signer identity
-      // console.log(req.user);
       if(!req.user.isActive || !req.user.isActivated) return;
       const secret = await admin.firestore().collection('secrets').doc(req.user.uid).get();
       if (!secret.exists) return res.status(401).json('Unauthorized access!');
@@ -75,7 +73,6 @@ export const isSigner = async (req: any, res: any, next: any) => {
       return next();
     } 
     catch (error) {
-      console.log(error);
       return res.status(501).json('Unauthorized request!');
     }
 };
@@ -118,7 +115,6 @@ export const updateUser = async (req: any, res: any, next: any) => {
     }
     next();
   } catch (error) {
-    console.log(error);
     return res.status(501).json('Internal error!');
   }
 };
@@ -147,7 +143,6 @@ export const createWallet = async (req: any, res: any, next: any) => {
     }
     next();
   } catch (error) {
-    console.log(error);
     return res.status(501).json('Internal error!');
   }
 };
@@ -175,7 +170,6 @@ export const setClaim = async (req: any, res: any, next: any) => {
     });
     next();
   } catch (error) {
-    console.log(error);
     return res.status(501).json('Internal error!');
   }
 }
@@ -194,7 +188,6 @@ export const postSecret = async (req: any, res: any, next: any) => {
     await admin.firestore().collection('secrets').doc(req.uid).set({ secret: req.secret });
     next();
   } catch (error) {
-    console.log(error);
     return res.status(501).json('Internal error!');
   }
 };

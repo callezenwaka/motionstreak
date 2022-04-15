@@ -49,10 +49,6 @@
         <label class="form--label" for="role">Account Type: </label>
         <input class="form--input" type="text" name="role" id="role" v-model="account.role" readOnly />
       </div>
-      <!-- <div class="form--item">
-        <label class="form--label" for="status">Account Status: </label>
-        <input class="form--input" type="text" name="status" id="status" v-model="account.isActivated" readOnly />
-      </div> -->
     </form>
   </div>
 </template>
@@ -89,25 +85,8 @@ export default defineComponent({
       photoURL:"",
       role:"",
     }));
-    // const handleAddress = (address: string) => {
-    //   return `${address.slice(0, 4)}...${address.slice(address.length - 3)}`;
-    // }
-    // const handleCopy = async (word?: string) => {
-    //   copy.isCopying = true;
-    //   if(word) await navigator.clipboard.writeText(word);
-    //   setTimeout(() => {
-    //     copy.isCopying = false;
-    //   }, 5000);
-    // };
-    // const handleBlur = (event: Event) => {
-    //   const target = event.target as HTMLInputElement;
-    //   target.style.borderColor = target.value
-    //     ? "rgba(229,231,235, 1)"
-    //     : "rgba(255, 0, 0, 1)";
-    // };
     const handleInput = async (event: Event) => {
       const target = event.target as HTMLInputElement;
-      console.log(target.value);
       store.dispatch(ActionTypes.GetAccount, target.value);
     };
 
@@ -178,17 +157,10 @@ export default defineComponent({
 }
 .spinner.active {
   display: inline-block;
-  /* width: 100px; */
-  /* height: 100px; */
-  /* background-color: #0CB1C4; */
   animation-name: spin;
   animation-duration: 5000ms;
   animation-iteration-count: infinite;
   animation-timing-function: linear; 
-  /* transform: rotate(3deg); */
-   /* transform: rotate(0.3rad);/ */
-   /* transform: rotate(3grad); */ 
-   /* transform: rotate(.03turn);  */
 }
 
 @keyframes spin {

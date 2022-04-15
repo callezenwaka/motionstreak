@@ -88,22 +88,6 @@ export default defineComponent({
         user.email !== "" 
       );
     });
-    // const handleAddress = (address: string) => {
-    //   return `${address.slice(0, 4)}...${address.slice(address.length - 3)}`;
-    // }
-    // const handleCopy = async (word: string) => {
-    //   copy.isCopying = true;
-    //   await navigator.clipboard.writeText(word);
-    //   setTimeout(() => {
-    //     copy.isCopying = false;
-    //   }, 5000);
-    // };
-    // const handleBlur = (event: Event) => {
-    //   const target = event.target as HTMLInputElement;
-    //   target.style.borderColor = target.value
-    //     ? "rgba(229,231,235, 1)"
-    //     : "rgba(255, 0, 0, 1)";
-    // };
     const handleValidation = (): boolean => {
       validations = [];
       if (!user.displayName) {
@@ -122,7 +106,6 @@ export default defineComponent({
       formData.append("file", file);
       try {
         const data = await addAccountImage(formData);
-        console.log(data);
         user.photoURL = typeof data === "string"? data : '';
       } catch (error) {
         console.log(error);
@@ -131,7 +114,6 @@ export default defineComponent({
     const handleUpdate = async () => {
       if (!handleValidation()) return;
       try {
-        console.log()
         await updateAccount({...user});
         router.push({ name: "Dashboard" });
       } catch (error) {

@@ -1,5 +1,5 @@
 import { Response, NextFunction } from "express";
-import { BigNumber, ethers, utils } from 'ethers';
+import { ethers } from 'ethers';
 import Service from '../types/Service';
 import { serviceAddress } from '../config';
 import Services from '../../artifacts/contracts/Services.sol/Services.json';
@@ -33,7 +33,6 @@ import Services from '../../artifacts/contracts/Services.sol/Services.json';
     
 		return res.status(200).json(services);
 	} catch (error) {
-    console.log(error);
 		return res.status(500).json('Internal Server Error!');
 	}
 }
@@ -60,7 +59,6 @@ import Services from '../../artifacts/contracts/Services.sol/Services.json';
     
 		return res.status(200).json('Success');
 	} catch (error) {
-    console.log(error);
 		return res.status(500).json('Internal Server Error!');
 	}
 }

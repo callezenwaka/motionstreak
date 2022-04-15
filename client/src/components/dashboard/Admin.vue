@@ -74,11 +74,8 @@ export default defineComponent({
     const isTenant = computed((): boolean => store.getters.isTenant);
     const profile = computed((): Profile => store.getters.profile);
     const account = computed((): Account => store.getters.account);
-    // const addAccountImage = (formData: FormData) => store.dispatch(ActionTypes.AddAccountImage, formData);
-    // const updateAccount = (account: Account) => store.dispatch(ActionTypes.UpdateAccount, account);
     let address = ref('');
     const isUpdating = ref(false);
-    // const isUpdating = ref(account.value.isActivated);
     const item = reactive({
       photoURL: 'https://ipfs.infura.io/ipfs/QmUHa9QV34uPdJ1JZ5XqcQgn5jfmW3SxUnt3yoFfHu8Sow',
       password: '',
@@ -95,7 +92,6 @@ export default defineComponent({
     });
     const handleInput = async (event: Event) => {
       const target = event.target as HTMLInputElement;
-      console.log(target.value);
       isUpdating.value = true;
       store.dispatch(ActionTypes.GetAccount, target.value);
     };
@@ -230,8 +226,6 @@ export default defineComponent({
   width: 100%;
 }
 .account--or span {
-  /* background: rgb(255, 255, 255); */
-  /* background-color: rgba(243, 244, 246, 1); */
   padding: 0px 10px;
   font-size: 24px;
   font-weight: normal;

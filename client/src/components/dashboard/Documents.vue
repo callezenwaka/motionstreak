@@ -1,6 +1,5 @@
 <template>
-  <div class="document">
-    <!-- <Header></Header> -->    
+  <div class="document">  
     <div class="content-section">
       <div class="content-section-title"><h2>Documents in your vault</h2></div>
       <div  v-if="documents.length" class="apps-card">
@@ -12,16 +11,9 @@
           <div class="app-card__subtext">
             The transcript validation process typically proceeds in three steps and typically takes three inputs. The first is the transcript to be validated, the second is any intermediate transcript certified by the source organization, and the third is the verification of intermediate transcript by the destination organization.
           </div>
-          <!-- <div v-if="profile.role.toLowerCase() === 'user'">
-            <span>Certifier: {{handleAddress(document.certifier)}}</span>
-            <span>Verifier: {{handleAddress(document.verifier)}}</span>
-          </div> -->
           <div class="app-card-buttons">
-            <!-- <div v-if="profile.role.toLowerCase() !== 'admin'" style=" text-transform: capitalize;">Status: {{Status[document.status]}}</div> -->
             <div style=" text-transform: capitalize;">Status: {{Status[document.status]}}</div>
             <button v-if="isAdmin" class="content-button status-button" @click="handleUpdate(document)">Update</button>
-            <!-- <button v-if="isAdmin" class="content-button status-button" @click="handleUpdate(document)">Update</button> -->
-            <!-- <div class="menu"></div> -->
           </div>
         </div>
       </div>
@@ -46,46 +38,28 @@ export default defineComponent({
   setup(props, context) {
     const store = useStore();
     enum Status { PENDING, CERTIFIED = 1, DECLINED, VERIFIED, REJECTED }
-    // console.log(profile.value.affiliate);
-    // onMounted(() => store.dispatch(ActionTypes.GetDocuments, {affiliate: profile.value.affiliate}));
     const documents = computed((): Document[] => store.getters.documents);
     const profile = computed((): Profile => store.getters.profile);
     const isAdmin = computed((): boolean => store.getters.isAdmin);
     const isLoading = computed((): boolean => store.getters.isLoading);
-    // const isValid = computed(() => {
-    //   return user.email !== "" && user.password !== "";
-    // });
     const handleCertify = (document: Document): boolean => {
-      console.log(document.certifier === profile.value.affiliate && Status[document.status] === 'PENDING' && isAdmin);
-      // console.log(Status[document.status] === 'PENDING');
       if (document.certifier === profile.value.affiliate && Status[document.status] === 'PENDING' && isAdmin) {
         return true;
       }
       return false
     };
     const handleVerify = (document: Document): boolean => {
-      console.log(document.certifier === profile.value.affiliate && Status[document.status] === 'CERTIFIED' && isAdmin);
-      // console.log(Status[document.status] === 'CERTIFIED');
       if (document.certifier === profile.value.affiliate && Status[document.status] === 'CERTIFIED' && isAdmin) {
         return true;
       }
       return false
     };
-    
-    store.dispatch(ActionTypes.SetToast, {
-      title: 'Bad Request!',
-      text: 'Not authorised to make request.',
-      status: true,
-    });
-    
     const handleUpdate = async (document: Document) => {
       if (Status[document.status] === 'PENDING' && document.certifier === profile.value.affiliate) {
-        console.log(true);
         store.commit(MutationType.SetDocument, document);
         store.dispatch(ActionTypes.GetAccount, document.certifier);
         context.emit("handlePages", "isPreview");
       } else if (Status[document.status] === 'CERTIFIED' && document.verifier === profile.value.affiliate) {
-        console.log(true);
         store.commit(MutationType.SetDocument, document);
         store.dispatch(ActionTypes.GetAccount, document.verifier);
         context.emit("handlePages", "isPreview");
@@ -95,14 +69,13 @@ export default defineComponent({
           text: 'Not authorised to make request.',
           status: true,
         });
+        setTimeout(() => store.dispatch(ActionTypes.SetToast, {
+          title: '',
+          text: '',
+          status: false,
+        }), 5000);
         return;
       }
-      // const res = (profile.value.affiliate == document.verifier)
-      // ? {address: document.verifier, page: "isVerify"}
-      // : {address: document.certifier, page: "isCertify"};
-      // store.commit(MutationType.SetDocument, document);
-      // store.dispatch(ActionTypes.GetAccount, res.address)
-      // context.emit("handlePages", res.page);
     }
 
     return {
@@ -190,9 +163,6 @@ export default defineComponent({
   margin-right: 12px;
   flex-shrink: 0;
 }
-/* .app-card + .app-card {
-  margin-left: 20px;
-} */
 .app-card span {
   display: flex;
   align-items: center;
@@ -216,10 +186,6 @@ export default defineComponent({
   .app-card {
     width: calc(50% - 20px);
   }
-  /* .app-card:last-child {
-    margin-top: 20px;
-    margin-left: 0px;
-  } */
 }
 @media screen and (max-width: 565px) {
   .app-card {

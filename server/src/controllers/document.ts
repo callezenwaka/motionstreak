@@ -40,7 +40,6 @@ export const getDocuments = async (req: any, res: Response, next: NextFunction) 
     
 		return res.status(200).json(documents);
 	} catch (error) {
-    console.log(error);
 		return res.status(500).json('Internal Server Error!');
 	}
 }
@@ -67,7 +66,6 @@ export const addDocument = async (req: any, res: Response, next: NextFunction) =
     
 		return res.status(200).json('Success');
 	} catch (error) {
-    console.log(error);
 		return res.status(500).json('Internal Server Error!');
 	}
 }
@@ -138,7 +136,6 @@ export const getMetrics = async (req: any, res: Response, next: NextFunction) =>
 
 		return res.status(200).json(metrics);
 	} catch (error) {
-    console.log(error);
 		return res.status(500).json('Internal Server Error!');
 	}
 }
@@ -190,7 +187,6 @@ export const updateDocument = async (req: any, res: Response, next: NextFunction
     
 		return res.status(200).json('Success');
 	} catch (error) {
-    console.log(error);
 		return res.status(500).json('Internal Server Error!');
 	}
 }

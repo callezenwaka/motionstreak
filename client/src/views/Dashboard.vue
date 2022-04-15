@@ -158,12 +158,6 @@
           <div class="content-wrapper">
             <Service v-if="isTenant && pages.isService"></Service>
             <Request v-if="isUser && pages.isRequest"></Request>
-            <!-- <Certify v-if="isAdmin && profile.affiliate == document.certifier"></Certify> -->
-            <!-- <Verify v-if="isAdmin && profile.affiliate == document.verifier"></Verify> -->
-            <!-- <Service v-if="pages.isService"></Service> -->
-            <!-- <Request v-if="pages.isRequest"></Request> -->
-            <Certify v-if="isAdmin && pages.isCertify && profile.affiliate == document.certifier"></Certify>
-            <Verify v-if="isAdmin && pages.isVerify && profile.affiliate == document.verifier"></Verify>
             <Documents v-if="pages.isDocuments" @handlePages="handlePages"></Documents>
             <Account v-if="pages.isAccount"></Account>
             <Admin v-if="isTenant && pages.isAdmin"></Admin>
@@ -187,8 +181,6 @@ import Account from "@/components/dashboard/Account.vue";
 import Admin from "@/components/dashboard/Admin.vue";
 import Documents from "@/components/dashboard/Documents.vue";
 import Request from "@/components/dashboard/Request.vue";
-import Certify from "@/components/dashboard/Certify.vue";
-import Verify from "@/components/dashboard/Verify.vue";
 import User from "@/components/dashboard/User.vue";
 import Help from "@/components/dashboard/Help.vue";
 import Wallet from "@/components/dashboard/Wallet.vue";
@@ -196,7 +188,6 @@ import Preview from "@/components/dashboard/Preview.vue";
 import { computed, defineComponent, reactive, ref } from 'vue';
 import { useStore } from "@/store";
 import { Profile, Document } from "@/store/state";
-// import { ActionTypes } from "@/store/actions";
 import { handleLogout } from "@/utils";
 export default defineComponent({
   name: 'DashboardView',
@@ -207,8 +198,6 @@ export default defineComponent({
     Service,
     Documents,
     Request,
-    Certify,
-    Verify,
     User,
     Help,
     Wallet,
@@ -219,9 +208,6 @@ export default defineComponent({
     const avatar = computed(() => {return require(`@/assets/avatar.png`)});
     const profile = computed((): Profile => store.getters.profile);
     const document = computed((): Document => store.getters.document);
-    // const isTenant = computed((): boolean => profile.value.role.toLowerCase() === "Tenant".toLowerCase()? true : false);
-    // const isAdmin = computed((): boolean => profile.value.role.toLowerCase() === "Admin".toLowerCase()? true : false);
-    // const isUser = computed((): boolean => profile.value.role.toLowerCase() === "User".toLowerCase()? true : false);
     const isTenant = computed((): boolean => store.getters.isTenant);
     const isAdmin = computed((): boolean => store.getters.isAdmin);
     const isUser = computed((): boolean => store.getters.isUser);

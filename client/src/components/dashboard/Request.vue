@@ -1,6 +1,5 @@
 <template>
   <div class="request">
-    <!-- <Header></Header> -->
     <form class="form--container" @submit.prevent="handleDocument">
       <div class="form--header">
         <h2 class="form--title">Request Document</h2>
@@ -44,9 +43,7 @@
 
 <script lang="ts">
 // @ is an alias to /src
-// import Header from "@/components/partials/Header.vue";
 import { computed, defineComponent, reactive } from "vue";
-// import { useStore } from "vuex";
 import { useStore } from '@/store'
 import { ActionTypes } from '@/store/actions'
 import { useRouter } from 'vue-router';
@@ -54,12 +51,8 @@ import { Account, Profile, Service } from "@/store/state";
 import { handleBlur } from "@/utils";
 export default defineComponent({
   name: "RequestView",
-  components: {
-    // Header
-  },
   setup() {
     const store = useStore();
-    // const route = useRoute();
     const router = useRouter();
     let validations = reactive<string[]>([]);
     const profile = computed((): Profile => store.getters.profile);
@@ -77,7 +70,6 @@ export default defineComponent({
     const isValid = computed(() => {
       return (
         request.requester !== "" &&
-        // request.requester == profile.value.address &&
         request.verifier !== request.certifier &&
         request.verifier !== "" && 
         request.certifier !== "" && 

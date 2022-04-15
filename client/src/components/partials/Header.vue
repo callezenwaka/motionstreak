@@ -3,11 +3,8 @@
     <nav class="header-menu" :class="{ active: isOpen }">
       <router-link class="menu-link is-active" to="/">Home</router-link>
       <router-link v-if="isActivated" class="menu-link" to="/dashboard">Dashboard</router-link>
-      <!-- <router-link v-if="!isActivated" class="menu-link" to="/register">Register</router-link> -->
       <router-link v-if="!isActivated" class="menu-link" to="/login">Login</router-link>
       <router-link v-if="isActivated" class="menu-link" to="/login" @click="handleLogout">Logout</router-link>
-      <!-- <router-link class="menu-link" to="/test">Test</router-link> -->
-      <!-- <router-link class="menu-link" to="/about">About</router-link> -->
     </nav>
     <div class="menu" :class="{ active: isOpen }">
       <button type="button" @click="handleMenu">
@@ -73,11 +70,7 @@ export default defineComponent({
   /* padding: 0 30px; */
   white-space: nowrap;
 }
-/* @media screen and (max-width: 480px) {
-  .header {
-    padding: 0 16px;
-  }
-} */
+
 .header-menu {
   display: flex;
   align-items: center;
@@ -117,20 +110,8 @@ export default defineComponent({
     background-color: unset;
 }
 }
-/* @media screen and (max-width: 610px) {
-  .header-menu a:not(.main-header-link) {
-    display: none;
-  }
-} */
-/* .header-menu a.is-active,
-.header-menu a:hover {
-  color: var(--theme-color);
-  border-bottom: 2px solid var(--theme-color);
-} */
 .header-menu a.router-link-exact-active {
-  /* color: #42b983; */
   color: var(--theme-color);
-  /* background-color: #0c0f194d; */
   background-color: var(--hover-menu-bg);
   border-bottom: 2px solid var(--theme-color);
 }
@@ -142,7 +123,6 @@ export default defineComponent({
 }
 .menu.active {
     z-index: 20;
-    /* margin-right: -5rem; */
     position: absolute;
     top: 0;
 }
@@ -177,13 +157,6 @@ export default defineComponent({
   width: 16px;
   margin-right: 8px;
 }
-/* .menu {
-  display: flex;
-    flex-direction: row;
-    justify-content: center;
-    padding-right: 36px;
-    padding-left: 16px;
-} */
 .notify {
   position: relative;
 }

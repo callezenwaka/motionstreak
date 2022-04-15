@@ -2,38 +2,45 @@
   <div class="wallet">
     <h1>Profile Wallet</h1>
     <div class="wallet--wrapper">
-      <div class="wallet-buttons">
-        <button type="button" class="wallet-button" @click="handleTransactions('isSending')">Send</button>
-        <button type="button" class="wallet-button" @click="handleTransactions('isBuying')">Buy</button>
-        <button type="button" class="wallet-button" @click="handleTransactions('isRecords')">Activities</button>
+      <div class="wallet--buttons">
+        <button type="button" class="wallet--button" :class="{active: pages.isBuying}" @click="handleTransfer('isBuying')">Buy</button>
+        <button type="button" class="wallet--button" :class="{active: pages.isSending}" @click="handleTransfer('isSending')">Send</button>
+        <button type="button" class="wallet--button" :class="{active: pages.isHistory}" @click="handleTransfer('isHistory')">History</button>
       </div>
       <div class="wallet--items">
-        <div class="wallet--item">
-          <label for="receiver">
-            <input type="text" name="receiver" id="receiver" placeholder="Add receiver address">
-          </label>
-          <label for="amount">
-            <input type="number" name="amount" id="amount" placeholder="Add amount">
-          </label>
-          <button type="button">Confirm</button>
-        </div>
-        <div class="wallet--item">
-          <label for="sender">
-            <input type="text" name="sender" id="sender" placeholder="Add sender address">
-          </label>
-          <label for="amount">
-            <input type="number" name="amount" id="amount" placeholder="Add amount">
-          </label>
-          <button type="button">Confirm</button>
-        </div>
-        <div class="wallet--item">
-          <label for="receiver">
-            <input type="text" name="receiver" id="receiver">
-          </label>
-          <label for="amount">
-            <input type="number" name="amount" id="amount">
-          </label>
-          <button type="button">Confirm</button>
+        <form v-if="pages.isBuying" class="wallet--item" @submit.prevent="handleReceive">
+          <div class="form--item">
+            <label class="form--label" for="receiver">Receiver Address: </label>
+            <input class="form--input" type="text" name="receiver" id="receiver" v-model="buy.receiver" placeholder="Add receiver address">
+          </div>
+          <div class="form--item">
+            <label class="form--label" for="amount">Amount: </label>
+            <input class="form--input" type="number" name="amount" id="amount" v-model="buy.amount" placeholder="Add amount">
+          </div>
+          <div class="form--item">
+            <button class="form--button" :class="{active: isBuying}" type="button">Confirm</button>
+          </div>
+        </form>
+        <form v-if="pages.isSending" class="wallet--item" @submit.prevent="handleSend">
+          <div class="form--item">
+            <label class="form--label" for="sender">Sender Address: </label>
+            <input class="form--input" type="text" name="sender" id="sender" v-model="send.sender" placeholder="Add sender address">
+          </div>
+          <div class="form--item">
+            <label class="form--label" for="amount">Amount: </label>
+            <input class="form--input" type="number" name="amount" id="amount" v-model="send.amount" placeholder="Add amount">
+          </div>
+          <div class="form--item">
+            <button class="form--button" :class="{active: isSending}" type="button">Confirm</button>
+          </div>
+        </form>
+        <div v-if="pages.isHistory" class="wallet--item">
+          <div class="transactions">
+            <div>Transaction 1</div>
+            <div>Transaction 2</div>
+            <div>Transaction 3</div>
+            <div>Transaction 4</div>
+          </div>
         </div>
       </div>
     </div>
@@ -42,25 +49,42 @@
 
 <script lang="ts">
 // @ is an alias to /src
-import { defineComponent, reactive } from 'vue';
+import { computed, defineComponent, reactive } from 'vue';
 
 export default defineComponent({
   name: 'WalletView',
-  components: {
-    // HelloWorld,
-  },
   setup() {
-     type Pages = {
+    const buy = reactive({
+      receiver: '',
+      amount: 0,
+    })
+    const send = reactive({
+      sender: '',
+      amount: 0,
+    })
+    const isBuying = computed(() => {
+      return (
+        buy.receiver !== "" && 
+        buy.amount !== 0
+      );
+    });
+    const isSending = computed(() => {
+      return (
+        send.sender !== "" && 
+        send.amount !== 0
+      );
+    });
+    type Pages = {
       isBuying: boolean;
       isSending: boolean;
-      isRecord: boolean;
+      isHistory: boolean;
     };
     const pages:Pages = reactive({
+      isHistory: true,
       isBuying: false,
       isSending: false,
-      isRecord: true,
     });
-    const handleTransactions = async (current: string) => {
+    const handleTransfer = async (current: string) => {
       if (pages[current as keyof Pages]) return;
       else {
         for (let page in pages) {
@@ -68,9 +92,22 @@ export default defineComponent({
         }
       }
     };
+    const handleReceive = async () => {
+      return;
+    };
+    const handleSend = async () => {
+      return;
+    };
 
     return {
-      handleTransactions,
+      buy,
+      send,
+      isBuying,
+      isSending,
+      pages,
+      handleTransfer,
+      handleReceive,
+      handleSend,
     }
   }
 });
@@ -91,14 +128,14 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
 }
-.wallet-buttons {
+.wallet--buttons {
   align-items: center;
     justify-content: center;
     align-content: center;
     /* gap: 1rem; */
   display: flex;
 }
-.wallet-button {
+.wallet--button {
   background-color: #3a6df0;
   border: none;
   padding: 8px 26px;
@@ -109,39 +146,86 @@ export default defineComponent({
   transition: 0.3s;
   white-space: nowrap;
 }
-.wallet-button:not(:first-child),
-.wallet-button:not(:last-child) {
-  /* border-right: 1px solid #900;
-  border-left: 1px solid #900; */
-}
-/* .wallet-button:not(:last-child) {
-  color: green;
-  border-right: 1px solid #900;
-  border-left: 1px solid #900;
-} */
-.wallet-button:not(:nth-child(2n+1)) {
+.wallet--button:not(:nth-child(2n+1)) {
   color: #fff;
   border-right: 1px solid;
   border-left: 1px solid;
 }
+.wallet--button.active {
+  opacity: .5;
+}
 .wallet--items {
+  /* width: 410px; */
+  width: 100%;
+  margin: 0 auto;
   margin-top: 32px;
 }
 .wallet--item {
   display: flex;
   flex-direction: column;
 }
-.wallet--item button {
-  width: fit-content;
-    align-self: center;
-  background-color: #3a6df0;
+.form--item {
+  display: flex;
+  flex-direction: column;
   border: none;
-  padding: 8px 26px;
-  color: #fff;
-  border-radius: 20px;
-  margin-top: 16px;
+  margin: 0px 0px 20px;
+  padding: 0px;
+}
+.form--label {
+  font-size: 14px;
+  color: rgb(61, 79, 88);
+  position: relative;
+  height: 16px;
+  text-align: left;
+  font-weight: bold;
+  line-height: 16px;
+  letter-spacing: 0.02em;
+}
+.form--input {
+  background-color: rgb(255, 255, 255);
+  border: 1px solid rgba(229, 231, 235, 1);
+  border-radius: 4px;
+  height: 52px;
+  font-size: 16px;
+  line-height: 24px;
+  margin-top: 5px;
+  padding-left: 12px;
+  padding-right: 12px;
+  transition: border-color 150ms ease-in-out 0s;
+}
+.form--button {
+  position: relative;
+  background-color: transparent;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  -webkit-box-align: stretch;
+  height: 45px;
+  width: 100%;
+  font-size: 18px;
+  margin-top: 20px;
+  margin-bottom: 5px;
+  border-radius: 4px;
+  border-color: transparent;
+  text-decoration: none;
+  cursor: not-allowed;
+  z-index: 0;
+  transition: all 150ms ease-in-out 0s;
+  box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 1px 3px 1px rgb(60 64 67 / 15%);
+}
+.form--button.active {
   cursor: pointer;
-  transition: 0.3s;
-  white-space: nowrap;
+  background-color: #0d6efd;
+}
+.form--button.isValid:hover {
+  opacity: 0.5;
+}
+/* mini */
+@media only screen and (min-width: 481px) {
+  .wallet--items {
+    width: 410px;
+    margin: 0 auto;
+    margin-top: 32px;
+  }
 }
 </style>

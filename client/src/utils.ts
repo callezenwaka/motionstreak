@@ -22,5 +22,5 @@ export const handleBlur = (event: Event) => {
 };
 
 export const handleLogout = async () => {
-  store.dispatch(ActionTypes.Logout, {text: 'Logout successful', status: true})
+  store.dispatch(ActionTypes.Logout, {title: 'Logout', text: 'Logout successful', status: true})
 }
