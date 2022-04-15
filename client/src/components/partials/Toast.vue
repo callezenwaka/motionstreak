@@ -13,11 +13,13 @@
           <p class="toast--type">{{ toast.title }}</p>
           <p class="toast--message">{{ toast.text }}</p>
         </div>
-        <button type="button" class="toast--action" @click="handleClose">
-          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.642 15.642" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 15.642 15.642">
-            <path fill-rule="evenodd" d="M8.882,7.821l6.541-6.541c0.293-0.293,0.293-0.768,0-1.061  c-0.293-0.293-0.768-0.293-1.061,0L7.821,6.76L1.28,0.22c-0.293-0.293-0.768-0.293-1.061,0c-0.293,0.293-0.293,0.768,0,1.061  l6.541,6.541L0.22,14.362c-0.293,0.293-0.293,0.768,0,1.061c0.147,0.146,0.338,0.22,0.53,0.22s0.384-0.073,0.53-0.22l6.541-6.541  l6.541,6.541c0.147,0.146,0.338,0.22,0.53,0.22c0.192,0,0.384-0.073,0.53-0.22c0.293-0.293,0.293-0.768,0-1.061L8.882,7.821z"></path>
-          </svg>
-        </button>
+        <div class="toast--action">
+          <button type="button" class="toast--" @click="handleClose">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15.642 15.642" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 15.642 15.642">
+              <path fill-rule="evenodd" d="M8.882,7.821l6.541-6.541c0.293-0.293,0.293-0.768,0-1.061  c-0.293-0.293-0.768-0.293-1.061,0L7.821,6.76L1.28,0.22c-0.293-0.293-0.768-0.293-1.061,0c-0.293,0.293-0.293,0.768,0,1.061  l6.541,6.541L0.22,14.362c-0.293,0.293-0.293,0.768,0,1.061c0.147,0.146,0.338,0.22,0.53,0.22s0.384-0.073,0.53-0.22l6.541-6.541  l6.541,6.541c0.147,0.146,0.338,0.22,0.53,0.22c0.192,0,0.384-0.073,0.53-0.22c0.293-0.293,0.293-0.768,0-1.061L8.882,7.821z"></path>
+            </svg>
+          </button>
+        </div>
       </div>
       <!-- <div class="toast__container">
       <div class="toast__cell">
@@ -74,23 +76,23 @@ export default defineComponent({
   width: 100%;
   background-color: #fff;
   color: #000;
-    text-align: left;
-    padding: 21px 0;
-    background-color: #fff;
-    border-radius: 4px;
-    max-width: 500px;
-        top: 45px;
-    right: 0;
+  text-align: left;
+  padding: 21px 0;
+  background-color: #fff;
+  border-radius: 4px;
+  max-width: 500px;
+  top: 45px;
+  right: 0;
   z-index: 20;
-    box-shadow: 1px 7px 14px -5px rgb(0 0 0 / 20%);
+  box-shadow: 1px 7px 14px -5px rgb(0 0 0 / 20%);
 }
 .toast:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
   border-top-left-radius:4px;
   border-bottom-left-radius: 4px;
 }
@@ -102,49 +104,51 @@ export default defineComponent({
 
 } */
 .toast--icon {
-    background-color: #2BDE3F;
+  background-color: #2BDE3F;
   background-color: #3a6df0;
 }
 
 .toast--icon {
-    position: absolute;
-    top: 50%;
-    left: 22px;
-    transform: translateY(-50%);
-    width: 14px;
-    height: 14px;
-    padding: 7px;
-    border-radius: 50%;
-    display: inline-block;
+  position: absolute;
+  top: 50%;
+  left: 22px;
+  transform: translateY(-50%);
+  width: 14px;
+  height: 14px;
+  padding: 7px;
+  border-radius: 50%;
+  display: inline-block;
 }
 .toast--svg {
-    fill: #fff;
+  fill: #fff;
 }
 .toast--content {
-    padding-left: 70px;
-    padding-right: 60px;
+  padding-left: 70px;
+  padding-right: 60px;
 }
 .toast--type {
-    color: #3e3e3e;
-    font-weight: 700;
-    margin-top: 0;
-    margin-bottom: 8px;
+  color: #000000;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 8px;
 }
 .toast--message {
-    font-size: 14px;
-    margin-top: 0;
-    margin-bottom: 0;
-    color: #000000;
+  font-size: 14px;
+  margin-top: 0;
+  margin-bottom: 0;
+  color: #000000;
 }
-.toast--action {
-    position: absolute;
-    right: 22px;
-    top: 50%;
-    width: 14px;
-    cursor: pointer;
-    height: 14px;
-    fill: #000000;
-    transform: translateY(-50%);
+.toast--action button {
+  position: absolute;
+  border: none;
+  background-color: transparent;
+  right: 22px;
+  top: 50%;
+  width: 14px;
+  cursor: pointer;
+  height: 14px;
+  fill: #000000;
+  transform: translateY(-50%);
 }
 /*
   Enter and leave animations can use different

@@ -3,36 +3,38 @@
     <h1>Profile Wallet</h1>
     <div class="wallet--wrapper">
       <div class="wallet-buttons">
-        <button type="button" class="wallet-button">Send</button>
-        <button type="button" class="wallet-button">Receive</button>
-        <button type="button" class="wallet-button">Other</button>
+        <button type="button" class="wallet-button" @click="handleTransactions('isSending')">Send</button>
+        <button type="button" class="wallet-button" @click="handleTransactions('isBuying')">Buy</button>
+        <button type="button" class="wallet-button" @click="handleTransactions('isRecords')">Activities</button>
       </div>
-      <div class="wallet--item">
-        <label for="receiver">
-          <input type="text" name="receiver" id="receiver" placeholder="Add receiver address">
-        </label>
-        <label for="amount">
-          <input type="number" name="amount" id="amount" placeholder="Add amount">
-        </label>
-        <button type="button">Confirm</button>
-      </div>
-      <div class="wallet--item">
-        <label for="sender">
-          <input type="text" name="sender" id="sender" placeholder="Add sender address">
-        </label>
-        <label for="amount">
-          <input type="number" name="amount" id="amount" placeholder="Add amount">
-        </label>
-        <button type="button">Confirm</button>
-      </div>
-      <div class="wallet--item">
-        <label for="receiver">
-          <input type="text" name="receiver" id="receiver">
-        </label>
-        <label for="amount">
-          <input type="number" name="amount" id="amount">
-        </label>
-        <button type="button">Confirm</button>
+      <div class="wallet--items">
+        <div class="wallet--item">
+          <label for="receiver">
+            <input type="text" name="receiver" id="receiver" placeholder="Add receiver address">
+          </label>
+          <label for="amount">
+            <input type="number" name="amount" id="amount" placeholder="Add amount">
+          </label>
+          <button type="button">Confirm</button>
+        </div>
+        <div class="wallet--item">
+          <label for="sender">
+            <input type="text" name="sender" id="sender" placeholder="Add sender address">
+          </label>
+          <label for="amount">
+            <input type="number" name="amount" id="amount" placeholder="Add amount">
+          </label>
+          <button type="button">Confirm</button>
+        </div>
+        <div class="wallet--item">
+          <label for="receiver">
+            <input type="text" name="receiver" id="receiver">
+          </label>
+          <label for="amount">
+            <input type="number" name="amount" id="amount">
+          </label>
+          <button type="button">Confirm</button>
+        </div>
       </div>
     </div>
   </div>
@@ -40,13 +42,37 @@
 
 <script lang="ts">
 // @ is an alias to /src
-import { defineComponent } from 'vue';
+import { defineComponent, reactive } from 'vue';
 
 export default defineComponent({
   name: 'WalletView',
   components: {
     // HelloWorld,
   },
+  setup() {
+     type Pages = {
+      isBuying: boolean;
+      isSending: boolean;
+      isRecord: boolean;
+    };
+    const pages:Pages = reactive({
+      isBuying: false,
+      isSending: false,
+      isRecord: true,
+    });
+    const handleTransactions = async (current: string) => {
+      if (pages[current as keyof Pages]) return;
+      else {
+        for (let page in pages) {
+          pages[page as keyof Pages] = page === current? true : false;
+        }
+      }
+    };
+
+    return {
+      handleTransactions,
+    }
+  }
 });
 </script>
 
@@ -97,6 +123,9 @@ export default defineComponent({
   color: #fff;
   border-right: 1px solid;
   border-left: 1px solid;
+}
+.wallet--items {
+  margin-top: 32px;
 }
 .wallet--item {
   display: flex;

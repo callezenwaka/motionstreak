@@ -71,8 +71,12 @@ export default defineComponent({
       }
       return false
     };
-
-    // console.log(handleCertify);
+    
+    store.dispatch(ActionTypes.SetToast, {
+      title: 'Bad Request!',
+      text: 'Not authorised to make request.',
+      status: true,
+    });
     
     const handleUpdate = async (document: Document) => {
       if (Status[document.status] === 'PENDING' && document.certifier === profile.value.affiliate) {

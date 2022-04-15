@@ -1,5 +1,5 @@
 <template>
-  <div class="certify">
+  <div class="preview">
     <!-- <Header></Header> -->
     <!-- <form class="form--container" @submit.prevent="handleCertify">
       <div class="form--header">
@@ -14,19 +14,19 @@
       </div>
       <div class="form--item">
         <label class="form--label" for="address">Destination Address: </label>
-        <input class="form--input" type="text" name="address" id="address" v-model="certify.verifier" readonly required />
+        <input class="form--input" type="text" name="address" id="address" v-model="item.verifier" readonly required />
       </div>
       <div class="form--item">
         <label class="form--label" for="name">Document Name: </label>
-        <input class="form--input" type="text" name="name" id="name" v-model="certify.name" readonly required />
+        <input class="form--input" type="text" name="name" id="name" v-model="item.name" readonly required />
       </div>
       <div class="form--item">
         <label class="form--label" for="fee">Processing Fee: </label>
-        <input class="form--input" type="text" name="fee" id="fee" v-model="certify.fee" readonly required />
+        <input class="form--input" type="text" name="fee" id="fee" v-model="item.fee" readonly required />
       </div>
       <div class="form--item">
         <label for="status" class="form--label">Document Status: </label>
-        <select class="form--input" name="status" id="status" v-model="certify.status">
+        <select class="form--input" name="status" id="status" v-model="item.status">
           <option :value=0 disabled>Select Status</option>
           <option :value="status.CERTIFIED">CERTIFIED</option>
           <option :value="status.DECLINED">DECLINED</option>
@@ -36,8 +36,8 @@
         <label class="form--label" for="file">Document Image: </label>
         <input class="form--file" type="file" name="file" id="file" @change="handleImage" @blur="handleBlur($event)" required />
       </div>
-      <div class="form--item" v-if="certify.imageURL">
-        <img :src="certify.imageURL" :alt="certify.name">
+      <div class="form--item" v-if="item.imageURL">
+        <img :src="item.imageURL" :alt="item.name">
       </div>
       <div class="form--item">
         <button class="form--button" :class="{isValid: isValid}" :disabled="!isValid" type="submit">Send</button>
@@ -69,7 +69,7 @@ export default defineComponent({
     const account = computed((): Account => store.getters.account);
     const addDocumentImage = (formData: FormData) => store.dispatch(ActionTypes.AddDocumentImage, formData);
     const updateDocument = (document: Document) => store.dispatch(ActionTypes.UpdateDocument, document);
-    const certify = reactive({
+    const item = reactive({
       requester: document.value.requester,
       verifier: document.value.verifier,
       certifier: document.value.certifier,
@@ -81,13 +81,13 @@ export default defineComponent({
     });
     const isValid = computed(() => {
       return (
-        certify.requester !== "" && 
-        certify.verifier !== "" && 
-        certify.certifier !== "" && 
-        certify.name !== "" && 
-        certify.imageURL !== "" && 
-        certify.fee !== 0 &&
-        certify.status !== 0
+        item.requester !== "" && 
+        item.verifier !== "" && 
+        item.certifier !== "" && 
+        item.name !== "" && 
+        item.imageURL !== "" && 
+        item.fee !== 0 &&
+        item.status !== 0
       );
     });
     // const handleBlur = (event: Event) => {
@@ -98,7 +98,7 @@ export default defineComponent({
     // };
     const handleValidation = (): boolean => {
       validations = [];
-      if (!certify.requester) {
+      if (!item.requester) {
         validations.push("Your address is required!");
       }
       setTimeout(() => (validations = []), 5000);
@@ -114,7 +114,7 @@ export default defineComponent({
       try {
         const data = await addDocumentImage(formData);
         console.log(data);
-        certify.imageURL = typeof data === "string"? data : '';
+        item.imageURL = typeof data === "string"? data : '';
       } catch (error) {
         console.log(error);
       }
@@ -122,7 +122,7 @@ export default defineComponent({
     const handleCertify = async () => {
       if (!handleValidation()) return;
       try {
-        await updateDocument({...certify});
+        await updateDocument({...item});
         router.push({ name: "Home" });
       } catch (error) {
         console.log(error);
@@ -133,7 +133,7 @@ export default defineComponent({
       validations,
       account,
       document,
-      certify,
+      item,
       isValid,
       status,
       handleBlur,
@@ -146,8 +146,8 @@ export default defineComponent({
 </script>
 
 <style scoped>
-/* certify */
-.certify {
+/* preview */
+.preview {
   /* padding: 1rem; */
   height: 100%;
   min-height: 100vh;
