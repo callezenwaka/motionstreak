@@ -29,6 +29,7 @@ export enum MutationType {
   // others
   SetProfile = `SET_PROFILE`,
   SetIsLoading = `SET_IS_LOADING`,
+  SetIdentity = `SET_IDENTITY`,
 }
 
 export type Mutations = {
@@ -68,6 +69,7 @@ export type Mutations = {
   // others
   [MutationType.SetProfile](state: State, value: Profile): void;
   [MutationType.SetIsLoading](state: State, value: boolean): void;
+  [MutationType.SetIdentity](state: State, value: string): void;
 };
 
 export const mutations: MutationTree<State> & Mutations = {
@@ -118,5 +120,14 @@ export const mutations: MutationTree<State> & Mutations = {
   },
   [MutationType.SetIsLoading](state, value) {
     state.isLoading = value;
+  },
+  [MutationType.SetIdentity](state, value) {
+    if (value.toLowerCase() == "Tenant".toLocaleLowerCase()) {
+      state.isTenant = true;
+    } else if (value.toLowerCase() == "Admin".toLocaleLowerCase()) {
+      state.isAdmin = true;
+    } else {
+      state.isUser = true;
+    }
   },
 }

@@ -18,7 +18,7 @@
           </div> -->
           <div class="app-card-buttons">
             <button v-if="profile.role.toLowerCase() === 'admin'" class="content-button status-button" @click="handleUpdate(document)">Update</button>
-            <div v-else style=" text-transform: capitalize;">Status: {{status[document.status]}}</div>
+            <div style=" text-transform: capitalize;">Status: {{status[document.status]}}</div>
             <!-- <div class="menu"></div> -->
           </div>
         </div>
@@ -44,7 +44,8 @@ export default defineComponent({
   setup(props, context) {
     const store = useStore();
     enum status { PENDING, CERTIFIED = 1, DECLINED, VERIFIED, REJECTED }
-    onMounted(() => store.dispatch(ActionTypes.GetDocuments, {affiliate: profile.value.affiliate}));
+    // console.log(profile.value.affiliate);
+    // onMounted(() => store.dispatch(ActionTypes.GetDocuments, {affiliate: profile.value.affiliate}));
     const documents = computed((): Document[] => store.getters.documents);
     const profile = computed((): Profile => store.getters.profile);
     const isLoading = computed((): boolean => store.state.isLoading);
@@ -87,7 +88,7 @@ export default defineComponent({
   padding: 8px 26px;
   color: #fff;
   border-radius: 20px;
-  margin-top: 16px;
+  /* margin-top: 16px; */
   cursor: pointer;
   transition: 0.3s;
   white-space: nowrap;
@@ -157,8 +158,9 @@ export default defineComponent({
 }
 .app-card-buttons {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  margin-left: auto;
+  /* margin-left: auto; */
   margin-top: 16px;
 }
 @media screen and (max-width: 1110px) {

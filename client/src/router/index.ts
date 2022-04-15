@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Home from '../views/Home.vue';
 import { store } from "@/store";
+import firebase from 'firebase/app';
 
+console.log("main", store.getters.profile.isActive);
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
@@ -24,12 +26,21 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue'),
     meta: { requiresAuth: true },
     beforeEnter: (to) => {
-      if (to.meta.requiresAuth && !store.getters.profile.isActive)
-      return {
-        path: '/login',
-        // save the location we were at to come back later
-        query: { redirect: to.fullPath },
-      }
+      firebase.auth().onAuthStateChanged( async user => {
+        console.log(user);
+        if (to.meta.requiresAuth && !user)
+        return {
+          path: '/login',
+          // save the location we were at to come back later
+          query: { redirect: to.fullPath },
+        }
+      });
+      // if (to.meta.requiresAuth && !store.getters.profile.isActive)
+      // return {
+      //   path: '/login',
+      //   // save the location we were at to come back later
+      //   query: { redirect: to.fullPath },
+      // }
     }
   },
   {

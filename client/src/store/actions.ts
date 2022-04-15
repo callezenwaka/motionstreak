@@ -1,20 +1,12 @@
 import { ActionContext, ActionTree } from 'vuex'
 import { Mutations, MutationType } from './mutations'
 import { State, Account, Document, Service, Register, Login, Profile, Message, Query } from './state'
-// import firebase from 'firebase';
-// import firebase from '@firebase/app';
-// import '@firebase/auth'
-// import firebase from "firebase/app"
-import firebase from 'firebase/app';
-import 'firebase/auth';
-// type Firebase = typeof firebase
-// type FirebaseApp = firebase.app.App
-// type FirebaseUser = firebase.User
 import account from '@/services/account';
 import service from '@/services/service';
 import document from '@/services/document';
-// import { accounts, services, documents } from '../data/data';
 import router from '@/router';
+import firebase from 'firebase/app';
+import 'firebase/auth';
 
 export enum ActionTypes {
   // account
@@ -46,6 +38,7 @@ export enum ActionTypes {
   // others
   SetProfile = `SET_Profile`,
   SetIsLoading = 'SET_IS_LOADING',
+  SetIdentity = 'SET_IDENTITY',
 }
 
 type ActionAugments = Omit<ActionContext<State, State>, 'commit'> & {
@@ -86,7 +79,7 @@ export type Actions = {
   // others
   [ActionTypes.SetIsLoading](context: ActionAugments, payload: boolean): void;
   [ActionTypes.SetProfile](context: ActionAugments, payload: Profile): void;
-
+  [ActionTypes.SetIdentity](context: ActionAugments, payload: string): void;
 }
 
 // const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
@@ -193,6 +186,8 @@ export const actions: ActionTree<State, State> & Actions = {
   },
   async [ActionTypes.GetDocuments](context, payload) {
     try {
+      // TODO: api call
+      console.log(payload);
       context.commit(MutationType.SetIsLoading, true)
       // await sleep(1000);
       const data = await document.getDocuments(context.getters.profile.token, payload);      
@@ -385,5 +380,8 @@ export const actions: ActionTree<State, State> & Actions = {
   },
   async [ActionTypes.SetIsLoading](context, payload) {
     context.commit(MutationType.SetIsLoading, payload);
+  },
+  async [ActionTypes.SetIdentity](context, payload) {
+    context.commit(MutationType.SetIdentity, payload);
   },
 }

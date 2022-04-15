@@ -22,11 +22,12 @@ firebase.initializeApp(firebaseConfig);
 firebase.auth().onAuthStateChanged( async user => {
   if (user && user.emailVerified) {
     const idTokenResult = await user.getIdTokenResult();
-    // console.log("main", idTokenResult);
+    console.log("main", idTokenResult);
     // console.log("main", user);
     // const { displayNam: name } = idTokenResult.claims;
     const { address, affiliate, email, isActivated, isActive, phone_number, role, picture, name, } = idTokenResult.claims;
     const { token } = idTokenResult;
+    store.dispatch(ActionTypes.SetIdentity, role);
     store.dispatch(ActionTypes.SetProfile, {
       displayName: name,
       phoneNumber: phone_number,
@@ -39,8 +40,9 @@ firebase.auth().onAuthStateChanged( async user => {
       affiliate,
       token,
     });
-    store.dispatch(ActionTypes.GetDocuments, affiliate);
-//     if (idTokenResult && idTokenResult.claims.isActivated) {
+    store.dispatch(ActionTypes.GetDocuments, {affiliate: affiliate});
+    // store.dispatch(ActionTypes.GetDocuments, affiliate);
+//     if (idTokenResult && idTokenResult.claims.isActive) {
 //       const isUser = idTokenResult.claims.isUser? true : false;
 //       if (isUser) {
 //         store.dispatch('setProfile', user);

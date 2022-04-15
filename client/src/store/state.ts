@@ -79,35 +79,21 @@ export type State = {
   service: Service;
   profile: Profile;
   isLoading: boolean;
+  isTenant: boolean
+  isAdmin: boolean;
+  isUser: boolean;
 };
 
 export const state: State = {
   documents: [],
-  document: {
-    // requester: '0xbDA5747bFD65F08deb54cb465eB87D40e51B197E',
-		// certifier: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
-		// verifier: '0x15d34AAf54267DB7D7c367839AAf71A00a2C6A65',
-		// name: 'Certificate',
-		// imageURL: imageURL,
-		// fee: 0.25,
-		// index: 0,
-		// status: 0,
-  } as Document,
+  document: {} as Document,
   accounts: [],
   account: {} as Account,
   services: [],
   service: {} as Service,
-  profile: {
-    // displayName: 'Admin One',
-    // phoneNumber: '+2348030003000',
-    // photoURL: photoURL,
-    // email: 'admin.one@mail.com',
-    // role: 'admin',
-    // isActive: true,
-    // isActivated: true,
-    // address: '0x976EA74026E726554dB657fA54763abd0C3a0aa9',
-    // affiliate: '0x90F79bf6EB2c4f870365E785982E1f101E93b906',
-    // token: 'ej0xbDA5747bFD65F08deb54cb465eB87D40e51B197E0xbDA5747bFD65F08deb54cb465eB87D40e51B197E',
-  } as Profile,
+  profile: {} as Profile,
   isLoading: false,
+  isTenant: false,
+  isAdmin: false,
+  isUser: false,
 };

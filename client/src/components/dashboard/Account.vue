@@ -62,8 +62,9 @@
 import { useStore } from '@/store';
 import { ActionTypes } from '@/store/actions';
 import { Account } from '@/store/state';
-import { computed, defineComponent, reactive, ref, toRefs } from 'vue';
+import { computed, defineComponent, onBeforeUnmount, reactive, ref, toRefs } from 'vue';
 import { handleAddress, handleCopy, handleBlur } from "@/utils";
+import { MutationType } from '@/store/mutations';
 export default defineComponent({
   name: 'AccountView',
   components: {
@@ -74,9 +75,20 @@ export default defineComponent({
     const copy = reactive({
       canCopy: false,
       isCopying: false,
-    })
+    });
     copy.canCopy = !!navigator.clipboard;
     const account = computed((): Account => store.getters.account);
+    onBeforeUnmount(() => store.commit(MutationType.SetAccount, {
+      address:"",
+      affiliate:"",
+      displayName:"",
+      email:"",
+      isActivated:false,
+      isActive:false,
+      phoneNumber:"",
+      photoURL:"",
+      role:"",
+    }));
     // const handleAddress = (address: string) => {
     //   return `${address.slice(0, 4)}...${address.slice(address.length - 3)}`;
     // }

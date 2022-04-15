@@ -205,11 +205,12 @@ export default defineComponent({
     const avatar = computed(() => {return require(`@/assets/avatar.png`)});
     const profile = computed((): Profile => store.getters.profile);
     const document = computed((): Document => store.getters.document);
-    const isTenant = computed((): boolean => profile.value.role.toLowerCase() === "Tenant".toLowerCase()? true : false);
-    const isAdmin = computed((): boolean => profile.value.role.toLowerCase() === "Admin".toLowerCase()? true : false);
-    const isUser = computed((): boolean => profile.value.role.toLowerCase() === "User".toLowerCase()? true : false);
-    // const isAdmin = computed((): boolean => store.getters.isAdmin);
-    // const isUser = computed((): boolean => store.getters.isUser);
+    // const isTenant = computed((): boolean => profile.value.role.toLowerCase() === "Tenant".toLowerCase()? true : false);
+    // const isAdmin = computed((): boolean => profile.value.role.toLowerCase() === "Admin".toLowerCase()? true : false);
+    // const isUser = computed((): boolean => profile.value.role.toLowerCase() === "User".toLowerCase()? true : false);
+    const isTenant = computed((): boolean => store.getters.isTenant);
+    const isAdmin = computed((): boolean => store.getters.isAdmin);
+    const isUser = computed((): boolean => store.getters.isUser);
     let isOpen = ref(false);
     type Pages = {
       isDocuments: boolean,

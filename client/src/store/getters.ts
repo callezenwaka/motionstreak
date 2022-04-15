@@ -53,12 +53,7 @@ export const getters: GetterTree<State, State> & Getters = {
   },
   profile(state) { return state.profile },
   isLoading(state) { return state.isLoading },
-  // isTenant: (state) => {
-  //   const role = "Tenant".toLowerCase();
-  //   console.log(state.profile.role, )
-  //   return (state.profile.role == role)? true : false 
-  // },
-  isTenant(state) { return state.profile.role.toLowerCase() == "Tenant".toLowerCase()? true : false },
-  isAdmin(state) { return state.profile.role.toLowerCase() == "Admin".toLowerCase()? true : false },
-  isUser(state) { return state.profile.role.toLowerCase() == "User".toLowerCase()? true : false },
+  isTenant(state) { return state.isTenant },
+  isAdmin(state) { return state.isAdmin },
+  isUser(state) { return state.isUser },
 }
