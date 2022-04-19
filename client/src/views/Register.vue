@@ -266,7 +266,7 @@ export default defineComponent({
 }
 .form--link {
   text-decoration: none;
-  color: rgb(0, 124, 173);
+  color: #3a6df0;
 }
 .form--text {
   color: #ffffff;

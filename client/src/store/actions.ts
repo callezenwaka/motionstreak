@@ -311,6 +311,7 @@ export const actions: ActionTree<State, State> & Actions = {
         affiliate,
         token,
       });
+      context.dispatch(ActionTypes.SetToast, {title: 'Login', text: `Login successful!`, status: true});
       context.commit(MutationType.SetIsLoading, false)
       return user;
     } catch (error) {
