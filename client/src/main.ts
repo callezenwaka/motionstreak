@@ -38,10 +38,11 @@ firebase.auth().onAuthStateChanged( async user => {
       token,
     });
     store.dispatch(ActionTypes.GetDocuments, {affiliate: affiliate});
-  } else {
-    store.dispatch(ActionTypes.Logout, {title: 'Logout', text: `Unauthorised access!`, status: true});
-    return;
-  }
+  } 
+  // else {
+  //   store.dispatch(ActionTypes.Logout, {title: 'Logout', text: `Unauthorised access!`, status: true});
+  //   return;
+  // }
 });
 
 createApp(App).use(store).use(router).mount('#app')

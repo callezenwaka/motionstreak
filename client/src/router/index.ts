@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import Home from '../views/Home.vue';
 import firebase from 'firebase/app';
+// import { store } from '@/store';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -13,16 +14,22 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Dashboard',
     component: () => import(/* webpackChunkName: "dashboard" */ '../views/Dashboard.vue'),
     meta: { requiresAuth: true },
-    beforeEnter: (to) => {
-      firebase.auth().onAuthStateChanged( async user => {
-        if (to.meta.requiresAuth && !user)
-        return {
-          path: '/login',
-          // save the location we were at to come back later
-          query: { redirect: to.fullPath },
-        }
-      });
-    }
+    beforeEnter: (to, from, next) => {
+			// TODO: Prevent login page if authenticated
+			if (!firebase.auth().currentUser) next({ name: "Login" });
+			else next();
+		},
+    // beforeEnter: (to) => {
+    //   firebase.auth().onAuthStateChanged( async user => {
+    //     console.log(user == null);
+    //     if (to.meta.requiresAuth && user == null)
+    //     return {
+    //       path: '/login',
+    //       // save the location we were at to come back later
+    //       query: { redirect: to.fullPath },
+    //     }
+    //   });
+    // }
   },
   {
     path: '/register',
@@ -32,18 +39,34 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/login',
     name: 'Login',
-    component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue')
+    component: () => import(/* webpackChunkName: "login" */ '../views/Login.vue'),
+    beforeEnter: (to, from, next) => {
+			// TODO: Prevent login page if authenticated
+			if (firebase.auth().currentUser) next({ name: "Dashboard" });
+			else next();
+		},
   },
-  {
-    path: '/fund',
-    name: 'Fund',
-    component: () => import(/* webpackChunkName: "fund" */ '../views/Fund.vue')
-  }
 ]
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes
-})
+});
+
+// navigation guard to check for logged in users
+router.beforeEach((to, from, next) => {
+	const requiresAuth = to.matched.some(x => x.meta.requiresAuth);
+  firebase.auth().onAuthStateChanged( async user => {
+    console.log(user);
+	if (requiresAuth && !firebase.auth().currentUser) {
+		next({
+			name: "Login",
+			query: { redirect: to.fullPath },
+		})		
+	} else {
+		next()
+	}
+  });
+});
 
 export default router
