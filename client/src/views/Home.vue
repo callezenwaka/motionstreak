@@ -30,7 +30,7 @@
                     The certificate validation process typically proceeds in three steps and typically takes three inputs. The first is the certificate to be validated, the second is any intermediate certificate certified by the source organization, and the third is the verification of intermediate certificate by the destination organization.
                   </div>
                   <div class="app-card-buttons">
-                    <button class="content-button status-button" @click="handleLogin">Update</button>
+                    <button class="content-button status-button" @click="handleLogin">Get started</button>
                   </div>
                 </div>
                 <div class="app-card">
@@ -39,7 +39,7 @@
                     The transcript validation process typically proceeds in three steps and typically takes three inputs. The first is the transcript to be validated, the second is any intermediate transcript certified by the source organization, and the third is the verification of intermediate transcript by the destination organization.
                   </div>
                   <div class="app-card-buttons">
-                    <button class="content-button status-button" @click="handleLogin">Update</button>
+                    <button class="content-button status-button" @click="handleLogin">Get started</button>
                   </div>
                 </div>
                 <div class="app-card">
@@ -48,7 +48,7 @@
                     The reference validation process typically proceeds in three steps and typically takes three inputs. The first is the reference to be validated, the second is any intermediate reference certified by the source organization, and the third is the verification of intermediate reference by the destination organization.
                   </div>
                   <div class="app-card-buttons">
-                    <button class="content-button status-button" @click="handleLogin">Update</button>
+                    <button class="content-button status-button" @click="handleLogin">Get started</button>
                   </div>
                 </div>
               </div>
