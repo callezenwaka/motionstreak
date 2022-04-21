@@ -299,7 +299,7 @@ export const actions: ActionTree<State, State> & Actions = {
       const idTokenResult = await user.getIdTokenResult();
       const { address, affiliate, isActivated, isActive, phone_number, role, picture, name } = idTokenResult.claims;
       const { token } = idTokenResult;
-      context.dispatch(ActionTypes.Logout, {title: 'Login', text: `Login successful!`, status: true});
+      context.dispatch(ActionTypes.Login, {title: 'Login', text: `Login successful!`, status: true});
       context.dispatch(ActionTypes.SetProfile, {
         displayName: name,
         phoneNumber: phone_number,
