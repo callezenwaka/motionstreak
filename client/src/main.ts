@@ -3,7 +3,7 @@ import App from './App.vue'
 import './registerServiceWorker'
 import router from './router';
 import { store } from './store';
-// import firebase from 'firebase';
+import 'firebase/auth';
 import firebase from 'firebase/app';
 import { ActionTypes } from './store/actions';
 
@@ -22,9 +22,6 @@ firebase.initializeApp(firebaseConfig);
 firebase.auth().onAuthStateChanged( async user => {
   if (user && user.emailVerified) {
     const idTokenResult = await user.getIdTokenResult();
-    // console.log("main", idTokenResult);
-    // console.log("main", user);
-    // const { displayNam: name } = idTokenResult.claims;
     const { address, affiliate, email, isActivated, isActive, phone_number, role, picture, name, } = idTokenResult.claims;
     const { token } = idTokenResult;
     store.dispatch(ActionTypes.SetIdentity, role);
@@ -41,24 +38,6 @@ firebase.auth().onAuthStateChanged( async user => {
       token,
     });
     store.dispatch(ActionTypes.GetDocuments, {affiliate: affiliate});
-    // store.dispatch(ActionTypes.GetDocuments, affiliate);
-//     if (idTokenResult && idTokenResult.claims.isActive) {
-//       const isUser = idTokenResult.claims.isUser? true : false;
-//       if (isUser) {
-//         store.dispatch('setProfile', user);
-//         store.dispatch('setIsActivated', idTokenResult.claims.isActivated);
-//         store.dispatch('setTenantId', idTokenResult.claims.tenantId);
-//         store.dispatch('setIdToken', idTokenResult.token);
-//         store.dispatch('setClaims', idTokenResult.claims);
-//         store.dispatch('setIsUser', idTokenResult.claims.isUser.value);
-//       } else {
-//         store.dispatch('logout', `Kindly contact your admin!`);
-//         return;
-//       }
-//     } else {
-//       store.dispatch('logout', `Your account is deactivated!`);
-//       return;
-//     }
   }
 });
 
