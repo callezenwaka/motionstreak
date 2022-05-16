@@ -46,7 +46,7 @@ export const getAccount = {
 };
 
 export const addAccount = {
-  name: "addAccount",
+  name: "add Account",
 	description: "This requests add a single account",
   type: AccountType,
   args: {
@@ -93,7 +93,7 @@ export const addAccount = {
 }
 
 export const updateAccount = {
-  name: "updateAccount",
+  name: "Update Account",
 	description: "This request updates a single account",
   type: AccountType,
   args: {
@@ -136,7 +136,7 @@ export const updateAccount = {
 }
 
 export const deleteAccount = {
-  name: "deleteAccount",
+  name: "Delete Account",
 	description: "This request deletes a single account",
   type: AccountType,
   args: { address: { type: GraphQLString } },

@@ -23,7 +23,7 @@ const MutationType = new GraphQLObjectType({
   },
 })
 
-module.exports = new GraphQLSchema({
+export const schema = new GraphQLSchema({
   query: QueryType,
   mutation: MutationType,
 })

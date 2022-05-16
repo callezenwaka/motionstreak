@@ -4,7 +4,7 @@ import express, { Application, Request, Response, NextFunction } from "express";
 import admin from 'firebase-admin';
 import cors from "cors";
 import { graphqlHTTP } from "express-graphql";
-import schema from "./graphql/schema/schema";
+import { schema } from "./graphql/schema/schema";
 import { isAuthenticated, isSigner } from './utils';
 import document from "./routes/document";
 import service from "./routes/service";
@@ -41,9 +41,9 @@ app.get('/healthz',async (req: Request, res: Response) => {
 });
 
 // Verify request
-app.use('/account', account);
-app.use('/service', service);
-app.use('/document', document);
+// app.use('/account', account);
+// app.use('/service', service);
+// app.use('/document', document);
 
 // Ping home route
 app.get('/', (req: Request, res: Response) => {
@@ -55,10 +55,22 @@ app.get('/', (req: Request, res: Response) => {
 });
 
 app.use(
-  "/graphql",
-  graphqlHTTP({
-    schema,
-    graphiql: true,
+  // "/graphql",
+  // graphqlHTTP({
+  //   schema,
+  //   graphiql: true,
+  // }),
+  "/api",
+  graphqlHTTP((req: any, res: any, graphQLParams) => {
+    return {
+      schema,
+      graphiql: true,
+      context: {
+        req: req,
+        user: req.user,
+        // whatever else you want
+      }
+    }
   })
 )
 
