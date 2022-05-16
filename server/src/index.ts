@@ -1,14 +1,14 @@
 // import 'dotenv/config';
 
-import express, { Application, Request, Response, NextFunction } from "express";
+import express, { Application, Request, Response } from "express";
 import admin from 'firebase-admin';
 import cors from "cors";
 import { graphqlHTTP } from "express-graphql";
 import { schema } from "./graphql/schema/schema";
 import { isAuthenticated, isSigner } from './utils';
-import document from "./routes/document";
-import service from "./routes/service";
-import account from "./routes/account";
+// import document from "./routes/document";
+// import service from "./routes/service";
+// import account from "./routes/account";
 
 const app: Application = express();
 // Initialize firebase admin sdk config
@@ -73,15 +73,6 @@ app.use(
     }
   })
 )
-
-// notfound route handler
-// app.use((req: Request, res: Response, next: NextFunction) => {
-//   const error = {
-//     statusText: new Error('Not Found'),
-//     status: 404
-//   };
-//   next(error);
-// })
 
 // Set up port and start the server
 app.listen( process.env.PORT, () => {

@@ -45,7 +45,9 @@ export const isAuthenticated = async (req: any, res: any, next: NextFunction) =>
 			req.user = userInfo;
 			return next();
 		} catch (error) {
-			return res.status(401).json('Unauthorized access!');
+			// return res.status(401).json('Unauthorized access!');
+      req.user = null;
+      return next();
 		}
 	});
 }
@@ -73,7 +75,9 @@ export const isSigner = async (req: any, res: any, next: any) => {
       return next();
     } 
     catch (error) {
-      return res.status(501).json('Unauthorized request!');
+      // return res.status(501).json('Unauthorized request!');
+      req.signer = null;
+      return next();
     }
 };
 // [END CHECK SIGNER]

@@ -19,7 +19,7 @@ export const Documents = {
     const results = await documentContract.getDocuments(args.affiliate);
     // if (!results.length) return res.status(200).json([]);
 
-    // let documents:Document[] = [];
+    // let documents:DocumentType[] = [];
     const documents = await Promise.all(results.map(async (result:any) => {
       return {
         requester: result.requester,
@@ -108,17 +108,43 @@ export const updateDocument = {
 	description: "This request updates a single document",
   type: DocumentType,
   args: {
-    id: { type: GraphQLID },
-    name: { type: GraphQLString },
-    league: { type: GraphQLString }
+    certifier: {type: GraphQLString},
+    verifier: {type: GraphQLString},
+    requester: {type: GraphQLString},
+    name: {type: GraphQLString},
+    imageURL: {type: GraphQLString},
+    fee: {type: GraphQLFloat},
+    index: {type: GraphQLInt},
+    status: {type: GraphQLString},
   },
-  resolve: async (parent: any, args: { id: number; name: any; league: any; }, context: any) => {
-    const { id, name, league } = args;
-    const _id = Number(id);
+  resolve: async (
+    parent: any, 
+    args: { 
+      certifier: string; 
+      verifier: string; 
+      requester: string; 
+      name: string; 
+      imageURL: string; 
+      fee: number;
+      index: number; 
+      status: string;
+    }, 
+    context: any
+  ) => {
+    // const { id, name, league } = args;
+    // const _id = Number(id);
     // const club = seedData.findIndex(club => club.id === _id);
 		// const update_club = seedData.splice(club, 1, { id: _id, name, league });
     // // console.log(update_club);
     // return update_club;
+    // const { imageURL, fee, status } = req.body;
+    if (!args.imageURL || !args.fee || !args.status || !args.index) return;
+
+    const documentContract = new ethers.Contract(documentAddress, documentsABI, context.signer);
+    const result = await documentContract.updateDocument(args.imageURL, args.index, args.status);
+    await result.wait();
+
+    return 'Success';
   }
 }
 
@@ -128,10 +154,11 @@ export const deleteDocument = {
   type: DocumentType,
   args: { id: { type: GraphQLID } },
   resolve: async (parent: any, args: { id: number; }, context: any) => {
-    const id = Number(args.id);
+    // const id = Number(args.id);
     // const club = seedData.findIndex(club => club.id === id);
 		// const deleted_club = seedData.splice(club, 1);
     // return deleted_club;
+    return 'Success';
   }
 }
 
