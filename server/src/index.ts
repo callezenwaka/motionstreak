@@ -4,6 +4,7 @@ import express, { Application, Request, Response } from "express";
 import admin from 'firebase-admin';
 import cors from "cors";
 import { graphqlHTTP } from "express-graphql";
+import { graphqlUploadExpress } from "graphql-upload";
 import { schema } from "./graphql/schema/schema";
 import { isAuthenticated, isSigner } from './utils';
 // import document from "./routes/document";
@@ -61,6 +62,7 @@ app.use(
   //   graphiql: true,
   // }),
   "/api",
+  graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }),
   graphqlHTTP((req: any, res: any, graphQLParams) => {
     return {
       schema,

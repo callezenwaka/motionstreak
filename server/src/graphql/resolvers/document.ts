@@ -1,5 +1,5 @@
 import { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLList, GraphQLInt, GraphQLFloat } from 'graphql';
-import { DocumentType } from "../../types/Document";
+import { DocumentType } from "../types/Document";
 import { ethers } from 'ethers';
 import { create } from 'ipfs-http-client';
 import { documentAddress, documentsABI } from '../../config';
@@ -152,8 +152,8 @@ export const deleteDocument = {
   name: "deleteDocument",
 	description: "This request deletes a single document",
   type: DocumentType,
-  args: { id: { type: GraphQLID } },
-  resolve: async (parent: any, args: { id: number; }, context: any) => {
+  args: { index: { type: GraphQLInt } },
+  resolve: async (parent: any, args: { index: number; }, context: any) => {
     // const id = Number(args.id);
     // const club = seedData.findIndex(club => club.id === id);
 		// const deleted_club = seedData.splice(club, 1);
