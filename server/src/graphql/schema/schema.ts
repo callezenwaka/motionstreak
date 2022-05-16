@@ -2,14 +2,17 @@
 import { GraphQLSchema, GraphQLObjectType } from "graphql";
 
 // Import resolvers
-import { getAccount, addAccount, updateAccount } from "../resolvers/account";
+import { Account, addAccount, updateAccount } from "../resolvers/account";
+import { Services, Service, addService, updateService, deleteService } from "../resolvers/service";
 
 // Define QueryType
 const QueryType = new GraphQLObjectType({
   name: "QueryType",
   description: "Queries",
   fields: { 
-    getAccount 
+    Account,
+    Services,
+    Service,
   },
 })
 
@@ -20,6 +23,9 @@ const MutationType = new GraphQLObjectType({
   fields: {
     addAccount,
     updateAccount,
+    addService,
+    updateService,
+    deleteService,
   },
 })
 

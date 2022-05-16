@@ -4,7 +4,7 @@ import { ethers } from 'ethers';
 import { serviceAddress, servicesABI } from '../../config';
 // import { seedData } from '../../seedData';
 
-const getServices = {
+export const Services = {
 	name: "Services",
 	description: "This request gets all services",
 	type: new GraphQLList(ServiceType),
@@ -17,7 +17,7 @@ const getServices = {
     const results = await servicesContract.getServices(args.affiliate);
 
     // let services:Service[] = [];
-    const services =  await Promise.all(results.map(async (result:any) => {
+    const services = await Promise.all(results.map(async (result:any) => {
       return {
         name: result.name,
         cost: Number(ethers.utils.formatUnits(result.cost.toString(), 'ether')),
@@ -29,7 +29,7 @@ const getServices = {
 	}
 };
 
-const getService = {
+export const Service = {
 	name: "Service",
 	description: "This request gets a single service",
 	type: ServiceType,
@@ -51,7 +51,7 @@ const getService = {
 	}
 };
 
-const addService = {
+export const addService = {
   name: "addService",
 	description: "This requests add a single service",
   type: ServiceType,
@@ -71,7 +71,7 @@ const addService = {
   }
 }
 
-const updateService = {
+export const updateService = {
   name: "updateService",
 	description: "This request updates a single service",
   type: ServiceType,
@@ -98,7 +98,7 @@ const updateService = {
   }
 }
 
-const deleteService = {
+export const deleteService = {
   name: "deleteService",
 	description: "This request deletes a single service",
   type: ServiceType,
@@ -119,22 +119,22 @@ const deleteService = {
   }
 }
 
-const RootQuery = new GraphQLObjectType({
-	name: "RootQuery",
-	description: "This is the rootquery",
-	fields: {
-		getServices,
-		getService
-	}
-});
+// const RootQuery = new GraphQLObjectType({
+// 	name: "RootQuery",
+// 	description: "This is the rootquery",
+// 	fields: {
+// 		Services,
+// 		Service
+// 	}
+// });
 
-const RootMutation = new GraphQLObjectType({
-  name: "RootMutation",
-  fields: {
-    addService,
-    updateService,
-    deleteService
-  }
-});
+// const RootMutation = new GraphQLObjectType({
+//   name: "RootMutation",
+//   fields: {
+//     addService,
+//     updateService,
+//     deleteService
+//   }
+// });
 
-export { RootQuery, RootMutation };
+// export { RootQuery, RootMutation };

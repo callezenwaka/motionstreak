@@ -7,7 +7,7 @@ import { accountAddress, accountsABI } from '../../config';
 const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 // import { seedData } from '../../seedData';
 
-export const getAccounts = {
+export const Accounts = {
 	name: "Accounts",
 	description: "This request gets all accounts",
 	type: new GraphQLList(AccountType),
@@ -17,7 +17,7 @@ export const getAccounts = {
 	}
 };
 
-export const getAccount = {
+export const Account = {
 	name: "Account",
 	description: "This request gets a single account",
 	type: AccountType,

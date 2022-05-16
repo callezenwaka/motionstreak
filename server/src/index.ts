@@ -66,7 +66,7 @@ app.use(
       schema,
       graphiql: true,
       context: {
-        req: req,
+        signer: req.signer,
         user: req.user,
         // whatever else you want
       }
