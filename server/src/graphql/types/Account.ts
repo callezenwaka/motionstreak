@@ -16,6 +16,7 @@ export const AccountType = new GraphQLObjectType({
   name: "Account",
   description: "This is the account type definition.",
   fields: () => ({
+    address: {type: GraphQLString},
     displayName: {type: GraphQLString},
     phoneNumber: {type: GraphQLString},
     email: {type: GraphQLString},

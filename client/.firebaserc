@@ -7,6 +7,9 @@
       "hosting": {
         "onevault": [
           "onevault"
+        ],
+        "motionstreak": [
+          "motionstreak"
         ]
       }
     }

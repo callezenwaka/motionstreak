@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "target": "onevault",
+    "target": "motionstreak",
     "public": "dist",
     "ignore": [
       "firebase.json",
