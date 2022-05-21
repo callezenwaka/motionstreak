@@ -9,7 +9,7 @@ export const Services = {
 	description: "This request gets all services",
 	type: new GraphQLList(ServiceType),
 	args: { affiliate: { type: GraphQLString } },
-	resolve: async (parent: any, args: { affiliate: string; }, context: any) => {
+	resolve: async (parent: any, args: { affiliate?: string; }, context: any) => {
 		// const services = seedData;
 		// return services;
     if (!args.affiliate) return;
@@ -34,7 +34,7 @@ export const Service = {
 	description: "This request gets a single service",
 	type: ServiceType,
 	args: { index: { type: GraphQLInt } },
-	resolve: async (parent: any, args: { index: number; }, context: any) => {
+	resolve: async (parent: any, args: { index?: number; }, context: any) => {
     // const id = Number(args.id);
 		// const service = await seedData.find(service => service.id === id);
 		// return service;
@@ -56,7 +56,7 @@ export const addService = {
 	description: "This requests add a single service",
   type: ServiceType,
   args: { name: { type: GraphQLString }, cost: { type: GraphQLInt } },
-  resolve: async (parent: any, args: { name: string; cost: number; }, context: any) => {
+  resolve: async (parent: any, args: { name?: string; cost?: number; }, context: any) => {
     // const new_service = seedData.push({ id: seedData.length + 1, name: args.name, league: args.league });
     // console.log(new_service, ...args);
     // return {id: new_service, ...args};
@@ -80,7 +80,7 @@ export const updateService = {
     cost: { type: GraphQLInt },
     index: { type: GraphQLInt },
   },
-  resolve: async (parent: any, args: { index: number; name: string; cost: number; }, context: any) => {
+  resolve: async (parent: any, args: { index?: number; name?: string; cost?: number; }, context: any) => {
     // const { id, name, league } = args;
     // const _id = Number(id);
     // const service = seedData.findIndex(service => service.id === _id);
@@ -103,7 +103,7 @@ export const deleteService = {
 	description: "This request deletes a single service",
   type: ServiceType,
   args: { index: { type: GraphQLInt } },
-  resolve: async (parent: any, args: { index: number; }, context: any) => {
+  resolve: async (parent: any, args: { index?: number; }, context: any) => {
     // const id = Number(args.id);
     // const service = seedData.findIndex(service => service.id === id);
 		// const deleted_service = seedData.splice(service, 1);

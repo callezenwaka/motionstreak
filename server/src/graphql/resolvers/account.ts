@@ -22,11 +22,11 @@ export const Account = {
 	description: "This request gets a single account",
 	type: AccountType,
 	args: { address: { type: GraphQLString } },
-	resolve: async (parent: any, args: { address: string; }, context: any) => {
+	resolve: async (parent: any, args: { address?: string; }, context: any) => {
     // const id = Number(args.id);
 		// const account = await seedData.find(account => account.id === id);
 		// return account;
-    if(!args.address) return;
+    // if(!args.address) return;
     const accountsContract = new ethers.Contract(accountAddress, accountsABI, context.req.signer);
     const result = await accountsContract.getAccount(args.address);
     let account = {
@@ -62,13 +62,13 @@ export const addAccount = {
   resolve: async (
     parent: any, 
     args: { 
-      displayName: string; 
-      phoneNumber: string; 
-      email: string; 
-      photoURL: string; 
-      role: string; 
-      isActive: boolean;
-      isActivated: boolean; 
+      displayName?: string; 
+      phoneNumber?: string; 
+      email?: string; 
+      photoURL?: string; 
+      role?: string; 
+      isActive?: boolean;
+      isActivated?: boolean; 
     },
     context: any
   ) => {
@@ -88,7 +88,7 @@ export const addAccount = {
     const result = await accountsContract.addAccount(context.req.address, context.req.affiliate, args.displayName, args.phoneNumber, args.email, args.photoURL, args.role, args.isActive, args.isActivated);
     await result.wait();
 
-    return 'Success';
+    return {...args};
   }
 }
 
@@ -110,14 +110,14 @@ export const updateAccount = {
   resolve: async (
     parent: any, 
     args: { 
-      address: string; 
-      displayName: string; 
-      phoneNumber: string; 
-      email: string; 
-      photoURL: string; 
-      role: string; 
-      isActive: boolean;
-      isActivated: boolean; 
+      address?: string; 
+      displayName?: string; 
+      phoneNumber?: string; 
+      email?: string; 
+      photoURL?: string; 
+      role?: string; 
+      isActive?: boolean;
+      isActivated?: boolean; 
     },
     context: any
   ) => {
@@ -140,7 +140,7 @@ export const deleteAccount = {
 	description: "This request deletes a single account",
   type: AccountType,
   args: { address: { type: GraphQLString } },
-  resolve: async (parent: any, args: { address: string; }) => {
+  resolve: async (parent: any, args: { address?: string; }) => {
     // const id = Number(args.id);
     // const account = seedData.findIndex(account => account.id === id);
 		// const deleted_account = seedData.splice(account, 1);

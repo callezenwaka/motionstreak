@@ -10,7 +10,7 @@
 
 // export default Account;
 
-import {GraphQLString, GraphQLBoolean, GraphQLObjectType} from 'graphql';
+import { GraphQLString, GraphQLBoolean, GraphQLObjectType } from 'graphql';
 
 export const AccountType = new GraphQLObjectType({
   name: "Account",

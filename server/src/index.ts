@@ -29,31 +29,31 @@ admin.initializeApp({
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(isAuthenticated);
-app.use(isSigner);
+// app.use(isAuthenticated);
+// app.use(isSigner);
 
 // Ping healthz route
-app.get('/healthz',async (req: Request, res: Response) => {
-  try {
-    return res.status(200).json('Healthz');
-  } catch (error) {
-    return res.status(500).json('Internal Server Error!');
-  }
-});
+// app.get('/healthz',async (req: Request, res: Response) => {
+//   try {
+//     return res.status(200).json('Healthz');
+//   } catch (error) {
+//     return res.status(500).json('Internal Server Error!');
+//   }
+// });
 
 // Verify request
 // app.use('/account', account);
 // app.use('/service', service);
 // app.use('/document', document);
-
+// console.log(Request)
 // Ping home route
-app.get('/', (req: Request, res: Response) => {
-  try {
-    return res.status(200).json('Ok');
-  } catch (error) {
-    return res.status(500).json('Internal Server Error!');
-  }
-});
+// app.get('/', (req: Request, res: Response) => {
+//   try {
+//     return res.status(200).json('Ok');
+//   } catch (error) {
+//     return res.status(500).json('Internal Server Error!');
+//   }
+// });
 
 app.use(
   // "/graphql",
@@ -67,11 +67,11 @@ app.use(
     return {
       schema,
       graphiql: true,
-      context: {
-        signer: req.signer,
-        user: req.user,
-        // whatever else you want
-      }
+      // context: {
+      //   signer: req.signer,
+      //   user: req.user,
+      //   // whatever else you want
+      // }
     }
   })
 )

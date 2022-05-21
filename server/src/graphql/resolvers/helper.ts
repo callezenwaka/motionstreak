@@ -1,4 +1,4 @@
-import { GraphQLObjectType, GraphQLString, GraphQLID, GraphQLList, GraphQLInt, GraphQLFloat } from 'graphql';
+import { GraphQLString } from 'graphql';
 import { MetricsType, FileRequestType, FileResponseType } from "../types/Helper";
 import { ethers } from 'ethers';
 import { create } from 'ipfs-http-client';
@@ -14,7 +14,7 @@ export const Metrics = {
   description: "This request gets all metrics",
   type: MetricsType,
   args: { address: { type: GraphQLString } },
-  resolve: async (parent: any, args: { address: string; }, context: any) => {
+  resolve: async (parent: any, args: { address?: string; }, context: any) => {
     // const id = Number(args.id);
     // const club = await seedData.find(club => club.id === id);
     // return club;
@@ -43,20 +43,24 @@ export const Avatar: any = {
     file: { type: FileRequestType }
   },
   async resolve(parent: any, args: IFormParams, context: any) {
-    const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
-    const { createReadStream, filename, mimetype } = await args.file.file;
-    const stream = createReadStream();
-    console.log(args.file);
-    console.log(stream);
-    // const uniqueName:string =  fileRenamer(filename);
-    // const pathName = path.join(__dirname, '../../files/'+uniqueName);
-    // await stream.pipe(fs.createWriteStream(pathName));
-    // return {
-    //     success:true,
-    //     message:'file uploaded successfully'
-    // }
-    // const result = await client.add(Buffer.from(args.file.file.buffer));
-    // const imageURL = `https://ipfs.infura.io/ipfs/${result.path}`;
+    try {
+      const client = create({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
+      const { createReadStream, filename, mimetype } = await args.file.file;
+      const stream = createReadStream();
+      console.log(args.file);
+      console.log(filename);
+      // const uniqueName:string =  fileRenamer(filename);
+      // const pathName = path.join(__dirname, '../../files/'+uniqueName);
+      // await stream.pipe(fs.createWriteStream(pathName));
+      return {
+          success:true,
+          message:'file uploaded successfully'
+      }
+      // const result = await client.add(Buffer.from(args.file.file.buffer));
+      // const imageURL = `https://ipfs.infura.io/ipfs/${result.path}`;
+    } catch (error) {
+      console.info(error);
+    }
   }
 }
 

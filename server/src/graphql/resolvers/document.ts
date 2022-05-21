@@ -10,7 +10,7 @@ export const Documents = {
 	description: "This request gets all documents",
 	type: new GraphQLList(DocumentType),
 	args: { affiliate: { type: GraphQLString } },
-	resolve: async (parent: any, args: any, context: any) => {
+	resolve: async (parent: any, args: {affiliate?: string; }, context: any) => {
 		// const clubs = seedData;
 		// return clubs;
     if (!args.affiliate) return;
@@ -21,7 +21,7 @@ export const Documents = {
 
     // let documents:DocumentType[] = [];
     const documents = await Promise.all(results.map(async (result:any) => {
-      return {
+      const document = {
         requester: result.requester,
         verifier: result.verifier,
         certifier: result.certifier,
@@ -31,6 +31,7 @@ export const Documents = {
         index: Number(result.index),
         status: result.status,
       }
+      return document;
     }));
 
     return documents;
@@ -42,7 +43,7 @@ export const Document = {
 	description: "This request gets a single document",
 	type: DocumentType,
 	args: { index: { type: GraphQLInt } },
-	resolve: async (parent: any, args: { index: number; }, context: any) => {
+	resolve: async (parent: any, args: { index?: number }, context: any) => {
     // const id = Number(args.id);
 		// const club = await seedData.find(club => club.id === id);
 		// return club;
@@ -80,12 +81,12 @@ export const addDocument = {
   resolve: async (
     parent: any, 
     args: { 
-      certifier: string; 
-      verifier: string; 
-      requester: string; 
-      name: string; 
-      imageURL: string; 
-      fee: number;
+      certifier?: string; 
+      verifier?: string; 
+      requester?: string; 
+      name?: string; 
+      imageURL?: string; 
+      fee?: number;
     }, 
     context: any
   ) => {
@@ -120,14 +121,14 @@ export const updateDocument = {
   resolve: async (
     parent: any, 
     args: { 
-      certifier: string; 
-      verifier: string; 
-      requester: string; 
-      name: string; 
-      imageURL: string; 
-      fee: number;
-      index: number; 
-      status: string;
+      certifier?: string; 
+      verifier?: string; 
+      requester?: string; 
+      name?: string; 
+      imageURL?: string; 
+      fee?: number;
+      index?: number; 
+      status?: string;
     }, 
     context: any
   ) => {
@@ -153,7 +154,7 @@ export const deleteDocument = {
 	description: "This request deletes a single document",
   type: DocumentType,
   args: { index: { type: GraphQLInt } },
-  resolve: async (parent: any, args: { index: number; }, context: any) => {
+  resolve: async (parent: any, args: { index?: number; }, context: any) => {
     // const id = Number(args.id);
     // const club = seedData.findIndex(club => club.id === id);
 		// const deleted_club = seedData.splice(club, 1);

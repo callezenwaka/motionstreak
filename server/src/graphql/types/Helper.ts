@@ -2,20 +2,19 @@ import { GraphQLString, GraphQLInt, GraphQLBoolean, GraphQLObjectType, GraphQLSc
 // import { GraphQLObjectType, GraphQLID, GraphQLString,GraphQLBoolean,GraphQLInt,GraphQLScalarType, GraphQLList } from "graphql";
 
 export const FileResponseType = new GraphQLObjectType({
-  name: "FileUploadResponse",
+  name: "FileResponse",
   fields: () => {
     return ({
       success: { type: GraphQLBoolean },
       message: { type: GraphQLString },
       errorStatus: { type: GraphQLBoolean },
       error: { type: GraphQLString },
-      token: { type: GraphQLString },
     });
   },
 });
 
 export const FileRequestType = new GraphQLScalarType({
-  name: 'FileRequestType',
+  name: 'FileRequest',
   description: "This is the file type definition.",
   serialize: (file: any) => file,
   parseValue: (file: any) => file,
@@ -37,18 +36,18 @@ export const MetricsType = new GraphQLObjectType({
   })
 });
 
-export const AvatarType = new GraphQLObjectType({
-  name: "Avatar",
-  description: "This is the avatar type definition.",
-  fields: () => ({
-    pending: { type: GraphQLInt },
-    certified: { type: GraphQLInt },
-    declined: { type: GraphQLInt },
-    verified: { type: GraphQLInt },
-    rejected: { type: GraphQLInt },
-    total: { type: GraphQLInt },
-  })
-});
+// export const AvatarType = new GraphQLObjectType({
+//   name: "Avatar",
+//   description: "This is the avatar type definition.",
+//   fields: () => ({
+//     pending: { type: GraphQLInt },
+//     certified: { type: GraphQLInt },
+//     declined: { type: GraphQLInt },
+//     verified: { type: GraphQLInt },
+//     rejected: { type: GraphQLInt },
+//     total: { type: GraphQLInt },
+//   })
+// });
 
 // export const FileType = new GraphQLObjectType({
 //   name: "File",

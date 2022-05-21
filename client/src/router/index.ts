@@ -35,6 +35,11 @@ const routes: Array<RouteRecordRaw> = [
 			else next();
 		},
   },
+  {
+    path: '/file',
+    name: 'File',
+    component: () => import(/* webpackChunkName: "file" */ '../views/File.vue')
+  },
 ]
 
 const router = createRouter({

@@ -34,7 +34,7 @@ const MutationType = new GraphQLObjectType({
     deleteService,
     addDocument,
     updateDocument,
-    deleteDocument,
+    // deleteDocument,
   },
 })
 
